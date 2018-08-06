@@ -1,2 +1,2 @@
 # AImunePy
-Simple python webserver for tensorflow modelling.
+Simple python webserver for tensorflow modelling in the Aimune platform.

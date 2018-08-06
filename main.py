@@ -2,7 +2,7 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 from controllers.train import trainer
 from controllers.predict import predictor
-from controllers.evaluate import evaluater
+from controllers.evaluate import evaluator
 
 
 app = Flask(__name__)

@@ -1,2 +1,2 @@
-def trainer():
+def trainer(params):
     return 'damn';

@@ -4,7 +4,6 @@ from controllers.train import trainer
 from controllers.predict import predictor
 from controllers.evaluate import evaluator
 
-
 app = Flask(__name__)
 CORS(app)
 
@@ -22,8 +21,9 @@ def train():
 def evaluate():
     return jsonify(evaluator(request.json))
 
-
 # this will route the request to the an API wich performs image prediciton in tensorflow
+
+
 @app.route("/predict", methods=['POST'])
 def predict():
     return jsonify(predictor(request.json))
@@ -33,13 +33,15 @@ def predict():
 
 @app.errorhandler(404)
 def url_error(e):
-    return jsonify(e);
+    return jsonify(e)
 
 
 @app.errorhandler(500)
 def server_error(e):
-    return jsonify(e);
+    return jsonify(e)
 
-    # This will run this microserver in localhost port 5000
+
+# This will run this microserver in localhost port 5000
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True)

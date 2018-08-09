@@ -12,6 +12,22 @@ from keras.preprocessing.image import Iterator
 from keras.preprocessing.image import ImageDataGenerator
 from keras import backend as K
 
+def _get(obj,loc):
+        return p_.get(obj,loc);
+
+def _ag(obj,loc, msg):
+    pro = _get(obj,loc)
+    assert pro != None, msg
+    return pro
+
+def _agt(obj,loc,typ,msg):
+        pro = _get(obj,loc)
+        assert pro != None, msg
+        assert type(pro) is typ, msg
+        return pro
+
+def _ad(object,msg):
+        assert (type(object) is dict),msg
 
 class MongoGenerator(Iterator):
     def __init__(self,
@@ -48,24 +64,24 @@ class MongoGenerator(Iterator):
 
         self._dtype = K.floatx()
         self._size = (self._heigth,self._width)
-        self._object_ids = self._getOBIDS(query)
+        self._object_ids = self.__getOBIDS(query)
 
         self._samples = len(self._object_ids)
         assert (self._samples > 0),"The resulted query returned zero(0) samples."
         assert (self._samples > self._batchsize),"The resulted query returned less samples than the selected batchsize."
 
-        self._classes = self._getClassNumber()
+        self._classes = self.__getClassNumber()
         assert (self._classes > 1),"The resulted query return insufficient distinct classes."
 
         super(MongoGenerator, self).__init__(self._samples, self._batchsize, self._shuffle, self._seed)
 
-    def _getOBIDS(self,query):
+    def __getOBIDS(self,query):
         collection = self._connect()
         object_ids = collection.find(query, {'_id': True})
         self._disconnect(collection)
         return object_ids
 
-    def _getClassNumber(self,query):
+    def __getClassNumber(self,query):
         collection = self._connect()
         object_ids = collection.find({'_id':{'$in':self._object_ids}}).distinct({self._lbl_location: {'$exists': true}})
         self._disconnect(collection)
@@ -93,40 +109,30 @@ class MongoGenerator(Iterator):
     def next(self):
         return self._get_batches_of_transformed_samples(next(self.index_generator))
 
-    def _readMongoSample(self, oid):
+    def __readMongoSample(self, oid):
 
-        collection = self._connect()
-        sample = collection.find({'_id': oid}).next()
-        self._disconnect(collection)
-        return (self._getImage(sample),self._getLabel(sample))
+        collection = self.__connect()
+        sample = collection.find_one({'_id': oid}).next()
+        assert sample != None, "Failed to retrieve the sample corresponding to the image ID: "+str(oid)
+        return (self.__getImage(sample),self.__getLabel(sample))
 
-    def _connect(self):
+    def __connect(self):
         return pymongo.MongoClient(self._host,self._port)[self._database][self._collection]
 
-    def _disconnect(self, collection):
+    def __disconnect(self, collection):
         del collection
         collection = None
 
-    def _getImage(self,sample):
-        strg = self._getField(sample, self._img_location);
+    def __getImage(self,sample):
+        strg = _ag(sample, self._img_location,"Failed to retrieve image binary (ID:"+_get(sample,'_id').__str__+") at "+self._img_location+".");
         img = img.open(io.BytesIO(strg)).resize(self._size)
         return np.asarray(img, dtype=self._dtype)
 
-    def _geLabel(self,label):
-        label = self._getField(sample, self._lbl_location);
+    def __geLabel(self,label):
+        strg = _ag(sample, self._img_location,"Failed to retrieve image label (ID:"+_get(sample,'_id').__str__+") at "+self._lbl_location+".");
         return keras.utils.to_categorical(label, self._classes)
         
-    def _get(obj,loc):
-        return p_.get(obj,loc);
-
-    def _agt(obj,loc,typ,msg):
-        pro = _get(obj,loc)
-        assert pro != None, msg
-        assert type(pro) is typ, msg
-        return pro
-
-    def _ad(object,msg):
-        assert (type(object) is dict),msg
+    
 
 
 

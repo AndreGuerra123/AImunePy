@@ -1,5 +1,5 @@
 import io
-import pymongo as mongo
+import pymongo
 from PIL import Image
 
 import numpy as np

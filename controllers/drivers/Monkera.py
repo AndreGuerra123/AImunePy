@@ -1,6 +1,4 @@
 import io
-import json as js
-import bson as bs
 import pymongo as mongo
 from PIL import Image
 

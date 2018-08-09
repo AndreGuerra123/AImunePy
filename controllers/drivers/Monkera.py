@@ -2,6 +2,8 @@ import io
 import pymongo
 from PIL import Image
 
+import tensorflow
+import theano
 import numpy as np
 import pydash as p_
 

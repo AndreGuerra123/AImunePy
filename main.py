@@ -1,4 +1,4 @@
-from controllers.drivers.Monkera import MongoIterator
+from controllers.drivers.Monkera import MongoGenerator
 import keras
 from keras.preprocessing.image import ImageDataGenerator
 from keras.models import Sequential

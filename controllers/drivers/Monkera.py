@@ -132,7 +132,7 @@ class MongoGenerator(Iterator):
     def __getLabel(self,sample):
         idstr = str(_get(sample,'_id'));
         label = _ag(sample, self._img_location,"Failed to retrieve image label (ID:"+idstr+") at "+self._lbl_location+".");
-        return keras.utils.to_categorical(self.__convert_safe(label,idstr), self._classes)
+        return keras.utils.to_categorical(__convert_safe(label,idstr), self._classes)
 
     def getShape(self):
         return (self._height,self._width,3)

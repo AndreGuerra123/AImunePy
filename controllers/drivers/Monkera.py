@@ -114,7 +114,6 @@ class MongoGenerator(Iterator):
 
         collection = self.__connect()
         sample = collection.find_one({'_id': oid})
-        print(sample)
         assert sample != None, "Failed to retrieve the sample corresponding to the image ID: "+str(oid)
         return (self.__getImage(sample),self.__getLabel(sample))
 
@@ -126,12 +125,12 @@ class MongoGenerator(Iterator):
         collection = None
 
     def __getImage(self,sample):
-        strg = _ag(sample, self._img_location,"Failed to retrieve image binary (ID:"+_get(sample,'_id').__str__+") at "+self._img_location+".");
+        strg = _ag(sample, self._img_location,"Failed to retrieve image binary (ID:"+str(_get(sample,'_id'))+") at "+self._img_location+".");
         img = img.open(io.BytesIO(strg)).resize(self._size)
         return np.asarray(img, dtype=self._dtype)
 
     def __geLabel(self,label):
-        strg = _ag(sample, self._img_location,"Failed to retrieve image label (ID:"+_get(sample,'_id').__str__+") at "+self._lbl_location+".");
+        strg = _ag(sample, self._img_location,"Failed to retrieve image label (ID:"+str(_get(sample,'_id'))+") at "+self._lbl_location+".");
         return keras.utils.to_categorical(label, self._classes)
 
     def getShape(self):

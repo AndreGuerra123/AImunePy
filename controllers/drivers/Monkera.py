@@ -54,7 +54,7 @@ class MongoGenerator(Iterator):
         self._collection = _agt(connection,'collection',str,"Please provide a valid string for mongodb collection.")
 
         self._img_location = _agt(location,'image',str,"Please provide a valid location for the image binary field in the selected mongodb collection.")
-        self._lbl_location = _agt(location,'image',str,"Please provide a valid location for the label field in the selected mongodb collection.")
+        self._lbl_location = _agt(location,'label',str,"Please provide a valid location for the label field in the selected mongodb collection.")
 
         self._batchsize = _agt(config,'batchsize',int,"Please select a valid integer value for the batchsize parameter.")
         self._shuffle = _agt(config,'shuffle',bool,"Please select a valid boolean value for the shuffle parameter.")
@@ -132,8 +132,6 @@ class MongoGenerator(Iterator):
     def __getLabel(self,sample):
         idstr = str(_get(sample,'_id'));
         label = _ag(sample, self._lbl_location,"Failed to retrieve image label (ID:"+idstr+") at "+self._lbl_location+".")
-        print(label)
-        print(type(label))
         return keras.utils.to_categorical(self.__convert_safe(label,idstr), self._classes)
 
     def getShape(self):

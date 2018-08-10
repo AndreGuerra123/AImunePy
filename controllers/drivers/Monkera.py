@@ -84,6 +84,7 @@ class MongoGenerator(Iterator):
     def __getClassNumber(self):
         collection = self.__connect()
         classes = collection.distinct(self._lbl_location,{'_id':{'$in':self._object_ids}}).__len__()
+        print(classes)
         return classes
 
     def _get_batches_of_transformed_samples(self, index_array):
@@ -112,7 +113,8 @@ class MongoGenerator(Iterator):
     def __readMongoSample(self, oid):
 
         collection = self.__connect()
-        sample = collection.find_one({'_id': oid}).next()
+        sample = collection.find_one({'_id': oid})
+        print(sample)
         assert sample != None, "Failed to retrieve the sample corresponding to the image ID: "+str(oid)
         return (self.__getImage(sample),self.__getLabel(sample))
 

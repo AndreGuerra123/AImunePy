@@ -81,7 +81,7 @@ class MongoGenerator(Iterator):
         self.__disconnect(collection)
         return object_ids
 
-    def __getClassNumber(self,query):
+    def __getClassNumber(self):
         collection = self.__connect()
         object_ids = collection.find({'_id':{'$in':self._object_ids}}).distinct({self._lbl_location: {'$exists': true}})
         self.__disconnect(collection)

@@ -83,7 +83,7 @@ class MongoGenerator(Iterator):
 
     def __getClassNumber(self):
         collection = self.__connect()
-        classes = collection.distinct(self._lbl_location,{'_id':{'$in':self._object_ids}}).length
+        classes = collection.distinct(self._lbl_location,{'_id':{'$in':self._object_ids}}).__len__();
         print(classes)
         return classes
 

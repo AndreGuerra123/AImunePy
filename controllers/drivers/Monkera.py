@@ -78,12 +78,14 @@ class MongoGenerator(Iterator):
     def __getOBIDS(self,query):
         collection = self.__connect()
         object_ids = list(collection.find(query, {'_id': True}))
+        for i in object_ids:
+            print(i)
         self.__disconnect(collection)
         return object_ids
 
     def __getClassNumber(self):
         collection = self.__connect()
-        classes = collection.distinct(self._lbl_location,{'_id':{'$in':self._object_ids}}).__len__();
+        classes = collection.find({'_id':{'$in':self._object_ids}}).distinct(self._lbl_location).__len__()
         print(classes)
         return classes
 

@@ -6,6 +6,7 @@ import tensorflow
 import theano
 import numpy as np
 import pydash as p_
+import collections
 
 import keras
 from keras.preprocessing.image import Iterator
@@ -140,7 +141,7 @@ class MongoGenerator(Iterator):
     def __getLabel(self,sample):
         idstr = str(_get(sample,'_id'));
         label = _ag(sample, self._lbl_location,"Failed to retrieve image label (ID:"+idstr+") at "+self._lbl_location+".")
-        return self.__convert_safe(label,idstr)
+        return self.getEncoded(label)
 
     def getShape(self):
         return (self._height,self._width,3)
@@ -148,11 +149,11 @@ class MongoGenerator(Iterator):
     def getClassNumber(self):
         return self._classes
 
-    def __convert_safe(self,label,idstr):
-            return _ag(self._dictionary,label,"Failed to retrieve the one-hot image class label of the image ID:"+idstr)
+    def getEncoded(self,label):
+        return _get(self._dictionary,label)
+    
+    def getDecoded(self,np):
+        return self._dictionary.keys()[self._dictionary.values().index(np)]
                       
         
     
-
-
-

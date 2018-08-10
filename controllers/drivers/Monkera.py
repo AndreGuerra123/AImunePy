@@ -130,14 +130,25 @@ class MongoGenerator(Iterator):
         return np.asarray(img, dtype=self._dtype)
 
     def __getLabel(self,sample):
-        label = _ag(sample, self._img_location,"Failed to retrieve image label (ID:"+str(_get(sample,'_id'))+") at "+self._lbl_location+".");
-        return keras.utils.to_categorical(str(label), self._classes)
+        idstr = str(_get(sample,'_id'));
+        label = _ag(sample, self._img_location,"Failed to retrieve image label (ID:"+idstr+") at "+self._lbl_location+".");
+        return keras.utils.to_categorical(convertSafe(label,idstr), self._classes)
 
     def getShape(self):
         return (self._height,self._width,3)
     
     def getClassNumber(self):
         return self._classes
+
+    def __convert_safe(label,idstr):
+        if type(label) is int:
+            return label
+        else:
+            try:
+              return int(label)  
+            except:
+              raise "Please insert a valid integer value for the image label of the image ID:"+idstr
+                      
         
     
 

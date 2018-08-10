@@ -83,11 +83,9 @@ class MongoGenerator(Iterator):
 
     def __getClassNumber(self):
         collection = self.__connect()
-        classes = collection.find({'_id':{'$in':self._object_ids}},self._lbl_location).distinct(self._lbl_location)
-        for i in classes:
-             print(i)
-        self.__disconnect(collection)
-        return classes.length
+        classes = collection.distinct(self._lbl_location,{'_id':{'$in':self._object_ids}}).length
+        print(classes)
+        return classes
 
     def _get_batches_of_transformed_samples(self, index_array):
 

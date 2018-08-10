@@ -6,7 +6,7 @@ from keras.layers import Dense, Dropout, Activation, Flatten, Conv2D, MaxPooling
 
 
 datagen = ImageDataGenerator(
-    featurewise_center=False,  # set input mean to 0 over the dataset
+    featurewise_center=True,  # set input mean to 0 over the dataset
     samplewise_center=False,  # set each sample mean to 0
     featurewise_std_normalization=False,  # divide inputs by std of the dataset
     samplewise_std_normalization=False,  # divide each input by its std

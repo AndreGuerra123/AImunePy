@@ -106,7 +106,7 @@ class MongoGenerator(Iterator):
 
             #Get sample data
             (x,y) = self.__readMongoSample(self._object_ids[j])
-
+            #self.image_data_generator.mean = x;
             x = self.image_data_generator.random_transform(x)
             x = self.image_data_generator.standardize(x)
 
@@ -114,7 +114,7 @@ class MongoGenerator(Iterator):
             batch_x[i] = x
             batch_y[i] = y
 
-            return batch_x, batch_y
+        return batch_x, batch_y
 
     def next(self):
         return self._get_batches_of_transformed_samples(next(self.index_generator))

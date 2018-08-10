@@ -129,9 +129,9 @@ class MongoGenerator(Iterator):
         img = Image.open(io.BytesIO(strg)).resize(self._size)
         return np.asarray(img, dtype=self._dtype)
 
-    def __geLabel(self,label):
-        strg = _ag(sample, self._img_location,"Failed to retrieve image label (ID:"+str(_get(sample,'_id'))+") at "+self._lbl_location+".");
-        return keras.utils.to_categorical(label, self._classes)
+    def __getLabel(self,sample):
+        label = _ag(sample, self._img_location,"Failed to retrieve image label (ID:"+str(_get(sample,'_id'))+") at "+self._lbl_location+".");
+        return keras.utils.to_categorical(str(label), self._classes)
 
     def getShape(self):
         return (self._height,self._width,3)

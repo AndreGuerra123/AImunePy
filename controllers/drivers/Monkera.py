@@ -149,7 +149,7 @@ class MongoGenerator(Iterator):
         return self._classes
 
     def __convert_safe(self,label,idstr):
-            return _ag(self._dictionary,label),"Failed to retrieve the one-hot image class label of the image ID:"+idstr
+            return _ag(self._dictionary,label,"Failed to retrieve the one-hot image class label of the image ID:"+idstr)
                       
         
     

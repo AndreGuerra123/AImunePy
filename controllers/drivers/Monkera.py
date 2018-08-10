@@ -76,15 +76,15 @@ class MongoGenerator(Iterator):
         super(MongoGenerator, self).__init__(self._samples, self._batchsize, self._shuffle, self._seed)
 
     def __getOBIDS(self,query):
-        collection = self._connect()
+        collection = self.__connect()
         object_ids = collection.find(query, {'_id': True})
-        self._disconnect(collection)
+        self.__disconnect(collection)
         return object_ids
 
     def __getClassNumber(self,query):
-        collection = self._connect()
+        collection = self.__connect()
         object_ids = collection.find({'_id':{'$in':self._object_ids}}).distinct({self._lbl_location: {'$exists': true}})
-        self._disconnect(collection)
+        self.__disconnect(collection)
 
     def _get_batches_of_transformed_samples(self, index_array):
 

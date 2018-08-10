@@ -126,7 +126,7 @@ class MongoGenerator(Iterator):
 
     def __getImage(self,sample):
         strg = _ag(sample, self._img_location,"Failed to retrieve image binary (ID:"+str(_get(sample,'_id'))+") at "+self._img_location+".");
-        img = img.open(io.BytesIO(strg)).resize(self._size)
+        img = Image.open(io.BytesIO(strg)).resize(self._size)
         return np.asarray(img, dtype=self._dtype)
 
     def __geLabel(self,label):

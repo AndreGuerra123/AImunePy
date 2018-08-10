@@ -70,7 +70,8 @@ class MongoGenerator(Iterator):
         assert (self._samples > 0),"The resulted query returned zero(0) samples."
         assert (self._samples > self._batchsize),"The resulted query returned less samples than the selected batchsize."
 
-        self._classes = self.__getClassNumber()
+        self._dictionary, self._classes = self.__getDictionary()
+        print(self._dictionary)
         assert (self._classes > 1),"The resulted query return insufficient distinct classes."
 
         super(MongoGenerator, self).__init__(self._samples, self._batchsize, self._shuffle, self._seed)
@@ -81,11 +82,18 @@ class MongoGenerator(Iterator):
         self.__disconnect(collection)
         return object_ids
 
-    def __getClassNumber(self):
+    def __getDictionary(self):
         collection = self.__connect()
-        classes = collection.distinct(self._lbl_location,{'_id':{'$in':self._object_ids}}).__len__()
-        print(classes)
-        return classes
+        lbls = collection.distinct(self._lbl_location,{'_id':{'$in':self._object_ids}})
+        nb = labels.__len__
+        dictionary = {k: self.__hot(v,nb) for v, k in enumerate(lbls)} #keys as human readable, any type.
+        self.__disconnect(collection)
+        return dictionary, nb
+    
+    def __hot(self,idx,nb):
+        hot = np.zeros((nb,))
+        hot[idx] = 1
+        return hot
 
     def _get_batches_of_transformed_samples(self, index_array):
 
@@ -132,7 +140,7 @@ class MongoGenerator(Iterator):
     def __getLabel(self,sample):
         idstr = str(_get(sample,'_id'));
         label = _ag(sample, self._lbl_location,"Failed to retrieve image label (ID:"+idstr+") at "+self._lbl_location+".")
-        return keras.utils.to_categorical(self.__convert_safe(label,idstr), self._classes)
+        return self.__convert_safe(label,idstr)
 
     def getShape(self):
         return (self._height,self._width,3)
@@ -141,13 +149,7 @@ class MongoGenerator(Iterator):
         return self._classes
 
     def __convert_safe(self,label,idstr):
-        if type(label) is int:
-            return label
-        else:
-            try:
-              return int(label)  
-            except:
-              raise BaseException("Please insert a valid integer value for the image label of the image ID:"+idstr)
+            return _ag(self._dictionary,label),"Failed to retrieve the one-hot image class label of the image ID:"+idstr
                       
         
     

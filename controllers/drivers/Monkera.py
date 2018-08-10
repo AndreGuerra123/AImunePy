@@ -77,7 +77,7 @@ class MongoGenerator(Iterator):
 
     def __getOBIDS(self,query):
         collection = self.__connect()
-        object_ids = list(collection.find(query, {'_id': True}))
+        object_ids = collection.distinct("_id",query)
         for i in object_ids:
             print(i)
         self.__disconnect(collection)

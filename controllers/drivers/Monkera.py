@@ -131,7 +131,7 @@ class MongoGenerator(Iterator):
 
     def __getLabel(self,sample):
         idstr = str(_get(sample,'_id'));
-        label = _ag(sample, self._img_location,"Failed to retrieve image label (ID:"+idstr+") at "+self._lbl_location+".");
+        label = _ag(sample, self._lbl_location,"Failed to retrieve image label (ID:"+idstr+") at "+self._lbl_location+".");
         return keras.utils.to_categorical(self.__convert_safe(label,idstr), self._classes)
 
     def getShape(self):
@@ -147,7 +147,7 @@ class MongoGenerator(Iterator):
             try:
               return int(label)  
             except:
-              raise "Please insert a valid integer value for the image label of the image ID:"+idstr
+              raise BaseException("Please insert a valid integer value for the image label of the image ID:"+idstr)
                       
         
     

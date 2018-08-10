@@ -85,7 +85,7 @@ class MongoGenerator(Iterator):
     def __getDictionary(self):
         collection = self.__connect()
         lbls = collection.distinct(self._lbl_location,{'_id':{'$in':self._object_ids}})
-        nb = labels.__len__
+        nb = lbls.__len__
         dictionary = {k: self.__hot(v,nb) for v, k in enumerate(lbls)} #keys as human readable, any type.
         self.__disconnect(collection)
         return dictionary, nb

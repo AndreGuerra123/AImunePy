@@ -1,15 +1,17 @@
 from controllers.drivers.Monkera import MongoGenerator
+from controllers.drivers.Monkera import MongoImageDataGenerator
+
 import keras
-from keras.preprocessing.image import ImageDataGenerator
 from keras.models import Sequential
 from keras.layers import Dense, Dropout, Activation, Flatten, Conv2D, MaxPooling2D
 
 
-datagen = ImageDataGenerator(
-    featurewise_center=True,  # set input mean to 0 over the dataset
+
+datagen = MongoImageDataGenerator(
+    featurewise_center=False,  # set input mean to 0 over the dataset
     samplewise_center=False,  # set each sample mean to 0
-    featurewise_std_normalization=False,  # divide inputs by std of the dataset
-    samplewise_std_normalization=False,  # divide each input by its std
+    featurewise_std_normalization=True,  # divide inputs by std of the dataset
+    samplewise_std_normalization=True,  # divide each input by its std
     zca_whitening=False,  # apply ZCA whitening
     zca_epsilon=1e-06,  # epsilon for ZCA whitening
     # randomly rotate images in the range (degrees, 0 to 180)
@@ -27,7 +29,7 @@ datagen = ImageDataGenerator(
     horizontal_flip=True,  # randomly flip images
     vertical_flip=False,  # randomly flip images
     # set rescaling factor (applied before any other transformation)
-    rescale=None,
+    rescale=1/255,
     # set function that will be applied on each input
     preprocessing_function=None,
     # image data format, either "channels_first" or "channels_last"
@@ -71,7 +73,6 @@ opt = keras.optimizers.rmsprop(lr=0.0001, decay=1e-6)
 model.compile(loss='categorical_crossentropy',
               optimizer=opt,
               metrics=['accuracy'])
-
 
 model.fit_generator(mongogen, epochs=3, workers=4)
 

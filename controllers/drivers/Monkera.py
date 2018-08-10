@@ -59,11 +59,11 @@ class MongoGenerator(Iterator):
         self._batchsize = _agt(config,'batchsize',int,"Please select a valid integer value for the batchsize parameter.")
         self._shuffle = _agt(config,'shuffle',bool,"Please select a valid boolean value for the shuffle parameter.")
         self._seed = _agt(config,'seed',int,"Please select a valid integer value for the seed parameter.")
-        self._heigth = _agt(config,'height',int,"Please select a valid integer value for the image height parameter.")
+        self._height = _agt(config,'height',int,"Please select a valid integer value for the image height parameter.")
         self._width = _agt(config,'width',int,"Please select a valid integer value for the image width parameter.")
 
         self._dtype = K.floatx()
-        self._size = (self._heigth,self._width)
+        self._size = (self._height,self._width)
         self._object_ids = self.__getOBIDS(query)
 
         self._samples = len(self._object_ids)
@@ -133,7 +133,7 @@ class MongoGenerator(Iterator):
         return keras.utils.to_categorical(label, self._classes)
 
     def getShape(self):
-        return (self._heigth,self._width,3)
+        return (self._height,self._width,3)
     
     def getClassNumber(self):
         return self._classes

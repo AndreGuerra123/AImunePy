@@ -646,7 +646,7 @@ class MongoImageDataGenerator(object):
         assert (self.classes > 1), "The resulted query return insufficient distinct classes."
 
         # Split Obids into train and validation
-        self.train_obids, self.test_obids = partitioning(self.object_ids, self.validation_split, self.shuffle)
+        self.train_obids, self.test_obids = self.partitioning(self.object_ids, self.validation_split, self.shuffle)
 
         self.train_samples = len(self.train_obids)
         self.test_samples = len(self.test_obids)

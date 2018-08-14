@@ -609,7 +609,7 @@ class MongoImageDataGenerator(object):
             affine, 'shear', 0., float, "Please select a valid float value for the shear parameter.")
         self.channel_shift = _g_d_a_t(
             affine, 'channel_shift', 0., float, "Please select a valid float value for the channel_shift parameter.")
-        self.brightness = _g_d_a_t(affline, 'brightness', 1., float,
+        self.brightness = _g_d_a_t(affine, 'brightness', 1., float,
                                    "Please select a valid float value for the brightness parameter.")
 
         self.zoom = _g_d(affine, 'zoom', 0.)

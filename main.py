@@ -59,7 +59,7 @@ model.compile(loss='categorical_crossentropy',
 
 trainflow,testflow = mongogen.flows_from_mongo()
 
-model.fit_generator(traingen, epochs=3,validation_data=valgen, workers=4)
+model.fit_generator(traingen, epochs=10,validation_data=valgen, workers=4)
 
 
 """ from flask import Flask, request, jsonify

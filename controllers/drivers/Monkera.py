@@ -867,19 +867,19 @@ class MongoImageDataGenerator(object):
         x, y = self.reform(x,y) #Augmentation, tranformations and replications
         
 
-        if self.mean == None:
+        if self.mean is None:
             self.mean = self.getMean(x)
         else:
             
             self.mean = (self.samples_seen*self.mean)+(self.batch_size*self.getMean(x)) / (self.samples_seen+self.batch_size)
 
-        if self.std == None:
+        if self.std is None:
             self.std = getBatchStd(x)
         else:
             self.std = ((self.samples_seen*(self.std)**(2))+(self.batch_size*(self.getStd(x))**(2))/(self.samples_seen+self.batch_size))**(0.5)
 
         self.samples_seen += self.batch_size
-        
+
         return self.standardize(x), y
         
     def getMean(self,x):

@@ -1037,14 +1037,14 @@ class MongoTrainFlowGenerator(Iterator):
     
     def _get_batches_of_transformed_samples(self, index_array):
 
-        batch_x = np.zeros((len(index_array), self.mdig.height, self.mdig.width, self.mdig.color_shape), dtype=self.mdig.dtype)
+        batch_x = np.empty((len(index_array), self.mdig.height, self.mdig.width, self.mdig.color_shape), dtype=self.mdig.dtype)
 
-        batch_y = np.zeros((len(index_array), self.mdig.classes), dtype=self.mdig.dtype)
+        batch_y = np.empty((len(index_array), self.mdig.classes), dtype=self.mdig.dtype)
 
         for i, j in enumerate(index_array):
 
                 # Get sample data
-            (x, y) = self.__readMongoSample(self.mdig.train_obids[j])
+            (x, y) = self.mdig.__readMongoSample(self.mdig.train_obids[j])
 
             # Add the image and the label to the batch (one-hot encoded).
             batch_x[i] = x
@@ -1075,9 +1075,9 @@ class MongoTestFlowGenerator(Iterator):
      
     def _get_batches_of_transformed_samples(self, index_array):
 
-        batch_x = np.zeros((len(index_array), self.mdig.height, self.mdig.width, self.mdig.color_shape), dtype=self.mdig.dtype)
+        batch_x = np.empty((len(index_array), self.mdig.height, self.mdig.width, self.mdig.color_shape), dtype=self.mdig.dtype)
 
-        batch_y = np.zeros((len(index_array), self.mdig.classes), dtype=self.mdig.dtype)
+        batch_y = np.empty((len(index_array), self.mdig.classes), dtype=self.mdig.dtype)
 
         for i, j in enumerate(index_array):
 

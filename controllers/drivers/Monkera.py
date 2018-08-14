@@ -646,23 +646,21 @@ class MongoImageDataGenerator(object):
         assert (self.classes > 1), "The resulted query return insufficient distinct classes."
 
         # Split Obids into train and validation
-        self.train_obids, self.test_obids = self.partitioning(self.object_ids, self.validation_split, self.shuffle)
+        self.train_obids, self.test_obids = self.partitioning()
 
         self.train_samples = len(self.train_obids)
         self.test_samples = len(self.test_obids)
 
         return (MongoTrainFlowGenerator(self), MongoTestFlowGenerator(self))
 
-    def partitioning(raw, val, shuffle):
+    def partitioning(self):
 
-        many = int(round(val*len(raw)))
+        many = int(round(self.validation_split*len(self.object_ids)))
 
         if shuffle:
-            shuffled = random.shuffle(raw)
-        else:
-            shuffled = raw
-
-        return shuffled[many:], shuffled[:many]
+            self.object_ids = random.shuffle(self.object_ids)
+    
+        return self.object_ids[many:], self.object_ids[:many]
 
     def standardize(self, x):
         """Applies the normalization configuration to a batch of inputs.

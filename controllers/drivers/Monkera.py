@@ -640,7 +640,6 @@ class MongoImageDataGenerator(object):
 
         self.object_ids = self.__getOBIDS(self.query)
         assert (len(self.object_ids) > 0), "The resulted query returned zero(0) samples."
-        print(self.object_ids)
 
         self.dictionary, self.classes = self.__getDictionary()
         assert (self.classes > 1), "The resulted query return insufficient distinct classes."
@@ -655,12 +654,13 @@ class MongoImageDataGenerator(object):
 
     def partitioning(self):
 
-        print(self.object_ids)
 
         many = int(round(self.validation_split*len(self.object_ids)))
 
         if self.shuffle:
             self.object_ids = random.shuffle(self.object_ids)
+    
+        print (self.object_ids)
 
 
     

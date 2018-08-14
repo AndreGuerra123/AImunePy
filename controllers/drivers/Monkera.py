@@ -457,8 +457,10 @@ def _a_g(obj,loc,msg):
 
 class MongoImageDataGenerator(object):
     def __init__(self,
-                 connection={'host': "localhost", 'port': 12721,
-                             'database': "database", 'collection': "collection"},
+                 connection={'host': "localhost",
+                             'port': 12721,
+                             'database': "database",
+                             'collection': "collection"},
                  query={},
                  location={'image': "image", 'label': "label"},
                  config={
@@ -511,7 +513,7 @@ class MongoImageDataGenerator(object):
                                "Please provide a valid string for mongodb database.")
         self.collection = _g_a_t(connection, 'collection', str,
                                  "Please provide a valid string for mongodb collection.")
-                                 
+
         self.query = query
 
         self.img_location = _g_a_t(
@@ -1056,6 +1058,10 @@ class MongoImageDataGenerator(object):
         return (self.__getImage(sample), self.__getLabel(sample))
 
     def __connect(self):
+        print(self.host)
+        print(self.port)
+        print(self.database)
+        print(self.collection)
         return pymongo.MongoClient(self.host, self.port)[self.database][self.collection]
 
     def __disconnect(self, collection):

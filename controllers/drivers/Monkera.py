@@ -885,7 +885,10 @@ class MongoImageDataGenerator(object):
     def getMean(self,x):
         broadcast_shape = [1, 1, 1]
         broadcast_shape[self.channel_axis - 1] = x.shape[self.channel_axis]
-        return np.reshape(np.mean(x, axis=(0, self.row_axis, self.col_axis), dtype=self.dtype),broadcast_shape)
+        mean = np.reshape(np.mean(x, axis=(0, self.row_axis, self.col_axis), dtype=self.dtype),broadcast_shape)
+        print(mean)
+        return mean
+
 
     def getStd(self,x):
         broadcast_shape = [1, 1, 1]

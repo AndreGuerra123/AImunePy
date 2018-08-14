@@ -17,8 +17,25 @@ mongogen = MongoImageDataGenerator(
                             'preprocessing_function': None,
                             'rescale': 1/255,
                             'center': False,
-                            'normalize': False
-                            }
+                            'normalize': True
+                            },
+                          affine={
+                            'rounds': 0,
+                            'transform': False,
+                            'random': True,
+                            'keep_original': False,
+                            'rotation': 0.,
+                            'width_shift': 0.,
+                            'height_shift': 0.,
+                            'shear': 0.,
+                            'channel_shift': 0.,
+                            'brightness': 1.,
+                            'zoom': 0.,
+                            'horizontal_flip': False,
+                            'vertical_flip': False,
+                            'fill_mode': 'nearest',
+                            'cval': 0.
+                 }
                           
                           )
 traingen, valgen = mongogen.flows_from_mongo()

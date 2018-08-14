@@ -11,8 +11,16 @@ mongogen = MongoImageDataGenerator(
                           query={},
                           location={'image': "image.data", 'label': "classi"},
                           config={'batch_size': 2, 'shuffle': True, 'seed': 123, 'width': 50, 'height': 50, 'data_format': 'channels_last',
-                     'color_format': 'RGB',
-                     'validation_split': 0.2}
+                            'color_format': 'RGB',
+                            'validation_split': 0.5},
+                          stand={
+                            'featurewise_center': False,
+                            'samplewise_center': False,
+                            'featurewise_std_normalization': True,
+                            'samplewise_std_normalization': False,
+                            'rescale': 1/255,
+                            'preprocessing_function': None,
+                 }
                           
                           )
 traingen, valgen = mongogen.flows_from_mongo()

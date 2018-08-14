@@ -1001,9 +1001,8 @@ class MongoImageDataGenerator(object):
         return img_to_array(img,data_format=self.data_format)
 
     def __getLabel(self, sample):
-        idstr = str(_get(sample, '_id'))
         label = _a_g(sample, self._lbl_location,
-                    "Failed to retrieve image label (ID:"+idstr+") at "+self._lbl_location+".")
+                    "Failed to retrieve image label (ID:"+str(_g(sample, '_id'))+") at "+self._lbl_location+".")
         return self.getEncoded(label)
 
     def getShape(self):

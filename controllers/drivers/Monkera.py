@@ -511,7 +511,7 @@ class MongoImageDataGenerator(object):
                                "Please provide a valid string for mongodb database.")
         self.collection = _g_a_t(connection, 'collection', str,
                                  "Please provide a valid string for mongodb collection.")
-
+                                 
         self.query = query
 
         self.img_location = _g_a_t(

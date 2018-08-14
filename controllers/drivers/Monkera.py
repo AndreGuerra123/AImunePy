@@ -474,7 +474,7 @@ class MongoImageDataGenerator(object):
                      'samplewise_center': False,
                      'featurewise_std_normalization': False,
                      'samplewise_std_normalization': False,
-                     'rescale': 0.,
+                     'rescale': 1/255,
                      'preprocessing_function': None,
                  },
                  affine={

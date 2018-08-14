@@ -650,7 +650,7 @@ class MongoImageDataGenerator(object):
         self.train_samples = len(self.train_obids)
         self.test_samples = len(self.test_obids)
 
-        return (MongoTrainFlowGenerator(self), MongoTestFlowGenerator(self))
+        return (self.MongoTrainFlowGenerator(self), self.MongoTestFlowGenerator(self))
 
     def partitioning(self):
 

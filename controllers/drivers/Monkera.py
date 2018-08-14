@@ -864,34 +864,37 @@ class MongoImageDataGenerator(object):
         return xx,yy
 
     def atr(self,xx,yy):
-         size = getBatchSize(xx)
+         size = self.getBatchSize(xx)
          ax = np.asarray([self.random_transform(xx[i]) for i in range(size) for r in range(self.rounds)])
          ay = np.asarray([yy[i] for i in range(size) for r in range(self.rounds)])
          return ax, ay
                     
     def atn(self,xx,yy):
-         size = getBatchSize(xx)
+         size = self.getBatchSize(xx)
          ax = np.asarray([self.exact_transform(xx[i]) for i in range(size) for r in range(self.rounds)])
          ay = np.asarray([yy[i] for i in range(size) for r in range(self.rounds)])
          return ax, ay
 
     def an(self,xx,yy):
-         size = getBatchSize(xx)
+         size = self.getBatchSize(xx)
          ax = np.asarray([xx[i] for i in range(size) for r in range(self.rounds)])
          ay = np.asarray([yy[i] for i in range(size) for r in range(self.rounds)])
          return ax, ay
 
     def ntr(self,xx,yy):
-         size = getBatchSize(xx)
+         size = self.getBatchSize(xx)
          ax = np.asarray([self.random_transform(xx[i]) for i in range(size)])
          ay = np.asarray([yy[i] for i in range(size)])
          return ax, ay
 
     def ntn(self,xx,yy):
-         size = getBatchSize(xx)
+         size = self.getBatchSize(xx)
          ax = np.asarray([self.exact_transform(xx[i]) for i in range(size)])
          ay = np.asarray([yy[i] for i in range(size)])
          return ax, ay
+
+    def getBatchSize(self,x):
+        return x.shape[0]
 
     def keeper(x,xx,y,yy):
         return np.concatenate(x,xx,axis=0), np.concatenate(y,yy,axis=0)

@@ -1,5 +1,4 @@
-from controllers.drivers.Monkera import MongoGenerator
-from controllers.drivers.Monkera import MongoImageDataGenerator
+from controllers.drivers.Monkera2 import MongoImageDataGenerator
 
 import keras
 from keras.models import Sequential
@@ -37,12 +36,11 @@ datagen = MongoImageDataGenerator(
     # fraction of images reserved for validation (strictly between 0 and 1)
     validation_split=0.1)
 
-mongogen = MongoGenerator(datagen,
-                          connection={'host': "localhost", 'port': 27017,
-                                      'database': "authentication", 'collection': "loads"},
+mongogen = MongoGenerator(connection={'host': "localhost", 'port': 27017,'database': "authentication", 'collection': "loads"},
                           query={},
                           location={'image': "image.data", 'label': "classi"},
-                          config={'batchsize': 2, 'shuffle': True, 'seed': 123, 'width': 50, 'height': 50})
+                          config={'batchsize': 2, 'shuffle': True, 'seed': 123, 'width': 50, 'height': 50},
+                          )
 
 model = Sequential()
 model.add(Conv2D(32, (3, 3), padding='same', input_shape = mongogen.getShape()))
@@ -74,7 +72,9 @@ model.compile(loss='categorical_crossentropy',
               optimizer=opt,
               metrics=['accuracy'])
 
-model.fit_generator(mongogen, epochs=3, workers=4)
+trainflow,testflow = mongogen.flows_from_mongo()
+
+model.fit_generator(trainflow, epochs=3,validation_data=testflow, workers=4)
 
 
 """ from flask import Flask, request, jsonify

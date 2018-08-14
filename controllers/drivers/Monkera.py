@@ -15,22 +15,20 @@ from keras.preprocessing.image import ImageDataGenerator
 from keras import backend as K
 
 
+
 def _get(obj, loc):
     return p_.get(obj, loc)
-
 
 def _ag(obj, loc, msg):
     pro = _get(obj, loc)
     assert pro != None, msg
     return pro
 
-
 def _agt(obj, loc, typ, msg):
     pro = _get(obj, loc)
     assert pro != None, msg
     assert type(pro) is typ, msg
     return pro
-
 
 def _ad(object, msg):
     assert (type(object) is dict), msg
@@ -43,12 +41,14 @@ class MongoGenerator(Iterator):
                              'database': "database", 'collection': "collection"},
                  query={},
                  location={'image': "image", 'label': "label"},
-                 config={'batchsize': 5, 'shuffle': True, 'seed': 123, 'width': 50, 'height': 50}):
+                 config={'batchsize': 5, 'shuffle': True, 'seed': 123, 'width': 50, 'height': 50},
+                 fit_params={},
+                 prod_params={}
+
+                 ):
 
         # Validate inputs
-        assert isinstance(
-            image_data_generator, ImageDataGenerator), "Please provide a valid instance of ImageDataGenerator for data augmentation."
-        self.image_data_generator = image_data_generator
+        self.image_data_generator = image_data_generator;
 
         # Check if inputs are json deserialised objects
         _ad(connection, "Please select a valid connection dictionary")
@@ -133,14 +133,13 @@ class MongoGenerator(Iterator):
             # Get sample data
             (x, y) = self.__readMongoSample(self._object_ids[j])
 
-            self.image_data_generator.fit(x)
-
-            x = self.image_data_generator.random_transform(x)
-            x = self.image_data_generator.standardize(x)
-
             # Add the image and the label to the batch (one-hot encoded).
             batch_x[i] = x
             batch_y[i] = y
+
+        self.image_data_generator.fittingBatch()
+
+        (batchx,batchy) = self.image_data_generator.transformingBatch(batch_x,batch_y)
 
         return batch_x, batch_y
 
@@ -187,108 +186,3 @@ class MongoGenerator(Iterator):
         return self._dictionary.keys()[self._dictionary.values().index(np)]
 
 
-class MongoImageDataGenerator(ImageDataGenerator):
-    self.total_samples = 0
-    if(self.zca_whitening):
-        assert (scipy is not None),'Using zca_whitening requires SciPy.Please install SciPy'
-
-    def fit(self, x,
-            augment=True,
-            rounds=1,
-            seed=None):
-        """Fits the data generator to the batch data on the fly. This function is automatically called in MongoIterator but can be also called by the user
-
-        This computes the internal data stats related to the
-        data-dependent transformations, based on an array of sample data.
-        Our decision to run this all the times in order to keep up track of the generator used in Mokera
-
-        # Arguments
-            x: Batch data. Should have rank 4.
-             In case of grayscale data,
-             the channels axis should have value 1, in case
-             of RGB data, it should have value 3, and in case
-             of RGBA data, it should have value 4.
-            augment: Boolean (default: False).
-                Whether to fit on randomly augmented samples.
-            rounds: Int (default: 1).
-                If using data augmentation (`augment=True`),
-                this is how many augmentation passes over the data to use.
-            seed: Int (default: None). Random seed.
-       """
-        assert x.ndim == 4, 'Input to `.fit()` should have rank 4. Got array with shape: ' + \
-            str(x.shape)
-        assert isinstance(
-            augment, bool), 'Augment parameter must be a valid boolean'
-        assert (isinstance(rounds, int) & rounds >
-                0), 'Rounds parameter must be a valid integer (at least 1)'
-
-        if x.shape[self.channel_axis] not in {1, 3, 4}:
-            warnings.warn(
-                'Expected input to be images (as Numpy array) '
-                'following the data format convention "' +
-                self.data_format + '" (channels on axis ' +
-                str(self.channel_axis) + '), i.e. expected '
-                'either 1, 3 or 4 channels on axis ' +
-                str(self.channel_axis) + '. '
-                'However, it was passed an array with shape ' +
-                str(x.shape) + ' (' + str(x.shape[self.channel_axis]) +
-                ' channels).')
-
-        if seed is not None:
-            assert (isinstance(seed, int) & seed >
-                    0), 'Seed parameter, if set, must be a valid intger (at least 1)'
-            np.random.seed(seed)
-
-        self.broadcast = [1, 1, 1]
-        self.broadcast[self.channel_axis - 1] = x.shape[self.channel_axis]
-
-        x = np.copy(x)
-        if augment:
-            ax = np.zeros(
-                tuple([rounds * x.shape[0]] + list(x.shape)[1:]),
-                dtype=backend.floatx())
-            for r in range(rounds):
-                for i in range(x.shape[0]):
-                    ax[i + r * x.shape[0]] = self.random_transform(x[i])
-            x = ax
-
-        self.batch_samples = np.shape(x)[0]
-
-        if self.mean == None:
-            self.mean = getMean(x)
-        else:
-            self.mean = (self.total_samples*self.mean) + (self.batch_samples *
-                                                          getMean(x)) / (self.total_samples + self.batch_samples)
-
-        x -= self.mean
-
-        if self.std == None:
-            self.std = getStd(x)
-        else:
-            self.std = (self.total_samples*self.std) + (self.batch_samples *
-                                                        getStd(x)) / (self.total_samples + self.batch_samples)
-
-        x /= (self.std + backend.epsilon())
-
-        if self.principal_components == None:
-            self.principal_components = getPrincipalComponents()
-        else:
-            pass
-
-        self.total_samples += self.batch_samples
-
-    def getMean(self, x):
-        mean = np.mean(x, axis=(0, self.row_axis, self.col_axis))
-        return np.reshape(mean, self.broadcast)
-
-    def getStd(self, x):
-        std = np.std(x, axis=(0, self.row_axis, self.col_axis))
-        return np.reshape(std, self.broadcast)
-
-    def getPrincipalComponents(self):
-        flat_x = np.reshape(
-            x, (x.shape[0], x.shape[1] * x.shape[2] * x.shape[3]))
-        sigma = np.dot(flat_x.T, flat_x) / flat_x.shape[0]
-        u, s, _ = scipy.linalg.svd(sigma)
-        s_inv = 1. / np.sqrt(s[np.newaxis] + self.zca_epsilon)
-        self.principal_components = (u * s_inv).dot(u.T)

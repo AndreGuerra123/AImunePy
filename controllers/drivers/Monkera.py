@@ -583,7 +583,7 @@ class MongoImageDataGenerator(object):
         self.keep_original = _g_d_a_t(affine, 'keep_original', False, bool,
                                       "Please select a valid boolean value for the keep_original parameter.")
 
-        self.rotation_range = _g_d_a_t(
+        self.rotation = _g_d_a_t(
             affine, 'rotation', 0., float, "Please select a valid float value for the rotation parameter.")
         self.width_shift = _g_d_a_t(
             affine, 'width_shift', 0., float, "Please select a valid float value for the width_shift parameter.")

@@ -1029,6 +1029,11 @@ class MongoTrainFlowGenerator(Iterator):
         self.batch_size = self.mdig.batch_size
         self.shuffle = self.mdig.shuffle
         self.seed = self.mdig.seed
+        self.batch_index = 0
+        self.total_batches_seen = 0
+        self.lock = threading.Lock()
+        self.index_array = None
+        self.index_generator = self._flow_index()
     
     def _get_batches_of_transformed_samples(self, index_array):
 
@@ -1061,6 +1066,11 @@ class MongoTestFlowGenerator(Iterator):
         self.batch_size = self.mdig.batch_size
         self.shuffle = self.mdig.shuffle
         self.seed = self.mdig.seed
+        self.batch_index = 0
+        self.total_batches_seen = 0
+        self.lock = threading.Lock()
+        self.index_array = None
+        self.index_generator = self._flow_index()
 
      
     def _get_batches_of_transformed_samples(self, index_array):

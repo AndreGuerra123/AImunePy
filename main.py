@@ -5,52 +5,22 @@ from keras.models import Sequential
 from keras.layers import Dense, Dropout, Activation, Flatten, Conv2D, MaxPooling2D
 
 
-mongogen = MongoImageDataGenerator( 
-                connection={'host': "localhost",
-                             'port': 12721,
-                             'database': "authentication",
-                             'collection': "loads"},
-                 query={},
-                 location={'image': "image.data", 'label': "classi"},
-                 config={
-                     'batch_size': 1,
-                     'shuffle': True,
-                     'seed': None,
-                     'target_size': (32, 32),
-                     'data_format': 'channels_last',
+
+mongogen = MongoImageDataGenerator(
+                          connection={'host': "localhost", 'port': 27017,'database': "authentication", 'collection': "loads"},
+                          query={},
+                          location={'image': "image.data", 'label': "classi"},
+                          config={'batch_size': 2, 'shuffle': True, 'seed': 123, 'width': 50, 'height': 50, 'data_format': 'channels_last',
                      'color_format': 'RGB',
-                     'validation_split': 0.5},
-                 stand={
-                     'featurewise_center': False,
-                     'samplewise_center': False,
-                     'featurewise_std_normalization': False,
-                     'samplewise_std_normalization': False,
-                     'rescale': 1/255,
-                     'preprocessing_function': None,
-                 },
-                 affine={
-                     'rounds': 1,
-                     'transform': False,
-                     'random': False,
-                     'keep_original': False,
-                     'rotation': 0.,
-                     'width_shift': 0.,
-                     'height_shift': 0.,
-                     'shear': 0.,
-                     'channel_shift': 0.,
-                     'brightness': 1.,
-                     'zoom': 0.,
-                     'horizontal_flip': False,
-                     'vertical_flip': False,
-                     'fill_mode': 'nearest',
-                     'cval': 0.
-                 }
-)
+                     'validation_split': 0.2}
+                          
+                          )
 traingen, valgen = mongogen.flows_from_mongo()
 
 
+
 model = Sequential()
-model.add(Conv2D(32, (3, 3), padding='same', input_shape=mongogen.getShape()))
+model.add(Conv2D(32, (3, 3), padding='same', input_shape = mongogen.getShape()))
 model.add(Activation('relu'))
 model.add(Conv2D(32, (3, 3)))
 model.add(Activation('relu'))
@@ -79,9 +49,9 @@ model.compile(loss='categorical_crossentropy',
               optimizer=opt,
               metrics=['accuracy'])
 
-trainflow, testflow = mongogen.flows_from_mongo()
+trainflow,testflow = mongogen.flows_from_mongo()
 
-model.fit_generator(traingen, epochs=10, validation_data=valgen, workers=4)
+model.fit_generator(traingen, epochs=3,validation_data=valgen, workers=4)
 
 
 """ from flask import Flask, request, jsonify

@@ -17,7 +17,7 @@ mongogen = MongoImageDataGenerator(
                             'preprocessing_function': None,
                             'rescale': 1/255,
                             'center': False,
-                            'normalization': False
+                            'normalize': False
                             }
                           
                           )

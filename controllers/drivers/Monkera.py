@@ -467,7 +467,7 @@ class MongoImageDataGenerator(object):
                      'validation_split': 0.},
                  stand={
                      'center': False,
-                     'normalization': False,
+                     'normalize': False,
                      'rescale': 1/255,
                      'preprocessing_function': None,
                  },
@@ -553,10 +553,10 @@ class MongoImageDataGenerator(object):
 
         self.center = _g_d_a_t(stand, 'center', False, bool,
                                           "Please select a valid boolean value for the samplewise_center parameter.")
-        self.normalization = _g_d_a_t(stand, 'normalization', False,
-                                                     bool, "Please select a valid boolean value for the samplewise_std_normalization parameter.")
+        self.normalize = _g_d_a_t(stand, 'normalize', False,
+                                                     bool, "Please select a valid boolean value for the normalize parameter.")
 
-        if self.normalization:
+        if self.normalize:
             if not self.center:
                 self.center = True
                 warnings.warn('This MongoDataGenerator specifies '
@@ -659,9 +659,9 @@ class MongoImageDataGenerator(object):
             x = self.preprocessing_function(x)
         if self.rescale:
             x *= self.rescale
-        if self.samplewise_center:
+        if self.center:
             x -= np.mean(x, keepdims=True)
-        if self.samplewise_std_normalization:
+        if self.normalize:
             x /= (np.std(x, keepdims=True) + backend.epsilon())
 
         return x

@@ -19,7 +19,7 @@ mongogen = MongoImageDataGenerator(
                      'target_size': (32, 32),
                      'data_format': 'channels_last',
                      'color_format': 'RGB',
-                     'validation_split': 0.},
+                     'validation_split': 0.5},
                  stand={
                      'featurewise_center': False,
                      'samplewise_center': False,

@@ -525,13 +525,11 @@ class MongoImageDataGenerator(object):
         self.seed = _g_d_a_t(config, 'seed', None, int,
                              "Please select a valid integer value for the seed parameter.")
 
-        self.height = _g_d_a_t(
-            config, 'target_size[0]', 32, int, "Please select a valid integer value for the image height parameter.")
-        assert (self.height > 0), "Height must be positive integer."
-
-        self.width = _g_d_a_t(
-            config, 'target_size[1]', 32, int, "Please select a valid integer value for the image width parameter.")
-        assert (self.width > 0), "Width must be positive integer."
+        self.target_size = _g_d_a_t(config, 'target_size', (32,32), tuple, 'Please select a valid tuple value (height,width) for the target size parameter.')
+        self.height = self.target_size[0]
+        self.width = self.target_size[1]
+        assert (self.height > 0), "Height must be positive integer, check target size."
+        assert (self.width > 0), "Width must be positive integer, check target size."
 
         self.validation_split = _g_d_a_t(config, 'validation_split', 0., float,
                                          "Please select a valid float value for the validation split parameter.")

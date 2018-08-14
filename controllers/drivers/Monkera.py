@@ -522,7 +522,7 @@ class MongoImageDataGenerator(object):
 
         self.seed = _g_d_a_t(config, 'seed', None, int,
                              "Please select a valid integer value for the seed parameter.")
-
+        
         self.target_size = _g_d_a_t(config, 'target_size', (32,32), tuple, 'Please select a valid tuple value (height,width) for the target size parameter.')
         self.height = self.target_size[0]
         self.width = self.target_size[1]
@@ -613,7 +613,6 @@ class MongoImageDataGenerator(object):
 
         self.dtype = backend.floatx()
 
-
     def flows_from_mongo(self):
 
         # Initial Connection to retrieve samples and OBIDS
@@ -686,23 +685,14 @@ class MongoImageDataGenerator(object):
             theta = 0
 
         if self.height_shift != 0:
-            try:  # 1-D array-like or int
-                tx = np.random.choice(self.height_shift)
-                tx *= np.random.choice([-1, 1])
-            except ValueError:  # floating point
-                tx = np.random.uniform(-self.height_shift, self.height_shift)
+            tx = np.random.uniform(-self.height_shift, self.height_shift)
             if np.max(self.height_shift) < 1:
                 tx *= img_shape[img_row_axis]
         else:
             tx = 0
 
         if self.width_shift != 0:
-            try:  # 1-D array-like or int
-                ty = np.random.choice(self.width_shift)
-                ty *= np.random.choice([-1, 1])
-            except ValueError:  # floating point
-                ty = np.random.uniform(-self.width_shift,
-                                       self.width_shift)
+            ty = np.random.uniform(-self.width_shift,self.width_shift)
             if np.max(self.width_shift) < 1:
                 ty *= img_shape[img_col_axis]
         else:
@@ -731,6 +721,75 @@ class MongoImageDataGenerator(object):
         brightness = None
         if self.brightness != 1:
             brightness = np.random.uniform(1-self.brightness, self.brightness)
+
+        transform_parameters = {'theta': theta,
+                                'tx': tx,
+                                'ty': ty,
+                                'shear': shear,
+                                'zx': zx,
+                                'zy': zy,
+                                'flip_horizontal': flip_horizontal,
+                                'flip_vertical': flip_vertical,
+                                'channel_shift_intensity': channel_shift_intensity,
+                                'brightness': brightness}
+
+        return transform_parameters
+
+    def get_exact_transform(self, img_shape, seed=None):
+        """Generates random parameters for a transformation.
+
+        # Arguments
+            seed: Random seed.
+            img_shape: Tuple of integers.
+                Shape of the image that is transformed.
+
+        # Returns
+            A dictionary containing randomly chosen parameters describing the
+            transformation.
+        """
+        img_row_axis = self.row_axis - 1
+        img_col_axis = self.col_axis - 1
+
+        if seed is not None:
+            np.random.seed(seed)
+
+        theta = self.rotation
+        
+        if self.height_shift != 0:
+            tx = self.height_shift
+            if np.max(self.height_shift) < 1:
+                tx *= img_shape[img_row_axis]
+        else:
+            tx = 0
+
+        if self.width_shift != 0:
+            ty = self.width_shift
+            if np.max(self.width_shift) < 1:
+                ty *= img_shape[img_col_axis]
+        else:
+            ty = 0
+
+        if self.shear != 0:
+            shear = self.shear
+        else:
+            shear = 0
+
+        if self.zoom == 0.:
+            zx, zy = 1, 1
+        else:
+            zx, zy = (1-self.zoom,1+self.zoom)
+
+        flip_horizontal = self.horizontal_flip
+
+        flip_vertical = self.vertical_flip
+
+        channel_shift_intensity = None
+        if self.channel_shift != 0:
+            channel_shift_intensity = self.channel_shift
+
+        brightness = None
+        if self.brightness != 1:
+            brightness = self.brightness
 
         transform_parameters = {'theta': theta,
                                 'tx': tx,
@@ -811,6 +870,20 @@ class MongoImageDataGenerator(object):
         """
         params = self.get_random_transform(x.shape, seed)
         return self.apply_transform(x, params)
+
+    def exact_tranform(self,x, seed=None):
+        """Applies a exact transformation to an image.
+
+        # Arguments
+            x: 3D tensor, single image.
+            seed: Random seed.
+
+        # Returns
+            A randomly transformed version of the input (same shape).
+        """
+        params = self.get_exact_transform(x.shape, seed)
+        return self.apply_transform(x, params)
+ 
 
     def transform_test_batch(self,x,y):
         return self.standardize(x),y

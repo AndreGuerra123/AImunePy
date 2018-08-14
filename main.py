@@ -4,8 +4,6 @@ import keras
 from keras.models import Sequential
 from keras.layers import Dense, Dropout, Activation, Flatten, Conv2D, MaxPooling2D
 
-
-
 mongogen = MongoImageDataGenerator(
                           connection={'host': "localhost", 'port': 27017,'database': "authentication", 'collection': "loads"},
                           query={},
@@ -35,9 +33,9 @@ mongogen = MongoImageDataGenerator(
                             'vertical_flip': False,
                             'fill_mode': 'nearest',
                             'cval': 0.
-                 }
-                          
+                            }
                           )
+                          
 traingen, valgen = mongogen.flows_from_mongo()
 
 

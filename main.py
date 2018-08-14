@@ -29,7 +29,7 @@ mongogen = MongoImageDataGenerator(
                             'height_shift': 0.,
                             'shear': 0.,
                             'channel_shift': 0.,
-                            'brightness': 1.,
+                            'brightness': 0.,
                             'zoom': 0.,
                             'horizontal_flip': False,
                             'vertical_flip': False,

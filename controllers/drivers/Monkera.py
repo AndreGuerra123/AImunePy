@@ -481,7 +481,7 @@ class MongoImageDataGenerator(object):
                      'height_shift': 0.,
                      'shear': 0.,
                      'channel_shift': 0.,
-                     'brightness': 1.,
+                     'brightness': 0.,
                      'zoom': 0.,
                      'horizontal_flip': False,
                      'vertical_flip': False,
@@ -595,16 +595,12 @@ class MongoImageDataGenerator(object):
             affine, 'channel_shift', 0., float, "Please select a valid float value for the channel_shift parameter.")
         self.brightness = _g_d_a_t(affine, 'brightness', 1., float,
                                    "Please select a valid float value for the brightness parameter.")
+        assert (0 < self.brightness <= 1) , "Please select a value superior to zero (black image) for the brightness parameter"
 
-        self.zoom = _g_d(affine, 'zoom', 0.)
-        if np.isscalar(self.zoom):
-            self.zoom = [1 - self.zoom, 1 + self.zoom]
-        elif len(self.zoom) == 2:
-            self.zoom_range = [self.zoom[0], self.zoom[1]]
-        else:
-            raise ValueError('`zoom_range` should be a float or '
-                             'a tuple or list of two floats. '
-                             'Received: %s' % (self.zoom,))
+        self.zoom = _g_d(affine, 'zoom', 0.,float,"Please select a valid folat value for the zoom parameter")
+        assert (0 <= self.zoom <= 2) , "Please select a value superior to zero (black image) for the brightness parameter"
+
+        
 
         self.horizontal_flip = _g_d_a_t(affine, 'horizontal_flip', False, bool,
                                         "Please select a valid boolean value for the horizontal_flip parameter.")
@@ -684,68 +680,57 @@ class MongoImageDataGenerator(object):
         if seed is not None:
             np.random.seed(seed)
 
-        if self.rotation_range:
-            theta = np.random.uniform(
-                -self.rotation_range,
-                self.rotation_range)
+        if self.rotation != 0:
+            theta = np.random.uniform(-self.rotation,self.rotation)
         else:
             theta = 0
 
-        if self.height_shift_range:
+        if self.height_shift != 0:
             try:  # 1-D array-like or int
-                tx = np.random.choice(self.height_shift_range)
+                tx = np.random.choice(self.height_shift)
                 tx *= np.random.choice([-1, 1])
             except ValueError:  # floating point
-                tx = np.random.uniform(-self.height_shift_range,
-                                       self.height_shift_range)
-            if np.max(self.height_shift_range) < 1:
+                tx = np.random.uniform(-self.height_shift, self.height_shift)
+            if np.max(self.height_shift) < 1:
                 tx *= img_shape[img_row_axis]
         else:
             tx = 0
 
-        if self.width_shift_range:
+        if self.width_shift != 0:
             try:  # 1-D array-like or int
-                ty = np.random.choice(self.width_shift_range)
+                ty = np.random.choice(self.width_shift)
                 ty *= np.random.choice([-1, 1])
             except ValueError:  # floating point
-                ty = np.random.uniform(-self.width_shift_range,
-                                       self.width_shift_range)
-            if np.max(self.width_shift_range) < 1:
+                ty = np.random.uniform(-self.width_shift,
+                                       self.width_shift)
+            if np.max(self.width_shift) < 1:
                 ty *= img_shape[img_col_axis]
         else:
             ty = 0
 
-        if self.shear_range:
+        if self.shear != 0:
             shear = np.random.uniform(
-                -self.shear_range,
-                self.shear_range)
+                -self.shear,
+                self.shear)
         else:
             shear = 0
 
-        if self.zoom_range[0] == 1 and self.zoom_range[1] == 1:
+        if self.zoom == 0.:
             zx, zy = 1, 1
         else:
-            zx, zy = np.random.uniform(
-                self.zoom_range[0],
-                self.zoom_range[1],
-                2)
+            zx, zy = np.random.uniform(1-self.zoom,1+self.zoom,2)
 
         flip_horizontal = (np.random.random() < 0.5) * self.horizontal_flip
+
         flip_vertical = (np.random.random() < 0.5) * self.vertical_flip
 
         channel_shift_intensity = None
-        if self.channel_shift_range != 0:
-            channel_shift_intensity = np.random.uniform(-self.channel_shift_range,
-                                                        self.channel_shift_range)
+        if self.channel_shift != 0:
+            channel_shift_intensity = np.random.uniform(-self.channel_shift, self.channel_shift)
 
         brightness = None
-        if self.brightness_range is not None:
-            if len(self.brightness_range) != 2:
-                raise ValueError(
-                    '`brightness_range should be tuple or list of two floats. '
-                    'Received: %s' % (self.brightness_range,))
-            brightness = np.random.uniform(self.brightness_range[0],
-                                           self.brightness_range[1])
+        if self.brightness != 1:
+            brightness = np.random.uniform(1-self.brightness, self.brightness)
 
         transform_parameters = {'theta': theta,
                                 'tx': tx,

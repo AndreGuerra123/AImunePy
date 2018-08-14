@@ -864,7 +864,7 @@ class MongoImageDataGenerator(object):
 
     def transform_train_batch(self, x, y):
         
-        x, y = reform(x,y) #Augmentation, tranformations and replications
+        x, y = self.reform(x,y) #Augmentation, tranformations and replications
         
         currentSize = getBatchSize(x)
 

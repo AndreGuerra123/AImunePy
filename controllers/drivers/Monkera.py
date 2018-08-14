@@ -658,11 +658,7 @@ class MongoImageDataGenerator(object):
         many = int(round(self.validation_split*len(self.object_ids)))
 
         if self.shuffle:
-            self.object_ids = random.shuffle(self.object_ids)
-    
-        print (self.object_ids)
-
-
+            random.shuffle(self.object_ids)
     
         return self.object_ids[many:], self.object_ids[:many]
 

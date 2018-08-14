@@ -878,8 +878,8 @@ class MongoImageDataGenerator(object):
         else:
             self.std = ((self.samples_seen*(self.std)**(2))+(self.batch_size*(self.getStd(x))**(2))/(self.samples_seen+self.batch_size))**(0.5)
 
-        self.samples_seen += self.samples_seen
-
+        self.samples_seen += self.batch_size
+        
         return self.standardize(x), y
         
     def getMean(self,x):

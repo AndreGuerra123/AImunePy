@@ -871,7 +871,9 @@ class MongoImageDataGenerator(object):
             self.mean = self.getMean(x)
         else:
             
-            self.mean = (self.samples_seen*self.mean)+(self.batch_size*self.getMean(x)) / (self.samples_seen+self.batch_size)
+            mean = ((self.samples_seen*self.mean)+(self.batch_size*self.getMean(x))) / (self.samples_seen+self.batch_size)
+            print(mean)
+            self.mean = mean
 
         if self.std is None:
             self.std = self.getStd(x)
@@ -885,10 +887,8 @@ class MongoImageDataGenerator(object):
     def getMean(self,x):
         broadcast_shape = [1, 1, 1]
         broadcast_shape[self.channel_axis - 1] = x.shape[self.channel_axis]
-        mean = np.reshape(np.mean(x, axis=(0, self.row_axis, self.col_axis), dtype=self.dtype),broadcast_shape)
-        print(mean)
-        return mean
-
+        return np.reshape(np.mean(x, axis=(0, self.row_axis, self.col_axis), dtype=self.dtype),broadcast_shape)
+        
 
     def getStd(self,x):
         broadcast_shape = [1, 1, 1]

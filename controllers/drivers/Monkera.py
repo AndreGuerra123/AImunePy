@@ -575,15 +575,15 @@ class MongoImageDataGenerator(object):
         assert ((self.preprocessing_function == None) | (type(self.preprocessing_function)
                 is 'function')), "Preprocessing function is not a valid parameter."
 
-        if featurewise_std_normalization:
-            if not featurewise_center:
+        if self.featurewise_std_normalization:
+            if not self.featurewise_center:
                 self.featurewise_center = True
                 warnings.warn('This MongoImageDataGenerator specifies '
                               '`featurewise_std_normalization`, '
                               'which overrides setting of '
                               '`featurewise_center`.')
-        if samplewise_std_normalization:
-            if not samplewise_center:
+        if self.samplewise_std_normalization:
+            if not self.samplewise_center:
                 self.samplewise_center = True
                 warnings.warn('This MongoDataGenerator specifies '
                               '`samplewise_std_normalization`, '

@@ -14,13 +14,11 @@ mongogen = MongoImageDataGenerator(
                             'color_format': 'RGB',
                             'validation_split': 0.5},
                           stand={
-                            'featurewise_center': False,
-                            'samplewise_center': False,
-                            'featurewise_std_normalization': True,
-                            'samplewise_std_normalization': False,
-                            'rescale': 1/255,
                             'preprocessing_function': None,
-                 }
+                            'rescale': 1/255,
+                            'center': False,
+                            'normalization': False
+                            }
                           
                           )
 traingen, valgen = mongogen.flows_from_mongo()

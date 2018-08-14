@@ -466,10 +466,8 @@ class MongoImageDataGenerator(object):
                      'color_format': 'RGB',
                      'validation_split': 0.},
                  stand={
-                     'featurewise_center': False,
-                     'samplewise_center': False,
-                     'featurewise_std_normalization': False,
-                     'samplewise_std_normalization': False,
+                     'center': False,
+                     'normalization': False,
                      'rescale': 1/255,
                      'preprocessing_function': None,
                  },
@@ -553,15 +551,20 @@ class MongoImageDataGenerator(object):
         assert self.color_format in color_formats, "Please select a valid color format string: L, RGB, or RGBA"
         self.color_shape = _g(color_formats,self.color_format)
 
-         
-        self.featurewise_center = _g_d_a_t(stand, 'featurewise_center', False, bool,
-                                           "Please select a valid boolean value for the featurewise_center parameter.")
-        self.samplewise_center = _g_d_a_t(stand, 'samplewise_center', False, bool,
+        self.center = _g_d_a_t(stand, 'center', False, bool,
                                           "Please select a valid boolean value for the samplewise_center parameter.")
-        self.featurewise_std_normalization = _g_d_a_t(stand, 'featurewise_std_normalization', False,
-                                                      bool, "Please select a valid boolean value for the featurewise_std_normalization parameter.")
-        self.samplewise_std_normalization = _g_d_a_t(stand, 'samplewise_std_normalization', False,
+        self.normalization = _g_d_a_t(stand, 'normalization', False,
                                                      bool, "Please select a valid boolean value for the samplewise_std_normalization parameter.")
+
+        if self.normalization:
+            if not self.center:
+                self.center = True
+                warnings.warn('This MongoDataGenerator specifies '
+                              '`normalization`, '
+                              'which overrides setting of '
+                              '`center`.')
+
+
         self.rescale = _g_d_a_t(stand, 'rescale', 1/255., float,
                                 "Please select a valid float value for the rescale parameter.")
         assert (self.rescale != 0), "Rescaling with factor 0 will reset all data. Please update rescaling parameter to 1 if no rescaling is required."
@@ -570,21 +573,7 @@ class MongoImageDataGenerator(object):
         assert ((self.preprocessing_function == None) | (type(self.preprocessing_function)
                 is 'function')), "Preprocessing function is not a valid parameter."
 
-        if self.featurewise_std_normalization:
-            if not self.featurewise_center:
-                self.featurewise_center = True
-                warnings.warn('This MongoImageDataGenerator specifies '
-                              '`featurewise_std_normalization`, '
-                              'which overrides setting of '
-                              '`featurewise_center`.')
-        if self.samplewise_std_normalization:
-            if not self.samplewise_center:
-                self.samplewise_center = True
-                warnings.warn('This MongoDataGenerator specifies '
-                              '`samplewise_std_normalization`, '
-                              'which overrides setting of '
-                              '`samplewise_center`.')
-
+       
         self.rounds = _g_d_a_t(
             affine, 'rounds', 0, int, "Please select a valid integer value for the rounds parameter.")
         self.transform = _g_d_a_t(affine, 'transform', False, bool,
@@ -627,9 +616,7 @@ class MongoImageDataGenerator(object):
                              "Please select a valid float value for the cval parameter.")
 
         self.dtype = backend.floatx()
-        self.mean = None
-        self.std = None
-        self.samples_seen = 0
+
 
     def flows_from_mongo(self):
 
@@ -676,24 +663,6 @@ class MongoImageDataGenerator(object):
             x -= np.mean(x, keepdims=True)
         if self.samplewise_std_normalization:
             x /= (np.std(x, keepdims=True) + backend.epsilon())
-
-        if self.featurewise_center:
-            if self.mean is not None:
-                x -= self.mean
-            else:
-                warnings.warn('This ImageDataGenerator specifies '
-                              '`featurewise_center`, but it hasn\'t '
-                              'been fit on any training data. Fit it '
-                              'first by calling `.fit(numpy_data)`.')
-        if self.featurewise_std_normalization:
-            if self.std is not None:
-                x /= (self.std + backend.epsilon())
-            else:
-                warnings.warn('This ImageDataGenerator specifies '
-                              '`featurewise_std_normalization`, '
-                              'but it hasn\'t '
-                              'been fit on any training data. Fit it '
-                              'first by calling `.fit(numpy_data)`.')
 
         return x
 
@@ -859,42 +828,13 @@ class MongoImageDataGenerator(object):
         return self.apply_transform(x, params)
 
     def transform_test_batch(self,x,y):
-        x = self.standardize(x)
-        return x,y
+        return self.standardize(x),y
 
     def transform_train_batch(self, x, y):
         
         x, y = self.reform(x,y) #Augmentation, tranformations and replications
-        
-
-        if self.mean is None:
-            self.mean = self.getMean(x)
-        else:
-            
-            mean = ((self.samples_seen*self.mean)+(self.batch_size*self.getMean(x))) / (self.samples_seen+self.batch_size)
-            print(mean)
-            self.mean = mean
-
-        if self.std is None:
-            self.std = self.getStd(x)
-        else:
-            self.std = ((self.samples_seen*(self.std)**(2))+(self.batch_size*(self.getStd(x))**(2))/(self.samples_seen+self.batch_size))**(0.5)
-
-        self.samples_seen += self.batch_size
-
         return self.standardize(x), y
         
-    def getMean(self,x):
-        broadcast_shape = [1, 1, 1]
-        broadcast_shape[self.channel_axis - 1] = x.shape[self.channel_axis]
-        return np.reshape(np.mean(x, axis=(0, self.row_axis, self.col_axis), dtype=self.dtype),broadcast_shape)
-        
-
-    def getStd(self,x):
-        broadcast_shape = [1, 1, 1]
-        broadcast_shape[self.channel_axis - 1] = x.shape[self.channel_axis]
-        return np.reshape(np.std(x, axis=(0, self.row_axis, self.col_axis),dtype=self.dtype),broadcast_shape)
-
     def reform(self,x,y):
         xx = np.copy(x)
         yy = np.copy(y)

@@ -517,8 +517,9 @@ class MongoImageDataGenerator(object):
 
         self.batch_size = _g_d_a_t(
             config, 'batch_size', 1 , int, "Please select a valid integer value for the batchsize parameter.")
-        assert (self.batch_size >=
-                1), "Batch size must be a positive integer (at least 1)."
+        assert (self.batch_size >= 1), "Batch size must be a positive integer (at least 1)."
+        print(self.batch_size)
+
 
         self.shuffle = _g_d_a_t(config, 'shuffle', True, bool,
                                 "Please select a valid boolean value for the shuffle parameter.")

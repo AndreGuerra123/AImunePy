@@ -559,9 +559,6 @@ class MongoImageDataGenerator(object):
         self.color_shape = _g(color_formats,self.color_format)
 
          
-        self.broadcast_shape = [1, 1, 1]
-        self.broadcast_shape[self.channel_axis - 1] = x.shape[self.channel_axis]
-
         self.featurewise_center = _g_d_a_t(stand, 'featurewise_center', False, bool,
                                            "Please select a valid boolean value for the featurewise_center parameter.")
         self.samplewise_center = _g_d_a_t(stand, 'samplewise_center', False, bool,
@@ -896,10 +893,14 @@ class MongoImageDataGenerator(object):
         return self.standardize(x), y
         
     def getMean(self,x):
-        return np.reshape(np.mean(x, axis=(0, self.row_axis, self.col_axis)),self.broadcast_shape)
+        broadcast_shape = [1, 1, 1]
+        broadcast_shape[self.channel_axis - 1] = x.shape[self.channel_axis]
+        return np.reshape(np.mean(x, axis=(0, self.row_axis, self.col_axis)),broadcast_shape)
 
     def getStd(self,x):
-        return np.reshape(np.std(x, axis=(0, self.row_axis, self.col_axis)),self.broadcast_shape)
+        broadcast_shape = [1, 1, 1]
+        broadcast_shape[self.channel_axis - 1] = x.shape[self.channel_axis]
+        return np.reshape(np.std(x, axis=(0, self.row_axis, self.col_axis)),broadcast_shape)
 
     def getBatchSize(x):
         return len(x.shape[0])

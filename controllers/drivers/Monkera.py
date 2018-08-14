@@ -874,7 +874,7 @@ class MongoImageDataGenerator(object):
             self.mean = (self.samples_seen*self.mean)+(self.batch_size*self.getMean(x)) / (self.samples_seen+self.batch_size)
 
         if self.std is None:
-            self.std = getBatchStd(x)
+            self.std = self.getStd(x)
         else:
             self.std = ((self.samples_seen*(self.std)**(2))+(self.batch_size*(self.getStd(x))**(2))/(self.samples_seen+self.batch_size))**(0.5)
 

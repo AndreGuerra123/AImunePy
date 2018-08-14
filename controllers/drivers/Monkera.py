@@ -640,17 +640,15 @@ class MongoImageDataGenerator(object):
 
         # Initial Connection to retrieve samples and OBIDS
 
-        self.object_ids = self.__getOBIDS(idg.query)
+        self.object_ids = self.__getOBIDS(self.query)
         assert (len(self.object_ids) >
                 0), "The resulted query returned zero(0) samples."
 
         self.dictionary, self.classes = self.__getDictionary()
-        assert (self.classes >
-                1), "The resulted query return insufficient distinct classes."
+        assert (self.classes > 1), "The resulted query return insufficient distinct classes."
 
         # Split Obids into train and validation
-        self.train_obids, self.test_obids = partitioning(
-            self.object_ids, self.validation_split, self.shuffle)
+        self.train_obids, self.test_obids = partitioning(self.object_ids, self.validation_split, self.shuffle)
 
         self.train_samples = len(self.train_obids)
         self.test_samples = len(self.test_obids)

@@ -481,7 +481,7 @@ class MongoImageDataGenerator(object):
                      'height_shift': 0.,
                      'shear': 0.,
                      'channel_shift': 0.,
-                     'brightness': 0.,
+                     'brightness': 1.,
                      'zoom': 0.,
                      'horizontal_flip': False,
                      'vertical_flip': False,
@@ -597,7 +597,7 @@ class MongoImageDataGenerator(object):
                                    "Please select a valid float value for the brightness parameter.")
         assert (0 < self.brightness <= 1) , "Please select a value superior to zero (black image) for the brightness parameter"
 
-        self.zoom = _g_d(affine, 'zoom', 0.,float,"Please select a valid folat value for the zoom parameter")
+        self.zoom = _g_d_a_t(affine, 'zoom', 0.,float,"Please select a valid folat value for the zoom parameter")
         assert (0 <= self.zoom <= 2) , "Please select a value superior to zero (black image) for the brightness parameter"
 
         

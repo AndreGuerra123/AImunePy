@@ -16,11 +16,11 @@ mongogen = MongoImageDataGenerator(
                           stand={
                             'preprocessing_function': None,
                             'rescale': 1/255,
-                            'center': False,
+                            'center': True,
                             'normalize': True
                             },
                           affine={
-                            'rounds': 0,
+                            'rounds': 1,
                             'transform': True,
                             'random': True,
                             'keep_original': False,

@@ -538,7 +538,7 @@ class MongoImageDataGenerator(object):
 
         self.validation_split = _g_d_a_t(config, 'validation_split', 0., float,
                                          "Please select a valid float value for the validation split parameter.")
-        assert (self.validation_spit >= 0 and self.validation_spit <1), "Validation split parameter must be between 0 and 1"
+        assert (self.validation_split >= 0 and self.validation_split <1), "Validation split parameter must be between 0 and 1"
 
         self.data_format = _g_d_a_t(config, 'data_format', backend.image_data_format(
         ), str, "Please select a valid string for the data_format parameter.")

@@ -572,8 +572,8 @@ class MongoImageDataGenerator(object):
         assert (self.rescale != 0), "Rescaling with factor 0 will reset all data. Please update rescaling parameter to 1 if no rescaling is required."
         self.preprocessing_function = _g_d(
             stand, 'preprocessing_function', None)
-        assert (self.preprocessing_function == None | type(self.preprocessing_function)
-                is function), "Preprocessing function is not a valid parameter."
+        assert ((self.preprocessing_function == None) | (type(self.preprocessing_function)
+                is function)), "Preprocessing function is not a valid parameter."
 
         if featurewise_std_normalization:
             if not featurewise_center:

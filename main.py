@@ -10,7 +10,7 @@ mongogen = MongoImageDataGenerator(
                           connection={'host': "localhost", 'port': 27017,'database': "authentication", 'collection': "loads"},
                           query={},
                           location={'image': "image.data", 'label': "classi"},
-                          config={'batchsize': 2, 'shuffle': True, 'seed': 123, 'width': 50, 'height': 50},
+                          config={'batch_size': 2, 'shuffle': True, 'seed': 123, 'width': 50, 'height': 50},
                           )
 traingen, valgen = mongogen.flows_from_mongo()
 

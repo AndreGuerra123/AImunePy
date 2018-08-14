@@ -516,7 +516,7 @@ class MongoImageDataGenerator(object):
             location, 'label',"label", str, "Please provide a valid location for the label field in the selected mongodb collection.")
 
         self.batch_size = _g_d_a_t(
-            config, 'batch_size', 1, int, "Please select a valid integer value for the batchsize parameter.")
+            config, 'batch_size', 1 , int, "Please select a valid integer value for the batchsize parameter.")
         assert (self.batch_size >=
                 1), "Batch size must be a positive integer (at least 1)."
 

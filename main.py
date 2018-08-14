@@ -12,7 +12,7 @@ mongogen = MongoImageDataGenerator(
                           location={'image': "image.data", 'label': "classi"},
                           config={'batch_size': 2, 'shuffle': True, 'seed': 123, 'width': 50, 'height': 50, 'data_format': 'channels_last',
                             'color_format': 'RGB',
-                            'validation_split': 0.},
+                            'validation_split': 0.5},
                           stand={
                             'preprocessing_function': None,
                             'rescale': 1/255,

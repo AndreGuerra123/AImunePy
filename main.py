@@ -21,7 +21,7 @@ mongogen = MongoImageDataGenerator(
                             },
                           affine={
                             'rounds': 0,
-                            'transform': False,
+                            'transform': True,
                             'random': True,
                             'keep_original': False,
                             'rotation': 0.,

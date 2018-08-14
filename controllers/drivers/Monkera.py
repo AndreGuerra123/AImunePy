@@ -594,7 +594,7 @@ class MongoImageDataGenerator(object):
             affine, 'rounds', 0, int, "Please select a valid integer value for the rounds parameter.")
         self.transform = _g_d_a_t(affine, 'transform', False, bool,
                                   "Please select a valid boolean value for the transform parameter.")
-        self.transform = _g_d_a_t(affine, 'random', False, bool,
+        self.random = _g_d_a_t(affine, 'random', False, bool,
                                   "Please select a valid boolean value for the random parameter.")
         self.keep_original = _g_d_a_t(affine, 'keep_original', False, bool,
                                       "Please select a valid boolean value for the keep_original parameter.")

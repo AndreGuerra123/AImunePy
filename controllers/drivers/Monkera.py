@@ -1031,7 +1031,7 @@ class MongoImageDataGenerator(object):
     def __getDictionary(self):
         collection = self.__connect()
         lbls = collection.distinct(
-            self._lbl_location, {'_id': {'$in': self.object_ids}})
+            self.lbl_location, {'_id': {'$in': self.object_ids}})
         nb = len(lbls)
         # keys as human readable, any type.
         dictionary = {k: self.__hot(v, nb) for v, k in enumerate(lbls)}

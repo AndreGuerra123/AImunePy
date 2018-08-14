@@ -518,8 +518,6 @@ class MongoImageDataGenerator(object):
         self.batch_size = _g_d_a_t(
             config, 'batch_size', 1 , int, "Please select a valid integer value for the batchsize parameter.")
         assert (self.batch_size >= 1), "Batch size must be a positive integer (at least 1)."
-        print(self.batch_size)
-
 
         self.shuffle = _g_d_a_t(config, 'shuffle', True, bool,
                                 "Please select a valid boolean value for the shuffle parameter.")
@@ -1027,13 +1025,12 @@ class MongoTrainFlowGenerator(Iterator):
     def __init__(self, mdig):
 
         self.mdig = mdig
-        self.n = self.mdig.train_samples,
-        self.batch_size = self.mdig.batch_size,
-        self.shuffle = self.mdig.shuffle,
+        self.n = self.mdig.train_samples
+        self.batch_size = self.mdig.batch_size
+        self.shuffle = self.mdig.shuffle
         self.seed = self.mdig.seed
     
     def __len__(self):
-        print(self.batch_size)
         return np.floor(self.n / self.batch_size)
 
     def _get_batches_of_transformed_samples(self, index_array):
@@ -1063,13 +1060,12 @@ class MongoTestFlowGenerator(Iterator):
     def __init__(self, mdig):
 
         self.mdig = mdig
-        self.n = self.mdig.test_samples,
-        self.batch_size = self.mdig.batch_size,
-        self.shuffle = self.mdig.shuffle,
+        self.n = self.mdig.test_samples
+        self.batch_size = self.mdig.batch_size
+        self.shuffle = self.mdig.shuffle
         self.seed = self.mdig.seed
 
     def __len__(self):
-        print(self.batch_size)
         return np.floor(self.n / self.batch_size)
     
     def _get_batches_of_transformed_samples(self, index_array):

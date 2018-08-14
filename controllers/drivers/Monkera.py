@@ -440,12 +440,6 @@ def _g_d_a_t(obj, loc, default, typ, msg):
         assert type(pro) is typ, msg
     return pro
 
-
-def _g_a_t(obj, loc, typ, msg):
-    pro = _g(obj, loc)
-    assert type(pro) is typ, msg
-
-
 def _a_dic(object, msg):
     assert (type(object) is dict), msg
 
@@ -509,16 +503,16 @@ class MongoImageDataGenerator(object):
                              "Please provide a valid string for mongodb hostname.")
         self.port = _g_d_a_t(connection, 'port', 12721, int,
                              "Please provide a valid integer for mongodb port.")
-        self.database = _g_a_t(connection, 'database', str,
+        self.database = _g_d_a_t(connection, 'database', str,
                                "Please provide a valid string for mongodb database.")
-        self.collection = _g_a_t(connection, 'collection', str,
+        self.collection = _g_d_a_t(connection, 'collection', str,
                                  "Please provide a valid string for mongodb collection.")
 
         self.query = query
 
-        self.img_location = _g_a_t(
+        self.img_location = _g_d_a_t(
             location, 'image', str, "Please provide a valid location for the image binary field in the selected mongodb collection.")
-        self.lbl_location = _g_a_t(
+        self.lbl_location = _g_d_a_t(
             location, 'label', str, "Please provide a valid location for the label field in the selected mongodb collection.")
 
         self.batch_size = _g_d_a_t(

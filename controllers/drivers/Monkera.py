@@ -1031,7 +1031,7 @@ class MongoTrainFlowGenerator(Iterator):
 
         self.mdig = mdig
         
-        super(MongoTrainFlowGenerator, self).__init__(self.mdig.train_samples, self.mdig.batch_size, self.mdig.shuffle, self.mdig.seed)
+        super(Iterator, self).__init__(self.mdig.train_samples, self.mdig.batch_size, self.mdig.shuffle, self.mdig.seed)
 
     def _get_batches_of_transformed_samples(self, index_array):
 

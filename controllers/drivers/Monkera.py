@@ -990,10 +990,6 @@ class MongoImageDataGenerator(object):
         return (self.__getImage(sample), self.__getLabel(sample))
 
     def __connect(self):
-        print(self.host)
-        print(self.port)
-        print(self.database)
-        print(self.collection)
         return pymongo.MongoClient(self.host, self.port)[self.database][self.collection]
 
     def __disconnect(self, collection):
@@ -1070,6 +1066,10 @@ class MongoTestFlowGenerator(Iterator):
         self.batch_size = self.mdig.batch_size,
         self.shuffle = self.mdig.shuffle,
         self.seed = self.mdig.seed
+
+    def __len__(self):
+        print(self.batch_size)
+        return np.floor(self.n / self.batch_size)
     
     def _get_batches_of_transformed_samples(self, index_array):
 

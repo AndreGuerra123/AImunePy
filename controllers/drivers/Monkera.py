@@ -980,7 +980,7 @@ class MongoImageDataGenerator(object):
         hot[idx] = 1
         return hot
 
-    def __readMongoSample(self, oid):
+    def readMongoSample(self, oid):
 
         collection = self.__connect()
         sample = collection.find_one({'_id': oid})
@@ -1044,7 +1044,7 @@ class MongoTrainFlowGenerator(Iterator):
         for i, j in enumerate(index_array):
 
                 # Get sample data
-            (x, y) = self.mdig.__readMongoSample(self.mdig.train_obids[j])
+            (x, y) = self.mdig.readMongoSample(self.mdig.train_obids[j])
 
             # Add the image and the label to the batch (one-hot encoded).
             batch_x[i] = x
@@ -1082,7 +1082,7 @@ class MongoTestFlowGenerator(Iterator):
         for i, j in enumerate(index_array):
 
                 # Get sample data
-            (x, y) = self.mdig.__readMongoSample(self.mdig.test_obids[j])
+            (x, y) = self.mdig.readMongoSample(self.mdig.test_obids[j])
 
             # Add the image and the label to the batch (one-hot encoded).
             batch_x[i] = x

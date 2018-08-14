@@ -628,7 +628,7 @@ class MongoImageDataGenerator(object):
                                       "Please select a valid boolean value for the vertical_flip parameter.")
         self.fill_mode = _g_d_a_t(affine, 'fill_mode', 'nearest', str,
                                   "Please select a valid str value for the fill_mode parameter.")
-        self.cval = _g_d_a_t(affline, 'cval', 0., float,
+        self.cval = _g_d_a_t(affine, 'cval', 0., float,
                              "Please select a valid float value for the cval parameter.")
 
         self.dtype = backend.floatx()

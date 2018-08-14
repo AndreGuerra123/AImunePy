@@ -1055,7 +1055,7 @@ class MongoTrainFlowGenerator(Iterator):
         return batchx, batchy
 
     def next(self):
-        return self.mdig._get_batches_of_transformed_samples(next(self.mdig.index_generator))
+        return self._get_batches_of_transformed_samples(next(self.index_generator))
 
 class MongoTestFlowGenerator(Iterator):
         
@@ -1066,7 +1066,7 @@ class MongoTestFlowGenerator(Iterator):
         self.batch_size = self.mdig.batch_size,
         self.shuffle = self.mdig.shuffle,
         self.seed = self.mdig.seed
-
+    
     def _get_batches_of_transformed_samples(self, index_array):
 
         batch_x = np.zeros((len(index_array), self.mdig.height, self.mdig.width, self.mdig.color_shape), dtype=self.mdig.dtype)
@@ -1087,5 +1087,5 @@ class MongoTestFlowGenerator(Iterator):
         return batchx, batchy
 
     def next(self):
-            return self.mdig._get_batches_of_transformed_samples(next(self.mdig.index_generator))
+            return self._get_batches_of_transformed_samples(next(self.index_generator))
  

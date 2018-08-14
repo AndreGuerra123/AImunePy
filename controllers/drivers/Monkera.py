@@ -1062,7 +1062,7 @@ class MongoTestFlowGenerator(Iterator):
     def __init__(self, mdig):
 
         self.mdig = mdig
-        self.n = self.mdig.train_samples,
+        self.n = self.mdig.test_samples,
         self.batch_size = self.mdig.batch_size,
         self.shuffle = self.mdig.shuffle,
         self.seed = self.mdig.seed

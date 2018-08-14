@@ -545,11 +545,11 @@ class MongoImageDataGenerator(object):
         assert (self.data_format in ['channels_first', 'channels_last']
                 ), 'Data format parameter should be `"channels_last"` (channel after row and column) or `"channels_first"` (channel before row and column). Received: %s' % self.data_format
 
-        if data_format == 'channels_first':
+        if self.data_format == 'channels_first':
             self.channel_axis = 1
             self.row_axis = 2
             self.col_axis = 3
-        if data_format == 'channels_last':
+        if self.data_format == 'channels_last':
             self.channel_axis = 3
             self.row_axis = 1
             self.col_axis = 2

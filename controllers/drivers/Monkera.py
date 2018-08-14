@@ -866,18 +866,18 @@ class MongoImageDataGenerator(object):
         
         x, y = self.reform(x,y) #Augmentation, tranformations and replications
         
-        currentSize = getBatchSize(x)
+        currentSize = self.getBatchSize(x)
 
         if self.mean == None:
-            self.mean = getMean(x)
+            self.mean = self.getMean(x)
         else:
             
-            self.mean = (self.samples_seen*self.mean)+(currentSize*getMean(x)) / (self.samples_seen+currentSize)
+            self.mean = (self.samples_seen*self.mean)+(currentSize*self.getMean(x)) / (self.samples_seen+currentSize)
 
         if self.std == None:
             self.std = getBatchStd(x)
         else:
-            self.std = ((self.samples_seen*(self.std)**(2))+(currentSize*(getStd(x))**(2))/(self.samples_seen+currentSize))**(0.5)
+            self.std = ((self.samples_seen*(self.std)**(2))+(currentSize*(self.getStd(x))**(2))/(self.samples_seen+currentSize))**(0.5)
 
         self.samples_seen += self.samples_seen
 
@@ -893,7 +893,7 @@ class MongoImageDataGenerator(object):
         broadcast_shape[self.channel_axis - 1] = x.shape[self.channel_axis]
         return np.reshape(np.std(x, axis=(0, self.row_axis, self.col_axis)),broadcast_shape)
 
-    def getBatchSize(x):
+    def getBatchSize(self,x):
         return len(x.shape[0])
 
     def reform(self,x,y):

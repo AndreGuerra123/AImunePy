@@ -842,18 +842,18 @@ class MongoImageDataGenerator(object):
         if self.rounds > 0:
             if self.transform:
                 if self.random:
-                    xx,yy = atr(self,xx,yy)
+                    xx,yy = self.atr(xx,yy)
                 else:
-                    xx,yy = atn(self,xx,yy)
+                    xx,yy = self.atn(xx,yy)
             else:
-                return an(self,xx,yy)
+                return an(xx,yy)
                  
         else:
             if self.transform:
                 if self.random:
-                    xx,yy = ntr(self,xx,yy)
+                    xx,yy = self.ntr(xx,yy)
                 else:
-                    xx,yy = ntn(self,xx,yy)
+                    xx,yy = self.ntn(xx,yy)
             else:
                 return xx, yy
 

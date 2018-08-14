@@ -1036,6 +1036,7 @@ class MongoTrainFlowGenerator(Iterator):
         self.seed = self.mdig.seed
     
     def __len__(self):
+        print(self.batch_size)
         return np.floor(self.n / self.batch_size)
 
     def _get_batches_of_transformed_samples(self, index_array):

@@ -1,2 +1,0 @@
-def evaluator():
-    return 'damn';

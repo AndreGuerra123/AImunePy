@@ -871,7 +871,7 @@ class MongoImageDataGenerator(object):
         params = self.get_random_transform(x.shape, seed)
         return self.apply_transform(x, params)
 
-    def exact_tranform(self,x, seed=None):
+    def exact_transform(self,x, seed=None):
         """Applies a exact transformation to an image.
 
         # Arguments

@@ -1011,6 +1011,12 @@ class MongoImageDataGenerator(object):
     def getClassNumber(self):
         return self.classes
 
+    def getBatchSize(self):
+        if self.rounds > 0:
+            return self.batch_size*self.rounds
+        else:
+            return self.batch_size
+
     def getEncoded(self, label):
         return _g(self.dictionary, label)
 

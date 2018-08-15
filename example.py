@@ -38,10 +38,12 @@ mongogen = MongoImageDataGenerator(
                           
 traingen, valgen = mongogen.flows_from_mongo()
 
+print(mongogen.getShape())
+print(mongogen.getClassNumber())
 
 
 model = Sequential()
-model.add(Conv2D(32, (3, 3), padding='same', input_shape = (None,100,100,3)))
+model.add(Conv2D(32, (3, 3), padding='same', input_shape = (100,100,3)))
 model.add(Activation('relu'))
 model.add(Conv2D(32, (3, 3)))
 model.add(Activation('relu'))
@@ -59,7 +61,7 @@ model.add(Flatten())
 model.add(Dense(512))
 model.add(Activation('relu'))
 model.add(Dropout(0.5))
-model.add(Dense(None,2))
+model.add(Dense(2))
 model.add(Activation('softmax'))
 
 model.layers[0].input.set_shape(mongogen.getShape())

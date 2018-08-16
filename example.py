@@ -41,7 +41,6 @@ traingen, valgen = mongogen.flows_from_mongo()
 print(mongogen.getShape())
 print(type(mongogen.getShape()))
 print(mongogen.getClassNumber())
-print(mongogen.getBatchSize())
 
 
 model = Sequential()

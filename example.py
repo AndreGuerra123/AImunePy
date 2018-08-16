@@ -93,8 +93,6 @@ model.layers[len(model.layers)-1] = layers.deserialize({'class_name': layer.__cl
 # initiate RMSprop optimizer"""
 opt = keras.optimizers.rmsprop(lr=0.0001, decay=1e-6) 
 
-model.build()
-
 # Let's train the model using RMSprop
 model.compile(loss='categorical_crossentropy',
               optimizer=opt,

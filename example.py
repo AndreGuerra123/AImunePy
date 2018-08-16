@@ -71,17 +71,26 @@ layer = model.layers[0]
 config = layer.get_config()
 config['input_shape']=(32,32,3)
 config['batch_input_shape']=(None,32,32,3)
-layer = layers.deserialize({'class_name': layer.__class__.__name__, 'config': config})
+model.layers[0] = layers.deserialize({'class_name': layer.__class__.__name__, 'config': config})
+
+layer = model.layers[len(model.layers)-1]
+config = layer.get_config()
+config['input_shape']=(6)
+config['batch_input_shape']=(None,6)
+model.layers[len(model.layers)-1] = layers.deserialize({'class_name': layer.__class__.__name__, 'config': config})
 
 #model.layers[0].input.set_shape((None,)+mongogen.getShape())
 #model.layers[len(model.layers)-1].output.set_shape((None,mongogen.getClassNumber()))
 # initiate RMSprop optimizer"""
 opt = keras.optimizers.rmsprop(lr=0.0001, decay=1e-6) 
 
+model.build()
 # Let's train the model using RMSprop
 model.compile(loss='categorical_crossentropy',
               optimizer=opt,
               metrics=['accuracy'])
+
+print(model.inputs)
 
 trainflow,testflow = mongogen.flows_from_mongo()
 

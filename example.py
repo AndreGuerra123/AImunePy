@@ -65,7 +65,7 @@ model.add(Dropout(0.5))
 model.add(Dense(2))
 model.add(Activation('softmax'))
 
-model.layers[0].input.set_shape((None,)+mongogen.getShape())
+#model.layers[0].input.set_shape((None,)+mongogen.getShape())
 model.layers[len(model.layers)].output.set_shape((None,)+mongogen.getClassNumber())
 
 # initiate RMSprop optimizer

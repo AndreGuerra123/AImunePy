@@ -66,7 +66,7 @@ model.add(Dense(2))
 model.add(Activation('softmax'))
 
 #model.layers[0].input.set_shape((None,)+mongogen.getShape())
-model.layers[len(model.layers)].output.set_shape((None,)+mongogen.getClassNumber())
+model.layers[len(model.layers)].output.set_shape((None,mongogen.getClassNumber()))
 
 # initiate RMSprop optimizer
 opt = keras.optimizers.rmsprop(lr=0.0001, decay=1e-6)

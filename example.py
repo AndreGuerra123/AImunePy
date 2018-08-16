@@ -6,7 +6,7 @@ from keras.models import Sequential
 from keras import layers
 from keras.layers import Dense, Dropout, Activation, Flatten, Conv2D, MaxPooling2D
 
-mongogen = MongoImageDataGenerator(
+""" mongogen = MongoImageDataGenerator(
                           connection={'host': "localhost", 'port': 27017,'database': "authentication", 'collection': "loads"},
                           query={},
                           location={'image': "image.data", 'label': "classi"},
@@ -42,7 +42,7 @@ traingen, valgen = mongogen.flows_from_mongo()
 
 print(mongogen.getShape())
 print(type(mongogen.getShape()))
-print(mongogen.getClassNumber())
+print(mongogen.getClassNumber()) """
 
 
 model = Sequential()
@@ -67,18 +67,26 @@ model.add(Dropout(0.5))
 model.add(Dense(2))
 model.add(Activation('softmax'))
 
-layer = model.layers[0]
+def changeInputsShape(model, inputs):
+   assert len(model.inputs) == len(inputs), "Model inputs and assigned inputs mismatch."
+
+   for i in range(len(inputs)):
+     model.inputs[i] = keras.layers.Input(shape=inputs[i])
+
+changeInputsShape(model,[(32,32,3)])
+
+""" layer = model.layers[0]
 config = layer.get_config()
 config['input_shape']=(32,32,3)
 config['batch_input_shape']=(None,32,32,3)
 model.layers[0] = layers.deserialize({'class_name': layer.__class__.__name__, 'config': config})
 model.inputs[0] = keras.layers.Input(shape=(32,32,3))
-
-layer = model.layers[len(model.layers)-1]
+ """
+""" layer = model.layers[len(model.layers)-1]
 config = layer.get_config()
 config['input_shape']=(6)
 config['batch_input_shape']=(None,6)
-model.layers[len(model.layers)-1] = layers.deserialize({'class_name': layer.__class__.__name__, 'config': config})
+model.layers[len(model.layers)-1] = layers.deserialize({'class_name': layer.__class__.__name__, 'config': config}) """
 
 #model.layers[0].input.set_shape((None,)+mongogen.getShape())
 #model.layers[len(model.layers)-1].output.set_shape((None,mongogen.getClassNumber()))
@@ -86,6 +94,7 @@ model.layers[len(model.layers)-1] = layers.deserialize({'class_name': layer.__cl
 opt = keras.optimizers.rmsprop(lr=0.0001, decay=1e-6) 
 
 model.build()
+
 # Let's train the model using RMSprop
 model.compile(loss='categorical_crossentropy',
               optimizer=opt,

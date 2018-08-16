@@ -1,10 +1,12 @@
 from controllers.drivers.Monkera import MongoImageDataGenerator
 
 import keras
+import tensorflow as tf
 from keras.models import Sequential
+from keras import layers
 from keras.layers import Dense, Dropout, Activation, Flatten, Conv2D, MaxPooling2D
 
-mongogen = MongoImageDataGenerator(
+""" mongogen = MongoImageDataGenerator(
                           connection={'host': "localhost", 'port': 27017,'database': "authentication", 'collection': "loads"},
                           query={},
                           location={'image': "image.data", 'label': "classi"},
@@ -40,7 +42,7 @@ traingen, valgen = mongogen.flows_from_mongo()
 
 print(mongogen.getShape())
 print(type(mongogen.getShape()))
-print(mongogen.getClassNumber())
+print(mongogen.getClassNumber()) """
 
 
 model = Sequential()
@@ -65,15 +67,16 @@ model.add(Dropout(0.5))
 model.add(Dense(2))
 model.add(Activation('softmax'))
 
-print(model.inputs)
-print([method_name for method_name in dir(model.inputs)
- if callable(getattr(model.inputs, method_name))])
-print(model.outputs)
+layer = model.layers[0]
+config = layer.get_config()
+config['input_shape']=(32,32,3)
+config['batch_input_shape']=(None,32,32,3)
+layer = layers.deserialize({'class_name': layer.__class__.__name__, 'config': config})
+
 #model.layers[0].input.set_shape((None,)+mongogen.getShape())
 #model.layers[len(model.layers)-1].output.set_shape((None,mongogen.getClassNumber()))
-
-# initiate RMSprop optimizer
-opt = keras.optimizers.rmsprop(lr=0.0001, decay=1e-6)
+# initiate RMSprop optimizer"""
+opt = keras.optimizers.rmsprop(lr=0.0001, decay=1e-6) 
 
 # Let's train the model using RMSprop
 model.compile(loss='categorical_crossentropy',

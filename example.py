@@ -39,6 +39,7 @@ mongogen = MongoImageDataGenerator(
 traingen, valgen = mongogen.flows_from_mongo()
 
 print(mongogen.getShape())
+print(type(mongogen.getShape()))
 print(mongogen.getClassNumber())
 print(mongogen.getBatchSize())
 
@@ -65,8 +66,8 @@ model.add(Dropout(0.5))
 model.add(Dense(2))
 model.add(Activation('softmax'))
 
-model.layers[0].input.set_shape((None)+mongogen.getShape())
-model.layers[len(model.layers)].output.set_shape((None)+mongogen.getClassNumber())
+model.layers[0].input.set_shape([None]+mongogen.getShape())
+model.layers[len(model.layers)].output.set_shape((None,mongogen.getClassNumber()))
 
 # initiate RMSprop optimizer
 opt = keras.optimizers.rmsprop(lr=0.0001, decay=1e-6)

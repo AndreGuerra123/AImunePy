@@ -161,6 +161,6 @@ class Trainer:
     
     def loadArchitecture(self):
         model = Models.model_from_json(json(get(self.model_doc,'architecture')))
-        model.layers[0].input.set_shape(self.mifg.getShape())
+        model.layers[0].input.set_shape(self.model_doc.getShape())
         model.layers[len(model.layers)].output.set_shape(self.mifg.getClassNumber)
         return model

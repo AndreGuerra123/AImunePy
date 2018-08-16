@@ -66,6 +66,8 @@ model.add(Dense(2))
 model.add(Activation('softmax'))
 
 print(model.inputs)
+print([method_name for method_name in dir(model.inputs)
+ if callable(getattr(object, method_name))])
 print(model.outputs)
 #model.layers[0].input.set_shape((None,)+mongogen.getShape())
 #model.layers[len(model.layers)-1].output.set_shape((None,mongogen.getClassNumber()))

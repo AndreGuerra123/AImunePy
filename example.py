@@ -72,6 +72,7 @@ config = layer.get_config()
 config['input_shape']=(32,32,3)
 config['batch_input_shape']=(None,32,32,3)
 model.layers[0] = layers.deserialize({'class_name': layer.__class__.__name__, 'config': config})
+model.inputs[0] = keras.layers.Input(shape=(32,32,3))
 
 layer = model.layers[len(model.layers)-1]
 config = layer.get_config()

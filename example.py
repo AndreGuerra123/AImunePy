@@ -44,46 +44,21 @@ mongogen = MongoImageDataGenerator(
                           
 traingen, valgen = mongogen.flows_from_mongo()
 
-model = Sequential()
-model.add(Conv2D(32, (3, 3), padding='same', input_shape = (100,100,3)))
-model.add(Activation('relu'))
-model.add(Conv2D(32, (3, 3)))
-model.add(Activation('relu'))
-model.add(MaxPooling2D(pool_size=(2, 2)))
-model.add(Dropout(0.25))
-
-model.add(Conv2D(64, (3, 3), padding='same'))
-model.add(Activation('relu'))
-model.add(Conv2D(64, (3, 3)))
-model.add(Activation('relu'))
-model.add(MaxPooling2D(pool_size=(2, 2)))
-model.add(Dropout(0.25))
-
-model.add(Flatten())
-model.add(Dense(512))
-model.add(Activation('relu'))
-model.add(Dropout(0.5))
-model.add(Dense(6))
-model.add(Activation('softmax'))
+model = InceptionV3()
 
 shape=(32,32,3)
 stringmodel = model.to_json()
+
 
 json_model=json.loads(stringmodel)
 json_model['config'][0]['config']['input_shape'] = shape
 json_model['config'][0]['config']['batch_input_shape'] = (None,)+shape
 
-json_model['config'][-1]['config']['shape'] = (6)
+json_model['config'][-1]['config']['input_shape'] = (6)
 
 model = model_from_json(json.dumps(json_model))
 
 
-
-""" layer = model.layers[len(model.layers)-1]
-config = layer.get_config()
-config['input_shape']=(6)
-config['batch_input_shape']=(None,6)
-model.layers[len(model.layers)-1] = layers.deserialize({'class_name': layer.__class__.__name__, 'config': config}) """
 
 #model.layers[0].input.set_shape((None,)+mongogen.getShape())
 #model.layers[len(model.layers)-1].output.set_shape((None,mongogen.getClassNumber()))

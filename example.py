@@ -2,9 +2,12 @@ from controllers.drivers.Monkera import MongoImageDataGenerator
 
 import keras
 import tensorflow as tf
-from keras.models import Sequential
+from keras.models import Sequential, model_from_json
 from keras import layers
 from keras.layers import Dense, Dropout, Activation, Flatten, Conv2D, MaxPooling2D
+
+import json
+import pydash as p_
 
 """ mongogen = MongoImageDataGenerator(
                           connection={'host': "localhost", 'port': 27017,'database': "authentication", 'collection': "loads"},
@@ -67,21 +70,22 @@ model.add(Dropout(0.5))
 model.add(Dense(2))
 model.add(Activation('softmax'))
 
-def changeInputsShape(model, inputs):
-   assert len(model.inputs) == len(inputs), "Model inputs and assigned inputs mismatch."
+shape=(32,32,3)
+stringmodel = model.to_json()
 
-   for i in range(len(inputs)):
-     model.inputs[i] = keras.layers.Input(shape=inputs[i])
+json_model=json.loads(stringmodel)
+json_model['config'][0]['config']['input_shape'] = shape
+json_model['config'][0]['config']['batch_input_shape'] = (None,)+shape
 
-changeInputsShape(model,[(32,32,3)])
+print(json_model)
+#json_model['config'][-1]['config']['output_shape'] = (None,6)
 
-""" layer = model.layers[0]
-config = layer.get_config()
-config['input_shape']=(32,32,3)
-config['batch_input_shape']=(None,32,32,3)
-model.layers[0] = layers.deserialize({'class_name': layer.__class__.__name__, 'config': config})
-model.inputs[0] = keras.layers.Input(shape=(32,32,3))
- """
+model = model_from_json(json.dumps(json_model))
+
+
+print(model.inputs)
+
+
 """ layer = model.layers[len(model.layers)-1]
 config = layer.get_config()
 config['input_shape']=(6)
@@ -98,7 +102,6 @@ model.compile(loss='categorical_crossentropy',
               optimizer=opt,
               metrics=['accuracy'])
 
-print(model.inputs)
 
 trainflow,testflow = mongogen.flows_from_mongo()
 

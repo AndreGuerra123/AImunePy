@@ -9,7 +9,7 @@ from keras.layers import Dense, Dropout, Activation, Flatten, Conv2D, MaxPooling
 import json
 import pydash as p_
 
-""" mongogen = MongoImageDataGenerator(
+mongogen = MongoImageDataGenerator(
                           connection={'host': "localhost", 'port': 27017,'database': "authentication", 'collection': "loads"},
                           query={},
                           location={'image': "image.data", 'label': "classi"},
@@ -45,7 +45,7 @@ traingen, valgen = mongogen.flows_from_mongo()
 
 print(mongogen.getShape())
 print(type(mongogen.getShape()))
-print(mongogen.getClassNumber()) """
+print(mongogen.getClassNumber())
 
 
 model = Sequential()

@@ -77,13 +77,10 @@ json_model=json.loads(stringmodel)
 json_model['config'][0]['config']['input_shape'] = shape
 json_model['config'][0]['config']['batch_input_shape'] = (None,)+shape
 
-print(json_model)
 #json_model['config'][-1]['config']['output_shape'] = (None,6)
 
 model = model_from_json(json.dumps(json_model))
 
-
-print(model.inputs)
 
 
 """ layer = model.layers[len(model.layers)-1]

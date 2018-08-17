@@ -10,7 +10,7 @@ from keras.layers import Dense, Dropout, Activation, Flatten, Conv2D, MaxPooling
 import json
 import pydash as p_
 
-mongogen = MongoImageDataGenerator(
+""" mongogen = MongoImageDataGenerator(
                           connection={'host': "localhost", 'port': 27017,'database': "authentication", 'collection': "loads"},
                           query={},
                           location={'image': "image.data", 'label': "classi"},
@@ -42,16 +42,18 @@ mongogen = MongoImageDataGenerator(
                             }
                           )
                           
-traingen, valgen = mongogen.flows_from_mongo()
+traingen, valgen = mongogen.flows_from_mongo() """
 
 model = InceptionV3()
+print(model.inputs)
+print(model.outputs)
 
 shape=(32,32,3)
 stringmodel = model.to_json()
 
 
 json_model=json.loads(stringmodel)
-print(json_model['config'])
+
 json_model['config'][0]['config']['input_shape'] = shape
 json_model['config'][0]['config']['batch_input_shape'] = (None,)+shape
 

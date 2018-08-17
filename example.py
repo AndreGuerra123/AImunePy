@@ -51,6 +51,7 @@ stringmodel = model.to_json()
 
 
 json_model=json.loads(stringmodel)
+print(json_model['config'])
 json_model['config'][0]['config']['input_shape'] = shape
 json_model['config'][0]['config']['batch_input_shape'] = (None,)+shape
 

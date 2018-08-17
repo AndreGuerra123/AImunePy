@@ -4,6 +4,7 @@ import keras
 import tensorflow as tf
 from keras.models import Sequential, model_from_json
 from keras import layers
+from keras.applications import InceptionV3
 from keras.layers import Dense, Dropout, Activation, Flatten, Conv2D, MaxPooling2D
 
 import json
@@ -72,7 +73,7 @@ json_model=json.loads(stringmodel)
 json_model['config'][0]['config']['input_shape'] = shape
 json_model['config'][0]['config']['batch_input_shape'] = (None,)+shape
 
-#json_model['config'][-1]['config']['output_shape'] = (None,6)
+json_model['config'][-1]['config']['input_shape'] = (None,6)
 
 model = model_from_json(json.dumps(json_model))
 

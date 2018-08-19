@@ -1005,17 +1005,14 @@ class MongoImageDataGenerator(object):
         return self.getEncoded(label)
 
     def getInputShape(self):
-        toreturn = (None,None,None,None)
-        print(self.channel_axis)
+        toreturn = [None,None,None,None]
         toreturn[self.channel_axis] == self.color_shape
         toreturn[self.row_axis] == self.height
         toreturn[self.col_axis] == self.width
-        print(toreturn)
-        return toreturn
+        return tuple(toreturn)
 
     def getOutputShape(self):
-        print(self.classes)
-        return (None,self.classes)
+        return tuple([None,self.classes])
 
     def getEncoded(self, label):
         return _g(self.dictionary, label)

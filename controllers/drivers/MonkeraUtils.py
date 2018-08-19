@@ -1,5 +1,5 @@
 from keras.layers import Dense, Input
-from keras.models import clone_model
+from keras.models import clone_model, Model
 
 def modify(model,inp,out):
 

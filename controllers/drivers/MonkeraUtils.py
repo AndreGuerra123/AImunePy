@@ -55,7 +55,7 @@ def Modify(model,inp,out):
     if(ci): #change input
         model = changeInp(model,inp)
     if(co): #change ouput
-        model = changeOut(self,model,out)
+        model = changeOut(model,out)
 
     return model
 

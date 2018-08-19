@@ -3,7 +3,8 @@ from controllers.drivers.MonkeraUtils import modify
 
 import keras
 import tensorflow as tf
-from keras.layers import Sequential,Dense, Dropout, Activation, Flatten, Conv2D, MaxPooling2D
+from keras.models import Sequential
+from keras.layers import Dense, Dropout, Activation, Flatten, Conv2D, MaxPooling2D
 
 import json
 import pydash as p_

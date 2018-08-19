@@ -1,7 +1,7 @@
 from keras.layers import Dense, Input
 from keras.models import clone_model, Model,Sequential
 
-def Modify(self,model,inp,out):
+def Modify(model,inp,out):
 
     def validation(model,inp,out):
         assert isinstance(model,Sequential) or isinstance(model,Model)

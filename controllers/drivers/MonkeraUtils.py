@@ -2,7 +2,7 @@ from keras.layers import Dense, Input
 from keras.models import clone_model, Model,Sequential
 
 class Modify:
-    def __new__(model,inp,out):
+    def __new__(self,model,inp,out):
         ci,co = self.validation(model,inp,out)
 
         if(ci): #change input

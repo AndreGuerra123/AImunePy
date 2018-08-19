@@ -43,7 +43,7 @@ class Modify(Model):
         return clone_model(model,Input(batch_shape=inp))
         
     def changeOut(self,model,out):
-        idx = self.findPreTop(model) # Finds the pre-topping layer (must be tested more extensively)
+        idx = self.findPreTop(self,model) # Finds the pre-topping layer (must be tested more extensively)
         preds = self.reshapeOutput(model,idx,out)
         model = Model(inputs=model.input, outputs=preds)
   

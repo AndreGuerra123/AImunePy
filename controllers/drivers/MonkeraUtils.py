@@ -47,14 +47,14 @@ class Modify:
         preds = self.reshapeOutput(model,idx,out)
         model = Model(inputs=model.input, outputs=preds)
   
-    def findPreTop(model):
+    def findPreTop(self,model):
         i = len(model.layers)-1
         cos = model.output_shape
         while(model.layers[i].output_shape == cos):
             i -= 1
         return i
  
-    def reshapeOutput(model,i,out): # Reshapes model accordingly to https://keras.io/applications/#usage-examples-for-image-classification-models
+    def reshapeOutput(self,model,i,out): # Reshapes model accordingly to https://keras.io/applications/#usage-examples-for-image-classification-models
         layer=model.layers[i]
         x = layer.output
         x = Dense(out[1], activation='softmax')(x)

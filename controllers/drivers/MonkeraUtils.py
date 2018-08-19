@@ -1,17 +1,7 @@
 from keras.layers import Dense, Input
 from keras.models import clone_model, Model,Sequential
 
-class Modify(Model):
-    def __new__(self,model,inp,out):
-        ci,co = self.validation(model,inp,out)
-        
-        if(ci): #change input
-            model = self.changeInp(model,inp)
-        if(co): #change ouput
-            model = self.changeOut(self,model,out)
-
-        return Model(inputs=model.inputs,outputs=model.outputs)
-
+def Modify(self,model,inp,out):
 
     def validation(model,inp,out):
         assert isinstance(model,Sequential) or isinstance(model,Model)
@@ -38,16 +28,8 @@ class Modify(Model):
         co = any([out[i] != out_old[i] for i in range(0,len(out))])
       
         return ci,co
-        
-    def changeInp(model,inp):
-        return clone_model(model,Input(batch_shape=inp))
-        
-    def changeOut(self,model,out):
-        idx = self.findPreTop(self,model) # Finds the pre-topping layer (must be tested more extensively)
-        preds = self.reshapeOutput(model,idx,out)
-        model = Model(inputs=model.input, outputs=preds)
-  
-    def findPreTop(self,model):
+
+    def findPreTop(model):
         i = len(model.layers)-1
         cos = model.output_shape
         while(model.layers[i].output_shape == cos):
@@ -58,4 +40,26 @@ class Modify(Model):
         layer=model.layers[i]
         x = layer.output
         x = Dense(out[1], activation='softmax')(x)
-        return x
+        return x  
+
+    def changeInp(model,inp):
+        return clone_model(model,Input(batch_shape=inp))
+        
+    def changeOut(model,out):
+        idx = findPreTop(model) # Finds the pre-topping layer (must be tested more extensively)
+        preds = reshapeOutput(model,idx,out)
+        model = Model(inputs=model.input, outputs=preds)
+
+    ci,co = validation(model,inp,out)
+        
+    if(ci): #change input
+        model = changeInp(model,inp)
+    if(co): #change ouput
+        model = changeOut(self,model,out)
+
+    return model
+
+
+
+  
+    

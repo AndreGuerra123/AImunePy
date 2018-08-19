@@ -1,8 +1,7 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-from controllers.train import trainer
-from controllers.predict import predictor
-from controllers.evaluate import evaluator
+from controllers.train import Trainer
+from controllers.predict import Predictor
 
 app = Flask(__name__)
 CORS(app)
@@ -11,13 +10,13 @@ CORS(app)
 
 @app.route("/train", methods=['POST'])
 def train():
-    return jsonify(trainer(request.json))
+    return jsonify(Trainer(request.json))
 
 # this will route the request to the an API wich performs image prediciton in tensorflow
 
 @app.route("/predict", methods=['POST'])
 def predict():
-    return jsonify(predictor(request.json))
+    return jsonify(Predictor(request.json))
 
 # HTTP Errors handlers
 

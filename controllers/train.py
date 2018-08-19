@@ -133,7 +133,6 @@ class Trainer:
         #Save results
         self.updateProgress(0.95,"Saving model results...")
 
-
     def updateProgress(self,value,strmsg):
         progress={'value':value,
                   'description':strmsg}

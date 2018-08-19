@@ -48,19 +48,16 @@ def Modify(model,inp,out):
     def changeOut(model,out):
         idx = findPreTop(model) # Finds the pre-topping layer (must be tested more extensively)
         preds = reshapeOutput(model,idx,out)
-        model = Model(inputs=model.input, outputs=preds)
+        return Model(inputs=model.input, outputs=preds)
 
     ci,co = validation(model,inp,out)
         
     if(ci): #change input
         model = changeInp(model,inp)
-        print(type(model))
 
     if(co): #change ouput
         model = changeOut(model,out)
-        print(type(model))
 
-    print(type(model))
 
     return model
 

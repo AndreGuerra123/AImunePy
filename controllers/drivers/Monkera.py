@@ -1006,9 +1006,9 @@ class MongoImageDataGenerator(object):
 
     def getInputShape(self):
         toreturn = [None,None,None,None]
-        toreturn[self.channel_axis] == self.color_shape
-        toreturn[self.row_axis] == self.height
-        toreturn[self.col_axis] == self.width
+        toreturn[self.channel_axis] = self.color_shape
+        toreturn[self.row_axis] = self.height
+        toreturn[self.col_axis] = self.width
         print(tuple(toreturn))
         return tuple(toreturn)
 

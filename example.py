@@ -65,6 +65,7 @@ model.add(Dropout(0.5,name="damn"))
 model.add(Dense(2))
 model.add(Activation('softmax'))
 
+traingen, valgen = mongogen.flows_from_mongo()
 model, modified = modify(model,mongogen.getInputShape(),mongogen.getOutputShape())
 
 # initiate RMSprop optimizer"""
@@ -75,5 +76,4 @@ model.compile(loss='categorical_crossentropy',
               optimizer=opt,
               metrics=['accuracy'])
 
-traingen, valgen = mongogen.flows_from_mongo()
 model.fit_generator(traingen, epochs=10,validation_data=valgen, workers=4, use_multiprocessing=True)

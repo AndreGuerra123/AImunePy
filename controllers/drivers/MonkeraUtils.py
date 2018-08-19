@@ -3,12 +3,12 @@ from keras.models import clone_model, Model,Sequential
 
 class Modify(Model):
     def __new__(self,model,inp,out):
-        ci,co = validation(model,inp,out)
+        ci,co = self.validation(model,inp,out)
         
         if(ci): #change input
-            model = changeInp(model,inp)
+            model = self.changeInp(model,inp)
         if(co): #change ouput
-            model = changeOut(model,out)
+            model = self.changeOut(model,out)
 
         return model
 

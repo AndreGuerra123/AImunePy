@@ -2,13 +2,13 @@ from keras.layers import Dense, Input
 from keras.models import clone_model, Model,Sequential
 
 class Modify:
-    def __new__(self,model,inp,out):
-        ci,co = self.validation(model,inp,out)
-
+    def __new__(model,inp,out):
+        ci,co = validation(model,inp,out)
+        
         if(ci): #change input
-            model = self.changeInp(model,inp)
+            model = changeInp(model,inp)
         if(co): #change ouput
-             model = self.changeOut(model,out)
+             model = changeOut(model,out)
 
         return model, any([ci,co])
 
@@ -47,14 +47,14 @@ class Modify:
         preds = self.reshapeOutput(model,idx,out)
         model = Model(inputs=model.input, outputs=preds)
   
-    def findPreTop(self,model):
+    def findPreTop(model):
         i = len(model.layers)-1
         cos = model.output_shape
         while(model.layers[i].output_shape == cos):
             i -= 1
         return i
  
-    def reshapeOutput(self,model,i,out): # Reshapes model accordingly to https://keras.io/applications/#usage-examples-for-image-classification-models
+    def reshapeOutput(model,i,out): # Reshapes model accordingly to https://keras.io/applications/#usage-examples-for-image-classification-models
         layer=model.layers[i]
         x = layer.output
         x = Dense(out[1], activation='softmax')(x)

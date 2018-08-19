@@ -2,13 +2,13 @@ from keras.layers import Dense, Input
 from keras.models import clone_model, Model,Sequential
 
 class Modify:
-    def __new__(model,inp,out):
+    def __new__(self,model,inp,out):
         ci,co = validation(model,inp,out)
         
         if(ci): #change input
             model = changeInp(model,inp)
         if(co): #change ouput
-             model = changeOut(model,out)
+            model = changeOut(model,out)
 
         return model, any([ci,co])
 

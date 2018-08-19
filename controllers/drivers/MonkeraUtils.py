@@ -4,7 +4,7 @@ from keras.models import clone_model, Model,Sequential
 def Modify(model,inp,out):
 
     def validation(model,inp,out):
-        assert isinstance(model,Sequential) or isinstance(model,Model)
+        assert isinstance(model,int) or isinstance(model,Model)
         n_in = len(model.inputs)
         n_out =len(model.outputs) 
         assert (n_in) > 0, 'Model has not detectable inputs.'
@@ -54,8 +54,13 @@ def Modify(model,inp,out):
         
     if(ci): #change input
         model = changeInp(model,inp)
+        print(type(model))
+
     if(co): #change ouput
         model = changeOut(model,out)
+        print(type(model))
+
+    print(type(model))
 
     return model
 

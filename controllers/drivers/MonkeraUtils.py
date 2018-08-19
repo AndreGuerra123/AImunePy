@@ -1,7 +1,7 @@
 from keras.layers import Dense, Input
 from keras.models import clone_model, Model,Sequential
 
-class Modify:
+class Modify(Model):
     def __new__(self,model,inp,out):
         ci,co = validation(model,inp,out)
         

@@ -58,6 +58,7 @@ def assertGet(obj,loc,msg):
 
 class Trainer:
     def __init__(self,params):
+        print(params)
         self.model_id = validateID(params.model_id, "Model_ID is not a valid MongoDB ID string.")
         self.job_id = validateID(params.job_id, "Job_ID is not a valid MongoDB ID string.")
 

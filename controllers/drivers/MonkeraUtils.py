@@ -59,7 +59,7 @@ def Modify(model,inp,out):
         model = changeOut(model,out)
 
 
-    return model
+    return model, any([ci,co])
 
 
 

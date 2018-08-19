@@ -10,7 +10,7 @@ class Modify(Model):
         if(co): #change ouput
             model = self.changeOut(self,model,out)
 
-        return model
+        return Model(inputs=model.inputs,outputs=model.outputs)
 
 
     def validation(model,inp,out):

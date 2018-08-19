@@ -8,7 +8,7 @@ class Modify(Model):
         if(ci): #change input
             model = self.changeInp(model,inp)
         if(co): #change ouput
-            model = self.changeOut(model,out)
+            model = self.changeOut(self,model,out)
 
         return model
 
@@ -42,12 +42,12 @@ class Modify(Model):
     def changeInp(model,inp):
         return clone_model(model,Input(batch_shape=inp))
         
-    def changeOut(model,out):
+    def changeOut(self,model,out):
         idx = self.findPreTop(model) # Finds the pre-topping layer (must be tested more extensively)
         preds = self.reshapeOutput(model,idx,out)
         model = Model(inputs=model.input, outputs=preds)
   
-    def findPreTop(model):
+    def findPreTop(self,model):
         i = len(model.layers)-1
         cos = model.output_shape
         while(model.layers[i].output_shape == cos):

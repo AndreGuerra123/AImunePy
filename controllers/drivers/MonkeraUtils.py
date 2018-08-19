@@ -1,4 +1,4 @@
-from keras.layers import Dense
+from keras.layers import Dense, Input
 from keras.models import clone_model
 
 def modify(model,inp,out):

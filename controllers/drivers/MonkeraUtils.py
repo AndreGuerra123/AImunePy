@@ -13,7 +13,7 @@ class Modify:
         return model, any([ci,co])
 
 
-    def validation(self,model,inp,out):
+    def validation(model,inp,out):
         assert isinstance(model,Sequential) or isinstance(model,Model)
         n_in = len(model.inputs)
         n_out =len(model.outputs) 
@@ -39,22 +39,22 @@ class Modify:
       
         return ci,co
         
-    def changeInp(self,model,inp):
+    def changeInp(model,inp):
         return clone_model(model,Input(batch_shape=inp))
         
-    def changeOut(self,model,out):
+    def changeOut(model,out):
         idx = self.findPreTop(model) # Finds the pre-topping layer (must be tested more extensively)
         preds = self.reshapeOutput(model,idx,out)
         model = Model(inputs=model.input, outputs=preds)
   
-    def findPreTop(self,model):
+    def findPreTop(model):
         i = len(model.layers)-1
         cos = model.output_shape
         while(model.layers[i].output_shape == cos):
             i -= 1
         return i
  
-    def reshapeOutput(self,model,i,out): # Reshapes model accordingly to https://keras.io/applications/#usage-examples-for-image-classification-models
+    def reshapeOutput(model,i,out): # Reshapes model accordingly to https://keras.io/applications/#usage-examples-for-image-classification-models
         layer=model.layers[i]
         x = layer.output
         x = Dense(out[1], activation='softmax')(x)

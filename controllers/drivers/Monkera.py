@@ -884,7 +884,6 @@ class MongoImageDataGenerator(object):
         params = self.get_exact_transform(x.shape, seed)
         return self.apply_transform(x, params)
  
-
     def transform_test_batch(self,x,y):
         return self.standardize(x),y
 
@@ -1005,11 +1004,15 @@ class MongoImageDataGenerator(object):
                     "Failed to retrieve image label (ID:"+str(_g(sample, '_id'))+") at "+self.lbl_location+".")
         return self.getEncoded(label)
 
-    def getShape(self):
-        return (self.height, self.width, self.color_shape)
+    def getInputShape(self):
+        toreturn = (None,None,None,None)
+        toreturn[self.channel_axis] == self.color_shape
+        toreturn[self.row_axis] == self.height
+        toreturn[self.col_axis] == self.width
+        return toreturn
 
-    def getClassNumber(self):
-        return self.classes
+    def getOutputShape(self):
+        return (None,self.classes)
 
     def getEncoded(self, label):
         return _g(self.dictionary, label)

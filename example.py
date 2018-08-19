@@ -1,16 +1,17 @@
 from controllers.drivers.Monkera import MongoImageDataGenerator
+from controllers.drivers.MonkeraUtils import modify
 
 import keras
 import tensorflow as tf
-from keras.models import Sequential, model_from_json
+from keras.models import Sequential, Model, model_from_json, clone_model
 from keras import layers
 from keras.applications import InceptionV3
-from keras.layers import Dense, Dropout, Activation, Flatten, Conv2D, MaxPooling2D
+from keras.layers import Dense, Dropout, Activation, Flatten, Conv2D, MaxPooling2D, Input, GlobalAveragePooling2D
 
 import json
 import pydash as p_
 
-""" mongogen = MongoImageDataGenerator(
+mongogen = MongoImageDataGenerator(
                           connection={'host': "localhost", 'port': 27017,'database': "authentication", 'collection': "loads"},
                           query={},
                           location={'image': "image.data", 'label': "classi"},
@@ -42,29 +43,30 @@ import pydash as p_
                             }
                           )
                           
-traingen, valgen = mongogen.flows_from_mongo() """
+model = Sequential()
+model.add(Conv2D(32, (3, 3), padding='same', input_shape = (100,100,3)))
+model.add(Activation('relu'))
+model.add(Conv2D(32, (3, 3)))
+model.add(Activation('relu'))
+model.add(MaxPooling2D(pool_size=(2, 2)))
+model.add(Dropout(0.25))
 
-model = InceptionV3()
-print(model.inputs)
-print(model.outputs)
+model.add(Conv2D(64, (3, 3), padding='same'))
+model.add(Activation('relu'))
+model.add(Conv2D(64, (3, 3)))
+model.add(Activation('relu'))
+model.add(MaxPooling2D(pool_size=(2, 2)))
+model.add(Dropout(0.25))
 
-shape=(32,32,3)
-stringmodel = model.to_json()
+model.add(Flatten())
+model.add(Dense(512))
+model.add(Activation('relu'))
+model.add(Dropout(0.5,name="damn"))
+model.add(Dense(2))
+model.add(Activation('softmax'))
 
+model, modified = modify(model,mongogen.getInputShape(),mongogen.getOutputShape())
 
-json_model=json.loads(stringmodel)
-
-json_model['config'][0]['config']['input_shape'] = shape
-json_model['config'][0]['config']['batch_input_shape'] = (None,)+shape
-
-json_model['config'][-1]['config']['input_shape'] = (6)
-
-model = model_from_json(json.dumps(json_model))
-
-
-
-#model.layers[0].input.set_shape((None,)+mongogen.getShape())
-#model.layers[len(model.layers)-1].output.set_shape((None,mongogen.getClassNumber()))
 # initiate RMSprop optimizer"""
 opt = keras.optimizers.rmsprop(lr=0.0001, decay=1e-6) 
 
@@ -73,7 +75,5 @@ model.compile(loss='categorical_crossentropy',
               optimizer=opt,
               metrics=['accuracy'])
 
-
-trainflow,testflow = mongogen.flows_from_mongo()
-
+traingen, valgen = mongogen.flows_from_mongo()
 model.fit_generator(traingen, epochs=10,validation_data=valgen, workers=4, use_multiprocessing=True)

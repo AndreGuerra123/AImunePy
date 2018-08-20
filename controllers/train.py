@@ -53,7 +53,11 @@ def disconnect(collection):
     collection = None
 
 def includeAll(obj,location):
-    return "-1" in p_.get(obj,location) 
+    return "-1" in p_.get(obj,location)
+
+def notCanceled(model_id,job_id):
+    model = connect(MODELS).find({'_id':model_id},{'file.queue':1})
+    assert job_id == p_.get(model,'file.queue'), 'Job was canceled or not longer is the most recent training job referenced by the model.'
 
 class Trainer:
     def __init__(self,params):
@@ -61,18 +65,23 @@ class Trainer:
         self.model_id = validateID(params,'model_id', "Model_ID is not a valid MongoDB ID string.")
         self.job_id = validateID(params,'job_id', "Job_ID is not a valid MongoDB ID string.")
 
+
+        notCanceled(model_id,job_id)
         #Retrieving modelling parameters
         self.updateProgress(0,"Retrieving model parameters...")
         self.model_doc = self.getModelParameters()
 
+        notCanceled(model_id,job_id)
         #Validating modelling parameters
         self.updateProgress(0.05,"Validating model parameters...")
         self.model_postdoc = parameterValidation(self.model_doc)
         
+        notCanceled(model_id,job_id)
         #Creating Query
         self.updateProgress(0.1,"Setting image query parameter...")
         self.query = self.getQuery(self.model_postdoc)
 
+        notCanceled(model_id,job_id)
         #Creating Image Data Flow Generators
         self.updateProgress(0.15,"Setting MongoDB image data generators...")
         self.mifg = MongoImageFlowGenerator(connection=IMAGES,
@@ -142,7 +151,7 @@ class Trainer:
 
     def getModelParameters(self):
         col = connect(MODELS)
-        toreturn = col.find({'_id':self.model_id,},{'dataset':1,'config':1,'architecture':1,'queue':1})
+        toreturn = col.find({'_id':self.model_id,},{'dataset':1,'config':1,'architecture':1})
         disconnect(col)
         return toreturn
 

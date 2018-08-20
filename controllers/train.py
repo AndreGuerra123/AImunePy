@@ -35,9 +35,14 @@ JOBS = {
     'collection':'jobs'
 }
 
+def getSafe(obj,loc,typ,msg):
+    tr = p_.get(obj,loc)
+    assert tr != None, msg
+    assert type(tr)==typ, msg
+    return tr
 
-def validateID(mongoID, msg):
-    if not mongoID: raise ValueError(msg)
+def validateID(params, loc, msg):
+    mongoID = getSafe(params,loc,str,msg)
     return ObjectID(mongoID)   
     
 def connect(obj):
@@ -48,25 +53,19 @@ def disconnect(collection):
     collection = None
 
 def includeAll(obj,location):
-    return "-1" in p_.get(obj,location)
-
-def assertGet(obj,loc,msg):
-    pro = p_.get(obj,loc,default = None)
-    assert pro != None, msg
-    return pro
-    
+    return "-1" in p_.get(obj,location) 
 
 class Trainer:
     def __init__(self,params):
         print(params)
-        self.model_id = validateID(params.model_id, "Model_ID is not a valid MongoDB ID string.")
-        self.job_id = validateID(params.job_id, "Job_ID is not a valid MongoDB ID string.")
+        self.model_id = validateID(params,'model_id', "Model_ID is not a valid MongoDB ID string.")
+        self.job_id = validateID(params,'job_id', "Job_ID is not a valid MongoDB ID string.")
 
         #Retrieving modelling parameters
         self.updateProgress(0,"Retrieving model parameters...")
         self.model_doc = self.getModelParameters()
 
-        #Validating modelling parameters #TODO:
+        #Validating modelling parameters
         self.updateProgress(0.05,"Validating model parameters...")
         self.model_postdoc = parameterValidation(self.model_doc)
         

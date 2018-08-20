@@ -43,7 +43,7 @@ def getSafe(obj,loc,typ,msg):
 
 def validateID(params, loc, msg):
     mongoID = getSafe(params,loc,str,msg)
-    return ObjectID(mongoID)   
+    return ObjectId(mongoID)   
     
 def connect(obj):
     return pymongo.MongoClient(obj['host'],obj['port'])[obj['database']]['collection']
@@ -64,7 +64,6 @@ class Trainer:
         print(params)
         self.model_id = validateID(params,'model_id', "Model_ID is not a valid MongoDB ID string.")
         self.job_id = validateID(params,'job_id', "Job_ID is not a valid MongoDB ID string.")
-
 
         notCanceled(model_id,job_id)
         #Retrieving modelling parameters

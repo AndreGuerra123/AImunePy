@@ -8,6 +8,7 @@ import keras.models as Models
 from PIL import Image
 import numpy as np
 import pydash as p_
+from datetime import datetime
 
 IMAGES = {
     'host': 'localhost',
@@ -28,13 +29,10 @@ MODELS = {
     'collection':'models'
 }
 
-JOBS = {
-    'host': 'localhost',
-    'port': 12721,
-    'database':'authentication',
-    'collection':'jobs'
-}
 
+def get(obj,loc):
+    return p_.get(obj.loc)
+    
 def getSafe(obj,loc,typ,msg):
     tr = p_.get(obj,loc)
     assert tr != None, msg
@@ -42,8 +40,8 @@ def getSafe(obj,loc,typ,msg):
     return tr
 
 def validateID(params, loc, msg):
-    mongoID = getSafe(params,loc,str,msg)
-    return ObjectId(mongoID)   
+    mongoID = getSafe(params,loc,ObjectId,msg)
+    return mongoID   
     
 def connect(obj):
     return pymongo.MongoClient(obj['host'],obj['port'])[obj['database']]['collection']
@@ -55,35 +53,27 @@ def disconnect(collection):
 def includeAll(obj,location):
     return "-1" in p_.get(obj,location)
 
-def notCanceled(model_id,job_id):
-    model = connect(MODELS).find({'_id':model_id},{'file.queue':1})
-    assert job_id == p_.get(model,'file.queue'), 'Job was canceled or not longer is the most recent training job referenced by the model.'
-
 class Trainer:
     def __init__(self,params):
-        print(params)
-        self.model_id = validateID(params,'model_id', "Model_ID is not a valid MongoDB ID string.")
-        self.job_id = validateID(params,'job_id', "Job_ID is not a valid MongoDB ID string.")
 
-        notCanceled(model_id,job_id)
-        #Retrieving modelling parameters
-        self.updateProgress(0,"Retrieving model parameters...")
-        self.model_doc = self.getModelParameters()
+        self.model_id = validateID(params,'source', "Model source is not a valid MongoDB ID.")
+        self.startJob()
+        try:
+            #Retrieving modelling parameters
+            self.updateProgress(0,"Retrieving model parameters...")
+            self.model_doc = self.getModelParameters()
 
-        notCanceled(model_id,job_id)
-        #Validating modelling parameters
-        self.updateProgress(0.05,"Validating model parameters...")
-        self.model_postdoc = parameterValidation(self.model_doc)
+            #Validating modelling parameters
+            self.updateProgress(0.05,"Validating model parameters...")
+            self.model_postdoc = parameterValidation(self.model_doc)
         
-        notCanceled(model_id,job_id)
-        #Creating Query
-        self.updateProgress(0.1,"Setting image query parameter...")
-        self.query = self.getQuery(self.model_postdoc)
+            #Creating Query
+            self.updateProgress(0.1,"Setting image query parameter...")
+            self.query = self.getQuery(self.model_postdoc)
 
-        notCanceled(model_id,job_id)
-        #Creating Image Data Flow Generators
-        self.updateProgress(0.15,"Setting MongoDB image data generators...")
-        self.mifg = MongoImageFlowGenerator(connection=IMAGES,
+            #Creating Image Data Flow Generators
+            self.updateProgress(0.15,"Setting MongoDB image data generators...")
+            self.mifg = MongoImageFlowGenerator(connection=IMAGES,
                  query=self.query,
                  location=LOCATION,
                  config={
@@ -117,36 +107,84 @@ class Trainer:
                      'fill_mode': get(self.model_postdoc,'fill_mode'),
                      'cval': get(self.model_postdoc,'cval')
                  })
-        self.traingen , self.valgen = self.mifg.flows_from_mongo()
+            self.traingen , self.valgen = self.mifg.flows_from_mongo()
 
-        #Loading Architecture
-        self.updateProgress(0.2,"Loading model architecture...")
-        self.model = loadArchitecture()
+            #Loading Architecture
+            self.updateProgress(0.2,"Loading model architecture...") 
+            self.model = loadArchitecture()
 
-        #Compiling Architecture
-        self.updateProgress(0.25,"Compiling model loss, optimiser and metrics...") 
-        self.model.compile(loss=get(self.model_postdoc,'batch_size'),
+            #Compiling Architecture
+            self.updateProgress(0.25,"Compiling model loss, optimiser and metrics...") 
+            self.model.compile(loss=get(self.model_postdoc,'batch_size'),
               optimizer=get(self.model_postdoc,'optimizer'),
               metrics=get(self.model_postdoc,'batch_size'))
 
+            #Train Model
+            self.updateProgress(0.3,"Retrieving model parameters and architecture...") 
+            self.model = self.model.fit_generator(self.traingen, epochs=get(self.model_postdoc,'epochs'), validation_data=self.valgen, workers=4, use_multiprocessing=True)
 
-        #Train Model
-        self.updateProgress(0.3,"Retrieving model parameters and architecture...")
-        self.model = self.model.fit_generator(self.traingen, epochs=get(self.model_postdoc,'epochs'), validation_data=self.valgen, workers=4, use_multiprocessing=True)
+            #Save weigths
+            self.updateProgress(0.9,"Saving model trained weights...") 
 
-        #Save weigths
-        self.updateProgress(0.9,"Saving model trained weights...")
+            #Save results
+            self.updateProgress(0.95,"Saving model results...") 
+    
+            self.finishJob()
 
+        except Exception as e:
+            self.processError(e.message)
 
-        #Save results
-        self.updateProgress(0.95,"Saving model results...")
-
-    def updateProgress(self,value,strmsg):
-        progress={'value':value,
-                  'description':strmsg}
-        col = connect(jobs)
-        col.update_one({'_id':self.job_id},{'progress':progress})
+    def startJob(self):
+        self.job_id = ObjectId()
+        col = connect(MODELS)
+        col.update_one({'_id':self.model_id},{'$set':{
+            'file.job._id':self.job,
+            'file.job.started':datetime.utcnow(),
+            'file.job.value':0,
+            'file.job.description':"Started job..."
+        }},upsert=False)
         disconnect(col)
+
+    def finishJob(self):
+        if(self.canceled()):
+            raise ValueError('Model training was canceled/reset.')
+        else:
+            col = connect(MODELS)
+            col.update_one({'_id':self.model_id},{'$set':
+            {'file.job.value':1,
+            'file.job.description':"Job completed sucessfully.",
+            'file.job.finished':datetime.utcnow()}})
+            disconnect(col)
+
+    def updateProgress(self,value,strmsg): # Returns False if cannot update meaning that it was canceled
+        if(self.canceled()):
+            raise ValueError('Model training was canceled/reset.')
+        else:
+            col = connect(MODELS)
+            col.update_one({'_id':self.model_id},{'$set':{
+            'file.job.value':value,
+            'file.job.description':strmsg
+            }},upsert=False)
+            disconnect(col)
+
+    def canceled(self):
+        col = connect(MODELS)
+        model = col.find_one({'_id':self.model_id},{'file.job._id':1,'_id':0})
+        if(model is None):
+            return True
+        else:
+            return (get(model,'file.job._id') != self.job_id)
+
+    def processError(self,errormsg):
+        if(self.canceled()):
+            pass
+        else:
+            col = connect(MODELS)
+            col.update_one({'_id':self.model_id},{'$set':{
+            'file.job.error':errormsg,
+            'file.job.finished':datetime.utcnow()
+            }},upsert=False)
+            disconnect(col)
 
     def getModelParameters(self):
         col = connect(MODELS)

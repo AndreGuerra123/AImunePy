@@ -11,11 +11,14 @@ CORS(app)
 @app.route("/train", methods=['POST'])
 def train():
     Trainer(request.json)
+    return jsonify('Train complete.')
     # this will route the request to the an API wich performs image prediciton in tensorflow
 
 @app.route("/predict", methods=['POST'])
 def predict():
     Predictor(request.json)
+    return jsonify('Prediction complete.')
+
 
 # HTTP Errors handlers
 

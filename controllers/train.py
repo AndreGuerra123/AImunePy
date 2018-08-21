@@ -13,8 +13,8 @@ from datetime import datetime
 IMAGES = {
     'host': '127.0.0.1',
     'port': 27017,
-    'database':'authentication',
-    'collection':'loads'
+    'database': 'authentication',
+    'collection': 'loads'
 }
 
 LOCATION = {
@@ -25,53 +25,163 @@ LOCATION = {
 MODELS = {
     'host': '127.0.0.1',
     'port': 27017,
-    'database':'authentication',
-    'collection':'models'
+    'database': 'authentication',
+    'collection': 'models'
 }
 
 
-def get(obj,loc):
-    return p_.get(obj,loc)
+def get(obj, loc):
+    return p_.get(obj, loc)
 
-def getSafe(obj,loc,typ,msg):
-    tr = p_.get(obj,loc)
+def getSafe(obj, loc, typ, msg):
+    tr = p_.get(obj, loc)
     assert tr != None, msg
-    assert type(tr)==typ, msg
+    assert type(tr) == typ, msg
     return tr
 
-def validateID(params, loc, msg):
-    mongoID = getSafe(params,loc,str,msg)
-    return ObjectId(mongoID)   
-    
+
+def str2ObjectId(params, loc, msg):
+    mongoID = getSafe(params, loc, str, msg)
+    return ObjectId(mongoID)
+
+
 def connect(obj):
-    return pymongo.MongoClient(obj['host'],obj['port'])[obj['database']]['collection']
-    
+    return pymongo.MongoClient(obj['host'], obj['port'])[obj['database']]['collection']
+
+
 def disconnect(collection):
     del collection
     collection = None
 
-def includeAll(obj,location):
-    return "-1" in p_.get(obj,location)
+
+def includeAll(obj, location):
+    return "-1" in p_.get(obj, location)
+
 
 class Trainer:
+
+    def startJob(self):
+        self.job_id = ObjectId()
+        col = connect(MODELS)
+        modelinit = col.find_one({"_id": model_id})
+        dataset_date = getSafe(modelinit, 'dataset.date', datetime,
+                               "Failed to retrieve the dataset configuration synchronisation date.")
+        config_date = getSafe(modelinit, 'config.date', datetime,
+                              "Failed to retrieve the model configuration synchronisation date.")
+        self.file = {
+        'job': {
+            '_id': self.job_id,
+            'started': datetime.utcnow(),
+            'finished': None,
+            'error': None,
+            'value': 0,
+            'description': "Started new Job..."
+            },
+        'sync': {
+            'dataset_date': dataset_date,
+            'config_date': config_date
+        }}
+        count = col.update_one({'_id': self.model_id}, {'$set': {
+            'file': self.file
+                 }}).modified_count
+        disconnect(col)
+        if(count != 1):
+            raise ValueError('Failed to create new job.')
+      
+    def finishJob(self):
+        if(self.proceed()):
+            self.file['job']['value'] = 1;
+            self.file['job']['description'] = "Job completed successfully.";
+            self.file['job']['finished'] = datetime.utcnow()
+
+            col = connect(MODELS)
+            col.update_one({'_id': self.model_id}, {'$set':
+            {'file':self.file}})
+            disconnect(col)
+        else:
+            raise ValueError('Model training was canceled/reset.')
+
+    # Returns False if cannot update meaning that it was canceled
+    def updateProgress(self, value, strmsg):
+        if(self.proceed()):
+            self.file['job']['value'] = value;
+            self.file['job']['description'] = strmsg;
+            col = connect(MODELS)
+            col.update_one({'_id': self.model_id}, {'$set': {
+            'file': self.file}})
+            disconnect(col)
+        else:
+            raise ValueError('Modelling job was canceled/reset.')
+
+    def proceed(self):
+        col = connect(MODELS)
+        model = col.find_one({'_id': self.model_id}, {'file.job':1})
+        disconnect(col)
+        if(model is None):
+            return False
+        elif(get(model, 'file.job._id') != self.job_id):
+            return False
+        elif(get(model,'file.job.finished') is not None):
+            return False 
+        else:
+            return True
+
+    def processError(self, errormsg):
+        if(self.proceed()):
+            self.file['job']['error'] = errormsg
+            self.file['job']['finished'] = datetime.utcnow()
+            col = connect(MODELS)
+            col.update_one({'_id': self.model_id}, {'$set': {
+            'file':self.file}})
+            disconnect(col)
+        else:
+            pass
+
+    def getModelParameters(self):
+        col = connect(MODELS)
+        toreturn = col.find({'_id': self.model_id, }, {
+                            'dataset': 1, 'config': 1, 'architecture': 1})
+        disconnect(col)
+        return toreturn
+
+    def getQuery(self):
+        query = {}
+        if (not includeAll(self.model_doc, 'dataset.patients')):
+            query["patients"] = {'$in': params.dataset.patients}
+        if (not includeAll(self.model_doc, 'dataset.conditions')):
+            query["conditions"] = {'$in': params.dataset.conditions}
+        if (not includeAll(self.model_doc, 'dataset.compounds')):
+            query["compounds"] = {'$in': params.dataset.compounds}
+        if (not includeAll(self.model_doc, 'dataset.classes')):
+            query["classes"] = {'$in': params.dataset.classes}
+        return query
+
+    def loadArchitecture(self):
+        model = Models.model_from_json(
+            json(get(self.model_doc, 'architecture')))
+        model.layers[0].input.set_shape(self.model_doc.getShape())
+        model.layers[len(model.layers)].output.set_shape(
+            self.mifg.getClassNumber)
+        return model
+
     def __init__(self,params):
 
-        self.model_id = validateID(params,'source', "Model source is not a valid MongoDB ID.")
-        self.startJob()
+        self.model_id = str2ObjectID(params,'source', "Model source is not a valid MongoDB ID string.")
+        self.job_id = startJob(self.model_id)
         try:
-            #Retrieving modelling parameters
+            # Retrieving modelling parameters
             self.updateProgress(0,"Retrieving model parameters...")
             self.model_doc = self.getModelParameters()
 
-            #Validating modelling parameters
+            # Validating modelling parameters
             self.updateProgress(0.05,"Validating model parameters...")
             self.model_postdoc = parameterValidation(self.model_doc)
         
-            #Creating Query
+            # Creating Query
             self.updateProgress(0.1,"Setting image query parameter...")
             self.query = self.getQuery(self.model_postdoc)
 
-            #Creating Image Data Flow Generators
+            # Creating Image Data Flow Generators
             self.updateProgress(0.15,"Setting MongoDB image data generators...")
             self.mifg = MongoImageFlowGenerator(connection=IMAGES,
                  query=self.query,
@@ -109,24 +219,24 @@ class Trainer:
                  })
             self.traingen , self.valgen = self.mifg.flows_from_mongo()
 
-            #Loading Architecture
+            # Loading Architecture
             self.updateProgress(0.2,"Loading model architecture...") 
             self.model = loadArchitecture()
 
-            #Compiling Architecture
+            # Compiling Architecture
             self.updateProgress(0.25,"Compiling model loss, optimiser and metrics...") 
             self.model.compile(loss=get(self.model_postdoc,'batch_size'),
               optimizer=get(self.model_postdoc,'optimizer'),
               metrics=get(self.model_postdoc,'batch_size'))
 
-            #Train Model
+            # Train Model
             self.updateProgress(0.3,"Retrieving model parameters and architecture...") 
             self.model = self.model.fit_generator(self.traingen, epochs=get(self.model_postdoc,'epochs'), validation_data=self.valgen, workers=4, use_multiprocessing=True)
 
-            #Save weigths
+            # Save weigths
             self.updateProgress(0.9,"Saving model trained weights...") 
 
-            #Save results
+            # Save results
             self.updateProgress(0.95,"Saving model results...") 
     
             self.finishJob()
@@ -134,94 +244,4 @@ class Trainer:
         except Exception as e:
             self.processError(str(e))
 
-    def startJob(self):
-        self.job_id=ObjectId()
-        col = connect(MODELS)
-        modelinit = col.find_one({"_id":self.model_id})
-        print(modelinit)
-        dataset_date = getSafe(modelinit,'dataset.date',datetime,"Failed to retrieve the dataset configuration synchronisation date.")
-        config_date = getSafe(modelinit,'config.date',datetime,"Failed to retrieve the model configuration synchronisation date.")
-        self.file = {
-        'job':{
-            '_id':self.job_id,
-            'started':datetime.utcnow(),
-            'finished':None,
-            'error':None,
-            'value':0,
-            'description':"Started new Job..." 
-            },
-        'sync':{
-            'dataset_date':dataset_date,
-            'config_date':config_date
-        }}
-        count = col.update_one({'_id':self.model_id},{'$set':{
-            'file':self.file
-                 }}).modified_count
-        disconnect(col)
-        if(count!=1):
-            raise ValueError('Failed to create new job.')
-
-    def finishJob(self):
-        if(self.canceled()):
-            raise ValueError('Model training was canceled/reset.')
-        else:
-            col = connect(MODELS)
-            col.update_one({'_id':self.model_id},{'$set':
-            {'file.job.value':1,
-            'file.job.description':"Job completed sucessfully.",
-            'file.job.finished':datetime.utcnow()}})
-            disconnect(col)
-
-    def updateProgress(self,value,strmsg): # Returns False if cannot update meaning that it was canceled
-        if(self.canceled()):
-            raise ValueError('Model training was canceled/reset.')
-        else:
-            col = connect(MODELS)
-            col.update_one({'_id':self.model_id},{'$set':{
-            'file.job.value':value,
-            'file.job.description':strmsg
-            }},upsert=True)
-            disconnect(col)
-
-    def canceled(self):
-        col = connect(MODELS)
-        model = col.find_one({'_id':self.model_id},{'file.job._id':1,'_id':0})
-        if(model is None):
-            return True
-        else:
-            return (get(model,'file.job._id') != self.job_id)
-
-    def processError(self,errormsg):
-        if(self.canceled()):
-            pass
-        else:
-            col = connect(MODELS)
-            col.update_one({'_id':self.model_id},{'$set':{
-            'file.job.error':errormsg,
-            'file.job.finished':datetime.utcnow()
-            }},upsert=False)
-            disconnect(col)
-
-    def getModelParameters(self):
-        col = connect(MODELS)
-        toreturn = col.find({'_id':self.model_id,},{'dataset':1,'config':1,'architecture':1})
-        disconnect(col)
-        return toreturn
-
-    def getQuery(self):
-        query = {}
-        if (not includeAll(self.model_doc,'dataset.patients')):
-            query["patients"] = {'$in': params.dataset.patients}
-        if (not includeAll(self.model_doc,'dataset.conditions')):
-            query["conditions"] = {'$in': params.dataset.conditions}
-        if (not includeAll(self.model_doc,'dataset.compounds')):
-            query["compounds"] = {'$in': params.dataset.compounds}
-        if (not includeAll(self.model_doc,'dataset.classes')):
-            query["classes"] = {'$in': params.dataset.classes}
-        return query
-    
-    def loadArchitecture(self):
-        model = Models.model_from_json(json(get(self.model_doc,'architecture')))
-        model.layers[0].input.set_shape(self.model_doc.getShape())
-        model.layers[len(model.layers)].output.set_shape(self.mifg.getClassNumber)
-        return model
+   

@@ -166,8 +166,8 @@ class Trainer:
 
     def __init__(self,params):
 
-        self.model_id = str2ObjectID(params,'source', "Model source is not a valid MongoDB ID string.")
-        self.job_id = startJob(self.model_id)
+        self.model_id = str2ObjectId(params,'source', "Model source is not a valid MongoDB ID string.")
+        self.startJob()
         try:
             # Retrieving modelling parameters
             self.updateProgress(0,"Retrieving model parameters...")

@@ -32,7 +32,7 @@ MODELS = {
 
 def get(obj,loc):
     return p_.get(obj.loc)
-    
+
 def getSafe(obj,loc,typ,msg):
     tr = p_.get(obj,loc)
     assert tr != None, msg
@@ -40,8 +40,8 @@ def getSafe(obj,loc,typ,msg):
     return tr
 
 def validateID(params, loc, msg):
-    mongoID = getSafe(params,loc,ObjectId,msg)
-    return mongoID   
+    mongoID = getSafe(params,loc,str,msg)
+    return ObjectId(mongoID)   
     
 def connect(obj):
     return pymongo.MongoClient(obj['host'],obj['port'])[obj['database']]['collection']

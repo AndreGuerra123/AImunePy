@@ -12,7 +12,7 @@ from datetime import datetime
 
 IMAGES = {
     'host': '127.0.0.1',
-    'port': 12721,
+    'port': 27017,
     'database':'authentication',
     'collection':'loads'
 }
@@ -24,7 +24,7 @@ LOCATION = {
 
 MODELS = {
     'host': '127.0.0.1',
-    'port': 12721,
+    'port': 27017,
     'database':'authentication',
     'collection':'models'
 }

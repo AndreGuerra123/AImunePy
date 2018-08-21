@@ -138,7 +138,7 @@ class Trainer:
         self.job_id = ObjectId()
         col = connect(MODELS)
         col.update_one({'_id':self.model_id},{'$set':{
-            'file.job._id':self.job,
+            'file.job._id':self.job_id,
             'file.job.started':datetime.utcnow(),
             'file.job.value':0,
             'file.job.description':"Started job..."

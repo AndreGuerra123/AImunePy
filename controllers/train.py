@@ -57,6 +57,8 @@ class Trainer:
     def __init__(self,params):
 
         self.model_id = validateID(params,'source', "Model source is not a valid MongoDB ID.")
+        print(type(self.model_id))
+        print(self.model_id)
         self.startJob()
         try:
             #Retrieving modelling parameters
@@ -135,15 +137,30 @@ class Trainer:
             self.processError(str(e))
 
     def startJob(self):
-        self.job_id = ObjectId()
+        self.job_id=ObjectId()
         col = connect(MODELS)
-        col.update_one({'_id':self.model_id},{'$set':{
-            'file.job._id':self.job_id,
-            'file.job.started':datetime.utcnow(),
-            'file.job.value':0,
-            'file.job.description':"Started job..."
-        }},upsert=True)
+        modelinit = col.find_one({'_id':self.model_id},{'dataset.date':1,'config.date':1})
+        dataset_date = getSafe(modelinit,'dataset.date',datetime,"Failed to retrieve the dataset configuration synchronisation date.")
+        config_date = getSafe(modelinit,'config.date',datetime,"Failed to retrieve the model configuration synchronisation date.")
+        self.file = {
+        'job':{
+            '_id':self.job_id,
+            'started':datetime.utcnow(),
+            'finished':None,
+            'error':None,
+            'value':0,
+            'description':"Started new Job..." 
+            },
+        'sync':{
+            'dataset_date':dataset_date,
+            'config_date':config_date
+        }}
+        count = col.update_one({'_id':self.model_id},{'$set':{
+            'file':self.file
+                 }}).modified_count
         disconnect(col)
+        if(count!=1):
+            raise ValueError('Failed to create new job.')
 
     def finishJob(self):
         if(self.canceled()):

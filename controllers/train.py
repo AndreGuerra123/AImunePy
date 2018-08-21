@@ -167,7 +167,10 @@ class Trainer:
     def __init__(self,params):
 
         self.model_id = str2ObjectId(params,'source', "Model source is not a valid MongoDB ID string.")
-        self.startJob()
+        col = connect(MODELS)
+        print(col.find_one({'_id':self.model_id}))
+        disconnect(col)
+        """ self.startJob()
         try:
             # Retrieving modelling parameters
             self.updateProgress(0,"Retrieving model parameters...")
@@ -239,9 +242,9 @@ class Trainer:
             # Save results
             self.updateProgress(0.95,"Saving model results...") 
     
-            self.finishJob()
+            self.finishJob() 
 
         except Exception as e:
-            self.processError(str(e))
+            self.processError(str(e)) """
 
    

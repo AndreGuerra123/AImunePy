@@ -132,7 +132,7 @@ class Trainer:
             self.finishJob()
 
         except Exception as e:
-            self.processError(e.message)
+            self.processError(str(e))
 
     def startJob(self):
         self.job_id = ObjectId()
@@ -142,7 +142,7 @@ class Trainer:
             'file.job.started':datetime.utcnow(),
             'file.job.value':0,
             'file.job.description':"Started job..."
-        }},upsert=False)
+        }},upsert=True)
         disconnect(col)
 
     def finishJob(self):
@@ -164,7 +164,7 @@ class Trainer:
             col.update_one({'_id':self.model_id},{'$set':{
             'file.job.value':value,
             'file.job.description':strmsg
-            }},upsert=False)
+            }},upsert=True)
             disconnect(col)
 
     def canceled(self):

@@ -10,14 +10,12 @@ CORS(app)
 
 @app.route("/train", methods=['POST'])
 def train():
-    Trainer(request.json)
-    return jsonify('Train complete.')
+    return jsonify(Trainer(request.json))
     # this will route the request to the an API wich performs image prediciton in tensorflow
 
 @app.route("/predict", methods=['POST'])
 def predict():
-    Predictor(request.json)
-    return jsonify('Prediction complete.')
+    return jsonify(Predictor(request.json))
 
 
 # HTTP Errors handlers
@@ -35,4 +33,4 @@ def server_error(e):
 # This will run this microserver in localhost port 5000
 
 if __name__ == '__main__':
-    app.run(host='127.0.0.1',port=5000)
+    app.run(host='127.0.0.1',port=5000,debug=True)

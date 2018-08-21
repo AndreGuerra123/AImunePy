@@ -31,7 +31,7 @@ MODELS = {
 
 
 def get(obj,loc):
-    return p_.get(obj.loc)
+    return p_.get(obj,loc)
 
 def getSafe(obj,loc,typ,msg):
     tr = p_.get(obj,loc)

@@ -63,7 +63,7 @@ class Trainer:
     def startJob(self):
         self.job_id = ObjectId()
         col = connect(MODELS)
-        modelinit = col.find_one({"_id": model_id})
+        modelinit = col.find_one({"_id": self.model_id})
         dataset_date = getSafe(modelinit, 'dataset.date', datetime,
                                "Failed to retrieve the dataset configuration synchronisation date.")
         config_date = getSafe(modelinit, 'config.date', datetime,

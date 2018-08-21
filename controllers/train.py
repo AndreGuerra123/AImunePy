@@ -11,7 +11,7 @@ import pydash as p_
 from datetime import datetime
 
 IMAGES = {
-    'host': 'localhost',
+    'host': '127.0.0.1',
     'port': 12721,
     'database':'authentication',
     'collection':'loads'
@@ -23,7 +23,7 @@ LOCATION = {
 }
 
 MODELS = {
-    'host': 'localhost',
+    'host': '127.0.0.1',
     'port': 12721,
     'database':'authentication',
     'collection':'models'

@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
+
 from controllers.train import Trainer
 from controllers.predict import Predictor
 

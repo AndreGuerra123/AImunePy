@@ -10,23 +10,9 @@ import numpy as np
 import pydash as p_
 from datetime import datetime
 
-IMAGES = {
-    'host': 'localhost',
-    'port': 27017,
-    'database': 'authentication',
-    'collection': 'loads'
-}
-
 LOCATION = {
     'image': 'image.data',
     'label': 'classi'
-}
-
-MODELS = {
-    'host': 'localhost',
-    'port': 27017,
-    'database': 'authentication',
-    'collection': 'models'
 }
 
 
@@ -45,7 +31,7 @@ def toObjectId(params, loc):
     if (isinstance(obj,ObjectId)):
         return obj
     elif (isinstance(obj,str)):
-        return ObjectId(obj)
+        return ObjectId(str(obj))
     else:
         raise ValueError('Supplied object is not a valid ObjectId object or string')
 

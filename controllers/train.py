@@ -40,7 +40,7 @@ def getSafe(obj, loc, typ, msg):
     return tr
 
 
-def str2ObjectId(params, loc):
+def toObjectId(params, loc):
     obj = get(params,loc)
     if (isinstance(obj,ObjectId)):
         return obj
@@ -48,8 +48,6 @@ def str2ObjectId(params, loc):
         return ObjectId(oid=obj)
     else:
         raise ValueError('Supplied object is not a valid ObjectId object or string')
-
-
 
 def connect(obj):
     return pymongo.MongoClient(obj['host'], obj['port'])[obj['database']]['collection']

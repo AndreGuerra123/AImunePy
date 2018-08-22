@@ -156,7 +156,9 @@ class Trainer:
         return query
 
     def loadModelArchitecture(self, model_doc):
-        return model_from_json(getSafe(model_doc,'architecture',dict,'Failed to load the model architecture.'))
+        modeljson = json.dump(get(model_doc,'architecture'))
+        print(modeljson)
+        return model_from_json(modeljson)
         
 
     def parameterValidation(model):

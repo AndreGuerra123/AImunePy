@@ -169,7 +169,7 @@ class Trainer:
         print(type(self.model_id))
         print(self.model_id)
         col = connect(MODELS)
-        print(col.find_one({'_id':self.model_id}))
+        print(col.find_one({'id':self.model_id}))
         disconnect(col)
 
         """ self.startJob()

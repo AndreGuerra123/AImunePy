@@ -178,8 +178,8 @@ class Trainer:
             self.model = self.loadModelArchitecture(self.model_doc)
         
             # Creating Query
-            self.updateProgress(0.1,"Setting image query parameter...")
-            self.query = self.getQuery(self.model_postdoc)
+            self.updateProgress(0.1,"Building image database query...")
+            self.query = self.buildingQuery(self.model_doc)
 
             # Creating Image Data Flow Generators
             self.updateProgress(0.15,"Setting MongoDB image data generators...")
@@ -218,10 +218,6 @@ class Trainer:
                      'cval': get(self.model_postdoc,'cval')
                  })
             self.traingen , self.valgen = self.mifg.flows_from_mongo()
-
-            # Loading Architecture
-            self.updateProgress(0.2,"Loading model architecture...") 
-            self.model = loadArchitecture()
 
             # Compiling Architecture
             self.updateProgress(0.25,"Compiling model loss, optimiser and metrics...") 

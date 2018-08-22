@@ -4,7 +4,7 @@ import keras
 import random
 import json
 from controllers.drivers.Monkera import MongoImageDataGenerator
-import keras.models as Models
+from keras.models import model_from_json
 from PIL import Image
 import numpy as np
 import pydash as p_
@@ -155,13 +155,9 @@ class Trainer:
             query["classes"] = {'$in': params.dataset.classes}
         return query
 
-    def loadArchitecture(self):
-        model = Models.model_from_json(
-            json(get(self.model_doc, 'architecture')))
-        model.layers[0].input.set_shape(self.model_doc.getShape())
-        model.layers[len(model.layers)].output.set_shape(
-            self.mifg.getClassNumber)
-        return model
+    def loadModelArchitecture(self, model_doc):
+        return model_from_json(getSafe(model_doc,'architecture',dict,'Failed to load the model architecture.'))
+        
 
     def parameterValidation(model):
         toreturn = {}
@@ -178,8 +174,8 @@ class Trainer:
             self.model_doc = self.getModelParameters()
 
             # Validating modelling parameters
-            self.updateProgress(0.05,"Validating model parameters...")
-            self.model_postdoc = parameterValidation(self.model_doc)
+            self.updateProgress(0.05,"Loading model architecture...")
+            self.model = self.loadModelArchitecture(self.model_doc)
         
             # Creating Query
             self.updateProgress(0.1,"Setting image query parameter...")

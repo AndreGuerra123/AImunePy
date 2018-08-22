@@ -172,7 +172,7 @@ class Trainer:
         self.model_id = toObjectId(params, 'source')
         print(type(self.model_id))
         print(self.model_id)
-        col = connect('models')
+        col = connect(MODELS)
         print(col.find())
         disconnect(col)
 

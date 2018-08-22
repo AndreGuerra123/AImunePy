@@ -41,8 +41,8 @@ mongogen = MongoImageDataGenerator(
                             'cval': 0.
                             }
                           )
-model = InceptionV3()                       
-""" model = Sequential()
+#model = InceptionV3()                       
+model = Sequential()
 model.add(Conv2D(32, (3, 3), padding='same', input_shape = (100,100,3)))
 model.add(Activation('relu'))
 model.add(Conv2D(32, (3, 3)))
@@ -62,7 +62,7 @@ model.add(Dense(512))
 model.add(Activation('relu'))
 model.add(Dropout(0.5,name="damn"))
 model.add(Dense(2))
-model.add(Activation('softmax')) """
+model.add(Activation('softmax'))
 
 traingen, valgen = mongogen.flows_from_mongo()
 model, modified = Modify(model,mongogen.getInputShape(),mongogen.getOutputShape())

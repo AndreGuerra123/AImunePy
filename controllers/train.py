@@ -22,7 +22,6 @@ MODELS = {
     'collection': 'models'
 }
 
-
 def get(obj, loc):
     return p_.get(obj, loc)
 
@@ -43,7 +42,6 @@ def toObjectId(params, loc):
     else:
         raise ValueError(
             'Supplied object is not a valid ObjectId object or string')
-
 
 def connect(obj):
 
@@ -165,6 +163,11 @@ class Trainer:
             self.mifg.getClassNumber)
         return model
 
+    def parameterValidation(model):
+        toreturn = {}
+        getSafe()
+
+
     def __init__(self, params):
 
         self.model_id = toObjectId(params, 'source')
@@ -226,9 +229,7 @@ class Trainer:
 
             # Compiling Architecture
             self.updateProgress(0.25,"Compiling model loss, optimiser and metrics...") 
-            self.model.compile(loss=get(self.model_postdoc,'batch_size'),
-              optimizer=get(self.model_postdoc,'optimizer'),
-              metrics=get(self.model_postdoc,'batch_size'))
+            self.model.compile(loss=get(self.model_postdoc,'batch_size'),optimizer=get(self.model_postdoc,'optimizer'))
 
             # Train Model
             self.updateProgress(0.3,"Retrieving model parameters and architecture...") 

@@ -67,10 +67,8 @@ class Trainer:
         modelinit = col.find_one({"_id": self.model_id})
         dataset_date = getSafe(modelinit, 'dataset.date', datetime,
                                "Failed to retrieve the dataset configuration synchronisation date.")
-        print(dataset_date)
         config_date = getSafe(modelinit, 'config.date', datetime,
                               "Failed to retrieve the model configuration synchronisation date.")
-        print(config_date)
         self.file = {
             'job': {
                 '_id': self.job_id,
@@ -170,13 +168,7 @@ class Trainer:
     def __init__(self, params):
 
         self.model_id = toObjectId(params, 'source')
-        print(type(self.model_id))
-        print(self.model_id)
-        col = connect(MODELS)
-        print(col.find_one())
-        disconnect(col)
-
-        """ self.startJob()
+        self.startJob()
         try:
             # Retrieving modelling parameters
             self.updateProgress(0,"Retrieving model parameters...")

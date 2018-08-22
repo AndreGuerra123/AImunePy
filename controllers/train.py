@@ -1,5 +1,4 @@
 import pymongo
-from bson.objectid import ObjectId
 import keras
 import random
 import json
@@ -45,7 +44,7 @@ def toObjectId(params, loc):
     if (isinstance(obj,ObjectId)):
         return obj
     elif (isinstance(obj,str)):
-        return ObjectId(oid=obj)
+        return ObjectId(obj)
     else:
         raise ValueError('Supplied object is not a valid ObjectId object or string')
 
@@ -172,7 +171,7 @@ class Trainer:
 
     def __init__(self,params):
 
-        self.model_id = get(params,'source')
+        self.model_id = toObjectId(params,'source')
         print(type(self.model_id))
         print(self.model_id)
         col = connect(MODELS)

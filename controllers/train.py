@@ -40,9 +40,15 @@ def getSafe(obj, loc, typ, msg):
     return tr
 
 
-def str2ObjectId(params, loc, msg):
-    mongoID = getSafe(params, loc, str, msg)
-    return ObjectId(mongoID)
+def str2ObjectId(params, loc):
+    obj = get(params,loc)
+    if (isinstance(obj,ObjectId)):
+        return obj
+    elif (isinstance(obj,str)):
+        return ObjectId(oid=obj)
+    else:
+        raise ValueError('Supplied object is not a valid ObjectId object or string')
+
 
 
 def connect(obj):

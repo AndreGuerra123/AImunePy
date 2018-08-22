@@ -15,8 +15,17 @@ LOCATION = {
     'label': 'classi'
 }
 
+MODELS = {
+    'host': 'localhost',
+    'port': 27017,
+    'database': 'authentication',
+    'collection': 'models'
+}
+
+
 def get(obj, loc):
     return p_.get(obj, loc)
+
 
 def getSafe(obj, loc, typ, msg):
     tr = p_.get(obj, loc)
@@ -26,22 +35,25 @@ def getSafe(obj, loc, typ, msg):
 
 
 def toObjectId(params, loc):
-    obj = get(params,loc)
-    if (isinstance(obj,ObjectId)):
+    obj = get(params, loc)
+    if (isinstance(obj, ObjectId)):
         return obj
-    elif (isinstance(obj,str)):
+    elif (isinstance(obj, str)):
         return ObjectId(str(obj))
     else:
-        raise ValueError('Supplied object is not a valid ObjectId object or string')
+        raise ValueError(
+            'Supplied object is not a valid ObjectId object or string')
 
-def connect(database):
-    return MongoClient('mongodb://localhost:27017/authentication')[database]
 
+def connect(obj):
+
+    return MongoClient(
+        getSafe(obj, 'host', str, 'Hostname is not a valid string.'),
+        getSafe(obj, 'port', int, 'Port is not a valid integer.'))[getSafe(obj, 'database', str, 'Database name is not a valid string.')][getSafe(obj, 'collection', str, 'Collection name is not a valid string.')]
 
 def disconnect(collection):
     del collection
     collection = None
-
 
 def includeAll(obj, location):
     return "-1" in p_.get(obj, location)
@@ -60,34 +72,34 @@ class Trainer:
                               "Failed to retrieve the model configuration synchronisation date.")
         print(config_date)
         self.file = {
-        'job': {
-            '_id': self.job_id,
-            'started': datetime.utcnow(),
-            'finished': None,
-            'error': None,
-            'value': 0,
-            'description': "Started new Job..."
+            'job': {
+                '_id': self.job_id,
+                'started': datetime.utcnow(),
+                'finished': None,
+                'error': None,
+                'value': 0,
+                'description': "Started new Job..."
             },
-        'sync': {
-            'dataset_date': dataset_date,
-            'config_date': config_date
-        }}
+            'sync': {
+                'dataset_date': dataset_date,
+                'config_date': config_date
+            }}
         count = col.update_one({'_id': self.model_id}, {'$set': {
             'file': self.file
-                 }}).modified_count
+        }}).modified_count
         disconnect(col)
         if(count != 1):
             raise ValueError('Failed to create new job.')
-      
+
     def finishJob(self):
         if(self.proceed()):
-            self.file['job']['value'] = 1;
-            self.file['job']['description'] = "Job completed successfully.";
+            self.file['job']['value'] = 1
+            self.file['job']['description'] = "Job completed successfully."
             self.file['job']['finished'] = datetime.utcnow()
 
             col = connect(MODELS)
             col.update_one({'_id': self.model_id}, {'$set':
-            {'file':self.file}})
+                                                    {'file': self.file}})
             disconnect(col)
         else:
             raise ValueError('Model training was canceled/reset.')
@@ -95,25 +107,25 @@ class Trainer:
     # Returns False if cannot update meaning that it was canceled
     def updateProgress(self, value, strmsg):
         if(self.proceed()):
-            self.file['job']['value'] = value;
-            self.file['job']['description'] = strmsg;
+            self.file['job']['value'] = value
+            self.file['job']['description'] = strmsg
             col = connect(MODELS)
             col.update_one({'_id': self.model_id}, {'$set': {
-            'file': self.file}})
+                'file': self.file}})
             disconnect(col)
         else:
             raise ValueError('Modelling job was canceled/reset.')
 
     def proceed(self):
         col = connect(MODELS)
-        model = col.find_one({'_id': self.model_id}, {'file.job':1})
+        model = col.find_one({'_id': self.model_id}, {'file.job': 1})
         disconnect(col)
         if(model is None):
             return False
         elif(get(model, 'file.job._id') != self.job_id):
             return False
-        elif(get(model,'file.job.finished') is not None):
-            return False 
+        elif(get(model, 'file.job.finished') is not None):
+            return False
         else:
             return True
 
@@ -123,7 +135,7 @@ class Trainer:
             self.file['job']['finished'] = datetime.utcnow()
             col = connect(MODELS)
             col.update_one({'_id': self.model_id}, {'$set': {
-            'file':self.file}})
+                'file': self.file}})
             disconnect(col)
         else:
             pass
@@ -155,13 +167,13 @@ class Trainer:
             self.mifg.getClassNumber)
         return model
 
-    def __init__(self,params):
+    def __init__(self, params):
 
-        self.model_id = toObjectId(params,'source')
+        self.model_id = toObjectId(params, 'source')
         print(type(self.model_id))
         print(self.model_id)
         col = connect('models')
-        print(col.find_one())
+        print(col.find())
         disconnect(col)
 
         """ self.startJob()
@@ -240,5 +252,3 @@ class Trainer:
 
         except Exception as e:
             self.processError(str(e)) """
-
-   

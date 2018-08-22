@@ -66,8 +66,10 @@ class Trainer:
         modelinit = col.find_one({"_id": self.model_id})
         dataset_date = getSafe(modelinit, 'dataset.date', datetime,
                                "Failed to retrieve the dataset configuration synchronisation date.")
+        print(dataset_date)
         config_date = getSafe(modelinit, 'config.date', datetime,
                               "Failed to retrieve the model configuration synchronisation date.")
+        print(config_date)
         self.file = {
         'job': {
             '_id': self.job_id,

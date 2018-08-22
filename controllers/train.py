@@ -243,4 +243,4 @@ class Trainer:
             self.finishJob() 
 
         except Exception as e:
-            self.processError(str(e)) """
+            self.processError(str(e))

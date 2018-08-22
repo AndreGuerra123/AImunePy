@@ -15,6 +15,13 @@ LOCATION = {
     'label': 'classi'
 }
 
+MODELS = {
+    'host': 'localhost',
+    'port': 27017,
+    'database': 'authentication',
+    'collection': 'models'
+}
+
 
 def get(obj, loc):
     return p_.get(obj, loc)

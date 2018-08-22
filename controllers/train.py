@@ -172,7 +172,7 @@ class Trainer:
 
     def __init__(self,params):
 
-        self.model_id = toObjectId(params,'source', "Model source is not a valid MongoDB ID string.")
+        self.model_id = toObjectId(params,'source')
         col = connect(MODELS)
         print(col.find_one({'_id':self.model_id}))
         disconnect(col)

@@ -1,4 +1,4 @@
-import pymongo
+from pymongo import MongoClient
 from bson.objectid import ObjectId
 import keras
 import random
@@ -14,14 +14,6 @@ LOCATION = {
     'image': 'image.data',
     'label': 'classi'
 }
-
-MODELS = {
-    'host': '127.0.0.1',
-    'port': 27017,
-    'database': 'authentication',
-    'collection': 'models'
-}
-
 
 def get(obj, loc):
     return p_.get(obj, loc)
@@ -42,8 +34,8 @@ def toObjectId(params, loc):
     else:
         raise ValueError('Supplied object is not a valid ObjectId object or string')
 
-def connect(obj):
-    return pymongo.MongoClient(obj['host'], obj['port'])[obj['database']]['collection']
+def connect(database):
+    return MongoClient('mongodb://localhost:27017/authentication')[database]
 
 
 def disconnect(collection):

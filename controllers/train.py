@@ -156,7 +156,7 @@ class Trainer:
         return query
 
     def loadModelArchitecture(self, model_doc):
-        arch = get(model_doc,'architecture.file',dict,'Failed to load the model architecture object.')
+        arch = getSafe(model_doc,'architecture.file',dict,'Failed to load the model architecture object.')
         print(arch)
         return model_from_json(json.dumps(arch))
         

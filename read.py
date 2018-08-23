@@ -9,5 +9,5 @@ import pydash as p_
 col =  MongoClient('localhost',27017)['authentication']['architectures']
 arch = col.find_one()
 binary = p_.get(arch,'file').decode()
-bina = json.load(StringIO(binary))
+bina = json.load(binary)
 print(bina)

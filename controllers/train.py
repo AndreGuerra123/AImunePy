@@ -157,7 +157,7 @@ class Trainer:
 
     def loadModelArchitecture(self, model_doc):
         arch = getSafe(model_doc,'architecture.file',dict,'Failed to load the model architecture object.')
-        return Model.from_config(arch)
+        return model_from_json(arch)
         
 
     def parameterValidation(model):

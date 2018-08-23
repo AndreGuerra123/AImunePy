@@ -144,11 +144,19 @@ class Trainer:
         disconnect(col)
         return toreturn
 
-    def getQuery(self):
+    def loadModelArchitecture(self, model_doc):
+        binary = getSafe(model_doc,'file',bytes,'Failed to load the binary model architecture.')
+        return model_from_json(binary.decode())       
+
+    def getQuery(self,model_doc):
         query = {}
-        if (not includeAll(self.model_doc, 'dataset.patients')):
-            query["patients"] = {'$in': params.dataset.patients}
-        if (not includeAll(self.model_doc, 'dataset.conditions')):
+        querypatients = getSafe(model_doc,'dataset.patients',list,'Failed to retrieve patients list.')
+        queryconditions = geSafe(model_doc,'dataset.conditions',list,'Falied to retrieve conditions list.')
+        querycompounds = getSafe(model_doc,'dataset.compounds',list,'Failed to retrieve compounds list.')
+        queryclasses = getSafe(model_doc,'dataset.classes',list,'Failed to retrieve classes list.')
+        if ():
+            query["patients"] = {'$in': .dataset.patients}
+        if (not includeAll(model_doc, 'dataset.conditions')):
             query["conditions"] = {'$in': params.dataset.conditions}
         if (not includeAll(self.model_doc, 'dataset.compounds')):
             query["compounds"] = {'$in': params.dataset.compounds}
@@ -156,14 +164,6 @@ class Trainer:
             query["classes"] = {'$in': params.dataset.classes}
         return query
 
-    def loadModelArchitecture(self, model_doc):
-        arch = getSafe(model_doc,'architecture.file',dict,'Failed to load the model architecture object.')
-        return deserialize(arch)
-        
-
-    def parameterValidation(model):
-        toreturn = {}
-        getSafe()
 
 
     def __init__(self, params):

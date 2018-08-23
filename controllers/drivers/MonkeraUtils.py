@@ -1,7 +1,35 @@
 from keras.layers import Dense, Input
 from keras.models import clone_model, Model,Sequential
+from pymongo import MongoClient
+import pydash as p_
 
-def Modify(model,inp,out):
+def _get(obj,loc):
+    return p_.get(obj,loc)
+
+def _getSafe(obj,loc,type,msg):
+    got = _get(obj,loc)
+    assert type(got)==type, msg
+    return got
+
+def connect(obj):
+    return MongoClient(
+        _getSafe(obj, 'host', str, 'Hostname is not a valid string.'),
+        _getSafe(obj, 'port', int, 'Port is not a valid integer.'))[_getSafe(obj, 'database', str, 'Database name is not a valid string.')][_getSafe(obj, 'collection', str, 'Collection name is not a valid string.')]
+
+def disconnect(collection):
+    del collection
+    collection = None
+
+def toObjectId(got):
+    if (isinstance(got, ObjectId)):
+        return got
+    elif (isinstance(got, str)):
+        return ObjectId(str(got))
+    else:
+        raise ValueError(
+            'Supplied object is not a valid ObjectId object or string')
+
+def ValidateModelArchitecture(model,inp,out):
 
     def validation(model,inp,out):
         assert isinstance(model,int) or isinstance(model,Model)
@@ -61,7 +89,21 @@ def Modify(model,inp,out):
 
     return model, any([ci,co])
 
-
+def LoadModelFromDatabase(obid,location,connection={'host':'localhost','port':27017,'database':'database','collection':'collection'}):
+    assert type(location)== str, 'Please provide a valid location of the model architecture.'
+    obid = toObjectId(obid)
+    col = connect(connection)
+    doc = col.find_one({'_id':obid})
+    disconnect(col)
+    arch = _get(doc,location)
+    if(isinstance(arch,str)):
+        return model_from_json(arch)
+    elif(isinstance(arch,bytes)):
+        return model_from_json(arch.decode())
+    elif(arch is None):
+        raise ValueError('Could not find an architecture object in the database.')
+    else:
+        raise TypeError('Detected architecture object is neither a string or binary json object.')
 
   
     

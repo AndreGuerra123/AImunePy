@@ -4,7 +4,7 @@ import keras
 import random
 import json
 from controllers.drivers.Monkera import MongoImageDataGenerator
-from keras.models import model_from_json
+from keras.models import Model, model_from_json
 from PIL import Image
 import numpy as np
 import pydash as p_
@@ -157,11 +157,7 @@ class Trainer:
 
     def loadModelArchitecture(self, model_doc):
         arch = getSafe(model_doc,'architecture.file',dict,'Failed to load the model architecture object.')
-        print(arch)
-        archstr = json.dumps(arch)
-        print(archstr)
-
-        return model_from_json(arch)
+        return Model.from_config(arch)
         
 
     def parameterValidation(model):

@@ -9,4 +9,4 @@ import pydash as p_
 col =  MongoClient('localhost',27017)['authentication']['architectures']
 arch = col.find_one()
 decoded = p_.get(arch,'file').decode()
-print(decoded)
+model = model_from_json(decoded)

@@ -4,6 +4,7 @@ import keras
 import random
 import json
 from controllers.drivers.Monkera import MongoImageDataGenerator
+from controllers.drivers.MonkeraUtils import ValidateModelArchitecture, LoadModelFromDatabase
 from keras.models import Model, model_from_json
 from keras.layers import deserialize, deserialize_keras_object
 from PIL import Image
@@ -145,8 +146,7 @@ class Trainer:
         return toreturn
 
     def loadModelArchitecture(self, model_doc):
-        binary = getSafe(model_doc,'file',bytes,'Failed to load the binary model architecture.')
-        return model_from_json(binary.decode())       
+        return LoadModelFromDatabase(self.model_id,'architecture.file',MODELS)
 
     def toInclude(lista):
        return ("-1" not in lista)

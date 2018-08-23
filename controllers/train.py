@@ -138,7 +138,7 @@ class Trainer:
 
     def getModelParameters(self):
         col = connect(MODELS)
-        toreturn = col.find({'_id': self.model_id, }, {
+        toreturn = col.find_one({'_id': self.model_id, }, {
                             'dataset': 1, 'config': 1, 'architecture': 1})
         disconnect(col)
         return toreturn

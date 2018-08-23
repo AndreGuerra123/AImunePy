@@ -90,7 +90,7 @@ def ValidateModelArchitecture(model,inp,out):
 
     return model, any([ci,co])
 
-def LoadModelFromDatabase(obid,location,connection={'host':'localhost','port':27017,'database':'database','collection':'collection'}):
+def LoadModelFromDatabase(obid,location,connection={'host':'localhost','port':27017,'database':'database','collection':'collection'}, decode = True):
     assert type(location)== str, 'Please provide a valid location of the model architecture.'
     obid = toObjectId(obid)
     col = connect(connection)
@@ -98,8 +98,10 @@ def LoadModelFromDatabase(obid,location,connection={'host':'localhost','port':27
     disconnect(col)
     arch = _get(doc,location)
     if(isinstance(arch,str)):
+        print('its a trap')
         return model_from_json(arch)
     elif(isinstance(arch,bytes)):
+        print('its a nap')
         return model_from_json(arch.decode())
     elif(arch is None):
         raise ValueError('Could not find an architecture object in the database.')

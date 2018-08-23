@@ -5,6 +5,7 @@ import random
 import json
 from controllers.drivers.Monkera import MongoImageDataGenerator
 from keras.models import Model, model_from_json
+from keras.layers import deserialize, deserialize_keras_object
 from PIL import Image
 import numpy as np
 import pydash as p_
@@ -157,7 +158,7 @@ class Trainer:
 
     def loadModelArchitecture(self, model_doc):
         arch = getSafe(model_doc,'architecture.file',dict,'Failed to load the model architecture object.')
-        return model_from_json(json.dumps(arch))
+        return deserialize(arch)
         
 
     def parameterValidation(model):

@@ -3,6 +3,7 @@ from keras.models import clone_model, Model, Sequential, model_from_json
 from pymongo import MongoClient
 from bson.objectid import ObjectId
 import pydash as p_
+import base64
 
 def _get(obj,loc):
     return p_.get(obj,loc)
@@ -98,8 +99,7 @@ def LoadModelFromDatabase(obid,location,connection={'host':'localhost','port':27
     disconnect(col)
     arch = _get(doc,location)
     if(isinstance(arch,str)):
-        print(arch)
-        return model_from_json(arch.decode() if decode else arch)
+        return model_from_json(base64.b64decode(arch) if decode else arch)
     elif(arch is None):
         raise ValueError('Could not find an architecture object in the database.')
     else:

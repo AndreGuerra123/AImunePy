@@ -148,20 +148,23 @@ class Trainer:
         binary = getSafe(model_doc,'file',bytes,'Failed to load the binary model architecture.')
         return model_from_json(binary.decode())       
 
+    def toInclude(lista):
+       return ("-1" not in lista)
+
     def getQuery(self,model_doc):
         query = {}
         querypatients = getSafe(model_doc,'dataset.patients',list,'Failed to retrieve patients list.')
         queryconditions = geSafe(model_doc,'dataset.conditions',list,'Falied to retrieve conditions list.')
         querycompounds = getSafe(model_doc,'dataset.compounds',list,'Failed to retrieve compounds list.')
         queryclasses = getSafe(model_doc,'dataset.classes',list,'Failed to retrieve classes list.')
-        if ():
-            query["patients"] = {'$in': .dataset.patients}
-        if (not includeAll(model_doc, 'dataset.conditions')):
-            query["conditions"] = {'$in': params.dataset.conditions}
-        if (not includeAll(self.model_doc, 'dataset.compounds')):
-            query["compounds"] = {'$in': params.dataset.compounds}
-        if (not includeAll(self.model_doc, 'dataset.classes')):
-            query["classes"] = {'$in': params.dataset.classes}
+        if (toInclude(querypatients)):
+            query["patients"] = {'$in': querypatients}
+        if (toInclude(queryconditions)):
+            query["conditions"] = {'$in': queryconditions}
+        if (toInclude(querycompounds)):
+            query["compounds"] = {'$in': querycompounds}
+        if (toInclude(queryclasses)):
+            query["classes"] = {'$in': queryclasses}
         return query
 
 

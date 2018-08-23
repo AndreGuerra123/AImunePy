@@ -156,8 +156,10 @@ class Trainer:
         return query
 
     def loadModelArchitecture(self, model_doc):
-        print(get(model_doc,'architecture'))
-        modeljson = json.dumps()
+        arch = get(model_doc,'architecture')
+        print(type(arch))
+        print(arch)
+        modeljson = json.dumps(arch)
         print(modeljson)
         return model_from_json(modeljson)
         

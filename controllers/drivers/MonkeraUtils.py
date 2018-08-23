@@ -7,9 +7,9 @@ import pydash as p_
 def _get(obj,loc):
     return p_.get(obj,loc)
 
-def _getSafe(obj,loc,type,msg):
+def _getSafe(obj,loc,typ,msg):
     got = _get(obj,loc)
-    assert type(got)==type, msg
+    assert type(got)==typ, msg
     return got
 
 def connect(obj):

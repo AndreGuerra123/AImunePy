@@ -9,5 +9,6 @@ col =  MongoClient('localhost',27017)['authentication']['architectures']
 arch = col.find_one()
 binary = p_.get(arch,'file')
 jsonstr = io.BytesIO(binary)
-model = model_from_json()
+print(jsonstr)
+model = model_from_json(jsonstr)
 print(model)

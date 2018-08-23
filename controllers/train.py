@@ -161,7 +161,7 @@ class Trainer:
         archstr = json.dumps(arch)
         print(archstr)
 
-        return model_from_json(json.dumps(arch))
+        return model_from_json(arch)
         
 
     def parameterValidation(model):

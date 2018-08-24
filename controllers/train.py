@@ -37,8 +37,7 @@ def get(obj, loc):
 
 def getSafe(obj, loc, typ, msg):
     tr = p_.get(obj, loc)
-    assert tr != None, msg
-    assert type(tr) == typ, msg
+    assert isinstance(tr,typ), msg
     return tr
 
 
@@ -198,7 +197,7 @@ class Trainer:
                  config={
                      'batch_size': getSafe(self.model_doc,'config.batchsize',int,'Could not retrieve a valid batchsize parameter.'),
                      'shuffle': getSafe(self.model_doc,'config.shuffle',bool,'Could not retrieve a valid suffle parameter.'),
-                     'seed': get(self.model_doc,'config.seed'),
+                     'seed': getSafe(self.model_doc,(type(None),int),'config.seed'),
                      'target_size': (getSafe(self.model_doc,'dataset.height',int,'Could not retrieve a valid heigh parameter.'),getSafe(self.model_doc,'dataset.width',int,'Could not retrieve a valid width parameter.')),
                      'data_format': getSafe(self.model_doc,'dataset.data_format',str,'Could not retrieve a valid data_format parameter.'),
                      'color_format': getSafe(self.model_doc,'dataset.color_format',str,'Could not retrieve a valid color_format parameter.'),
@@ -214,13 +213,13 @@ class Trainer:
                      'transform': getSafe(self.model_doc,'dataset.transform',bool,'Could not get a valid transform parameter.'),
                      'random': getSafe(self.model_doc,'dataset.random',bool,'Could not get a valid random parameter.'),
                      'keep_original': getSafe(self.model_doc,'dataset.keep',bool,'Could not get a valid keep_original parameter.'),
-                     'rotation': getSafe(self.model_doc,'dataset.rotation',float,'Could not get a valid rotation parameter.'),
-                     'width_shift': getSafe(self.model_doc,'dataset.width_shift',float,'Could not get a valid width shift parameter.'),
-                     'height_shift': getSafe(self.model_doc,'dataset.height_shift',float,'Could not get a valid height shift parameter.'),
-                     'shear': getSafe(self.model_doc,'dataset.shear',float,'Could not get a valid shear parameter.'),
-                     'channel_shift': getSafe(self.model_doc,'dataset.channel_shift',float,'Could not get a valid channel shift parameter.'),
-                     'brightness': getSafe(self.model_doc,'dataset.brightness',float,'Could not get a valid brightness parameter.'),
-                     'zoom': getSafe(self.model_doc,'dataset.zoom',float,'Could not get a valid zoom parameter.'),
+                     'rotation': getSafe(self.model_doc,'dataset.rotation',(int,float),'Could not get a valid rotation parameter.'),
+                     'width_shift': getSafe(self.model_doc,'dataset.width_shift',(int,float),'Could not get a valid width shift parameter.'),
+                     'height_shift': getSafe(self.model_doc,'dataset.height_shift',(int,float),'Could not get a valid height shift parameter.'),
+                     'shear': getSafe(self.model_doc,'dataset.shear',(int,float),'Could not get a valid shear parameter.'),
+                     'channel_shift': getSafe(self.model_doc,'dataset.channel_shift',(int,float),'Could not get a valid channel shift parameter.'),
+                     'brightness': getSafe(self.model_doc,'dataset.brightness',(int,float),'Could not get a valid brightness parameter.'),
+                     'zoom': getSafe(self.model_doc,'dataset.zoom',(int,float),'Could not get a valid zoom parameter.'),
                      'horizontal_flip': getSafe(self.model_doc,'dataset.horizontal_flip',bool,'Could not get a valid horizontal flip parameter.'),
                      'vertical_flip': getSafe(self.model_doc,'dataset.vertical_flip',bool,'Could not get a valid vertical flip parameter.'),
                      'fill_mode': getSafe(self.model_doc,'dataset.fill_mode',str,'Could not get a valid fill mode parameter'),

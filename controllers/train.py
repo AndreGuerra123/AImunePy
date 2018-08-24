@@ -206,7 +206,7 @@ class Trainer:
                  stand={
                      'center': getSafe(self.model_doc,'dataset.center',bool,'Could not retrieve valid center parameter.'),
                      'normalize': getSafe(self.model_doc,'dataset.normalise',bool,'Could not retrieve valid normalise parameter.'),
-                     'rescale': getSafe(self.model_doc,'dataset.rescale',str,'Could not retrieve a valid rescale parameter.'),
+                     'rescale': getSafe(self.model_doc,'dataset.rescale',float,'Could not retrieve a valid rescale parameter.'),
                      'preprocessing_function': None,
                  },
                  affine={

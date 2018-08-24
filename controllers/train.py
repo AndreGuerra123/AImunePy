@@ -196,46 +196,46 @@ class Trainer:
                  query=self.query,
                  location=LOCATION,
                  config={
-                     'batch_size': getSafe(self.model_postdoc,'config.batchsize',int,'Could not retrieve a valid batchsize parameter.'),
-                     'shuffle': getSafe(self.model_postdoc,'config.shuffle',bool,'Could not retrieve a valid suffle parameter.'),
-                     'seed': get(self.model_postdoc,'config.seed'),
-                     'target_size': (getSafe(self.model_postdoc,'dataset.height',int,'Could not retrieve a valid heigh parameter.'),getSafe(self.model_postdoc,'dataset.width',int,'Could not retrieve a valid width parameter.')),
-                     'data_format': getSafe(self.model_postdoc,'dataset.data_format',str,'Could not retrieve a valid data_format parameter.'),
-                     'color_format': getSafe(self.model_postdoc,'dataset.color_format',str,'Could not retrieve a valid color_format parameter.'),
-                     'validation_split': getSafe(self.model_postdoc,'config.validation_split',float,'Could not retrieve a valid validation_split parameter.')},
+                     'batch_size': getSafe(self.model_doc,'config.batchsize',int,'Could not retrieve a valid batchsize parameter.'),
+                     'shuffle': getSafe(self.model_doc,'config.shuffle',bool,'Could not retrieve a valid suffle parameter.'),
+                     'seed': get(self.model_doc,'config.seed'),
+                     'target_size': (getSafe(self.model_doc,'dataset.height',int,'Could not retrieve a valid heigh parameter.'),getSafe(self.model_doc,'dataset.width',int,'Could not retrieve a valid width parameter.')),
+                     'data_format': getSafe(self.model_doc,'dataset.data_format',str,'Could not retrieve a valid data_format parameter.'),
+                     'color_format': getSafe(self.model_doc,'dataset.color_format',str,'Could not retrieve a valid color_format parameter.'),
+                     'validation_split': getSafe(self.model_doc,'config.validation_split',float,'Could not retrieve a valid validation_split parameter.')},
                  stand={
-                     'center': getSafe(self.model_postdoc,'dataset.center',bool,'Could not retrieve valid center parameter.'),
-                     'normalize': getSafe(self.model_postdoc,'dataset.normalise',bool,'Could not retrieve valid normalise parameter.'),
-                     'rescale': getSafe(self.model_postdoc,'dataset.rescale',str,'Could not retrieve a valid rescale parameter.'),
+                     'center': getSafe(self.model_doc,'dataset.center',bool,'Could not retrieve valid center parameter.'),
+                     'normalize': getSafe(self.model_doc,'dataset.normalise',bool,'Could not retrieve valid normalise parameter.'),
+                     'rescale': getSafe(self.model_doc,'dataset.rescale',str,'Could not retrieve a valid rescale parameter.'),
                      'preprocessing_function': None,
                  },
                  affine={
-                     'rounds': getSafe(self.model_postdoc,'dataset.rounds',int,'Could not get a valid rounds parameter.'),
-                     'transform': getSafe(self.model_postdoc,'dataset.transform',bool,'Could not get a valid transform parameter.'),
-                     'random': getSafe(self.model_postdoc,'dataset.random',bool,'Could not get a valid random parameter.'),
-                     'keep_original': getSafe(self.model_postdoc,'dataset.keep',bool,'Could not get a valid keep_original parameter.'),
-                     'rotation': getSafe(self.model_postdoc,'dataset.rotation',float,'Could not get a valid rotation parameter.'),
-                     'width_shift': getSafe(self.model_postdoc,'dataset.width_shift',float,'Could not get a valid width shift parameter.'),
-                     'height_shift': getSafe(self.model_postdoc,'dataset.height_shift',float,'Could not get a valid height shift parameter.'),
-                     'shear': getSafe(self.model_postdoc,'dataset.shear',float,'Could not get a valid shear parameter.'),
-                     'channel_shift': getSafe(self.model_postdoc,'dataset.channel_shift',float,'Could not get a valid channel shift parameter.'),
-                     'brightness': getSafe(self.model_postdoc,'dataset.brightness',float,'Could not get a valid brightness parameter.'),
-                     'zoom': getSafe(self.model_postdoc,'dataset.zoom',float,'Could not get a valid zoom parameter.'),
-                     'horizontal_flip': getSafe(self.model_postdoc,'dataset.horizontal_flip',bool,'Could not get a valid horizontal flip parameter.'),
-                     'vertical_flip': getSafe(self.model_postdoc,'dataset.vertical_flip',bool,'Could not get a valid vertical flip parameter.'),
-                     'fill_mode': getSafe(self.model_postdoc,'dataset.fill_mode',str,'Could not get a valid fill mode parameter'),
-                     'cval': getSafe(self.model_postdoc,'dataset.cval',float,'Could not get a valid cval parameter.')
+                     'rounds': getSafe(self.model_doc,'dataset.rounds',int,'Could not get a valid rounds parameter.'),
+                     'transform': getSafe(self.model_doc,'dataset.transform',bool,'Could not get a valid transform parameter.'),
+                     'random': getSafe(self.model_doc,'dataset.random',bool,'Could not get a valid random parameter.'),
+                     'keep_original': getSafe(self.model_doc,'dataset.keep',bool,'Could not get a valid keep_original parameter.'),
+                     'rotation': getSafe(self.model_doc,'dataset.rotation',float,'Could not get a valid rotation parameter.'),
+                     'width_shift': getSafe(self.model_doc,'dataset.width_shift',float,'Could not get a valid width shift parameter.'),
+                     'height_shift': getSafe(self.model_doc,'dataset.height_shift',float,'Could not get a valid height shift parameter.'),
+                     'shear': getSafe(self.model_doc,'dataset.shear',float,'Could not get a valid shear parameter.'),
+                     'channel_shift': getSafe(self.model_doc,'dataset.channel_shift',float,'Could not get a valid channel shift parameter.'),
+                     'brightness': getSafe(self.model_doc,'dataset.brightness',float,'Could not get a valid brightness parameter.'),
+                     'zoom': getSafe(self.model_doc,'dataset.zoom',float,'Could not get a valid zoom parameter.'),
+                     'horizontal_flip': getSafe(self.model_doc,'dataset.horizontal_flip',bool,'Could not get a valid horizontal flip parameter.'),
+                     'vertical_flip': getSafe(self.model_doc,'dataset.vertical_flip',bool,'Could not get a valid vertical flip parameter.'),
+                     'fill_mode': getSafe(self.model_doc,'dataset.fill_mode',str,'Could not get a valid fill mode parameter'),
+                     'cval': getSafe(self.model_doc,'dataset.cval',float,'Could not get a valid cval parameter.')
                  })
 
             self.traingen , self.valgen = self.mifg.flows_from_mongo()
 
             # Compiling Architecture
             self.updateProgress(0.25,"Compiling model loss, optimiser and metrics...") 
-            self.model.compile(loss=getSafe(self.model_postdoc,'batch_size'),optimizer=get(self.model_postdoc,'optimizer'))
+            self.model.compile(loss=getSafe(self.model_doc,'batch_size'),optimizer=get(self.model_doc,'optimizer'))
 
             # Train Model
             self.updateProgress(0.3,"Retrieving model parameters and architecture...") 
-            self.model = self.model.fit_generator(self.traingen, epochs=get(self.model_postdoc,'epochs'), validation_data=self.valgen, workers=4, use_multiprocessing=True)
+            self.model = self.model.fit_generator(self.traingen, epochs=get(self.model_doc,'epochs'), validation_data=self.valgen, workers=4, use_multiprocessing=True)
 
             # Save weigths
             self.updateProgress(0.9,"Saving model trained weights...") 

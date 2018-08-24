@@ -99,9 +99,7 @@ def LoadModelFromDatabase(obid,location,connection={'host':'localhost','port':27
     disconnect(col)
     arch = _get(doc,location)
     if(isinstance(arch,str)):
-        print(arch)
-        a = base64.b64decode(arch) if decode else arch
-        print(a)
+        a = base64.b64decode(arch).decode() if decode else arch
         return model_from_json(a)
     elif(arch is None):
         raise ValueError('Could not find an architecture object in the database.')

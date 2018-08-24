@@ -221,6 +221,7 @@ class Trainer:
     def saveArchitecture(self):
         col = connect(MODELS)
         arch = base64.b64encode(bytes(self.model.to_json()))
+        type(arch)
         col.update_one({'_id':self.model_id},{'$set':{'architecture.file': arch}})
         disconnect(col)
                

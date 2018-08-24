@@ -210,22 +210,23 @@ class Trainer:
                      'preprocessing_function': None,
                  },
                  affine={
-                     'rounds': getSafe(self.model_postdoc,'rounds',int,'Could not get a valid rounds parameter.'),
-                     'transform': getSafe(self.model_postdoc,'transform',bool,'Could not get a valid transform parameter.'),
-                     'random': getSafe(self.model_postdoc,'random',bool,'Could not get a valid random parameter.'),
-                     'keep_original': getSafe(self.model_postdoc,'keep',bool,'Could not get a valid keep_original parameter.'),
-                     'rotation': getSafe(self.model_postdoc,'rotation',float,'Could not get a valid rotation parameter.'),
-                     'width_shift': getSafe(self.model_postdoc,'width_shift',float,'Could not get a valid width shift parameter.'),
-                     'height_shift': getSafe(self.model_postdoc,'height_shift',float,'Could not get a valid height shift parameter.'),
-                     'shear': getSafe(self.model_postdoc,'shear',float,'Could not get a valid shear parameter.'),
-                     'channel_shift': getSafe(self.model_postdoc,'channel_shift',float,'Could not get a valid channel shift parameter.'),
-                     'brightness': getSafe(self.model_postdoc,'brightness',float,'Could not get a valid brightness parameter.'),
-                     'zoom': getSafe(self.model_postdoc,'zoom',float,'Could not get a valid zoom parameter.'),
-                     'horizontal_flip': getSafe(self.model_postdoc,'horizontal_flip',bool,'Could not get a valid horizontal flip parameter.'),
-                     'vertical_flip': getSafe(self.model_postdoc,'vertical_flip',bool,'Could not get a valid vertical flip parameter.'),
-                     'fill_mode': getSafe(self.model_postdoc,'fill_mode',str,'Could not get a valid fill mode parameter'),
-                     'cval': getSafe(self.model_postdoc,'cval',float,'Could not get a valid cval parameter.')
+                     'rounds': getSafe(self.model_postdoc,'dataset.rounds',int,'Could not get a valid rounds parameter.'),
+                     'transform': getSafe(self.model_postdoc,'dataset.transform',bool,'Could not get a valid transform parameter.'),
+                     'random': getSafe(self.model_postdoc,'dataset.random',bool,'Could not get a valid random parameter.'),
+                     'keep_original': getSafe(self.model_postdoc,'dataset.keep',bool,'Could not get a valid keep_original parameter.'),
+                     'rotation': getSafe(self.model_postdoc,'dataset.rotation',float,'Could not get a valid rotation parameter.'),
+                     'width_shift': getSafe(self.model_postdoc,'dataset.width_shift',float,'Could not get a valid width shift parameter.'),
+                     'height_shift': getSafe(self.model_postdoc,'dataset.height_shift',float,'Could not get a valid height shift parameter.'),
+                     'shear': getSafe(self.model_postdoc,'dataset.shear',float,'Could not get a valid shear parameter.'),
+                     'channel_shift': getSafe(self.model_postdoc,'dataset.channel_shift',float,'Could not get a valid channel shift parameter.'),
+                     'brightness': getSafe(self.model_postdoc,'dataset.brightness',float,'Could not get a valid brightness parameter.'),
+                     'zoom': getSafe(self.model_postdoc,'dataset.zoom',float,'Could not get a valid zoom parameter.'),
+                     'horizontal_flip': getSafe(self.model_postdoc,'dataset.horizontal_flip',bool,'Could not get a valid horizontal flip parameter.'),
+                     'vertical_flip': getSafe(self.model_postdoc,'dataset.vertical_flip',bool,'Could not get a valid vertical flip parameter.'),
+                     'fill_mode': getSafe(self.model_postdoc,'dataset.fill_mode',str,'Could not get a valid fill mode parameter'),
+                     'cval': getSafe(self.model_postdoc,'dataset.cval',float,'Could not get a valid cval parameter.')
                  })
+
             self.traingen , self.valgen = self.mifg.flows_from_mongo()
 
             # Compiling Architecture

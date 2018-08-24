@@ -58,6 +58,8 @@ def disconnect(collection):
 def includeAll(obj, location):
     return "-1" in p_.get(obj, location)
 
+def toInclude(lista):
+    return ("-1" not in lista)
 
 class Trainer:
 
@@ -148,13 +150,10 @@ class Trainer:
     def loadModelArchitecture(self, model_doc):
         return LoadModelArchitectureBase64(self.model_id,'architecture.file',MODELS)
 
-    def toInclude(lista):
-       return ("-1" not in lista)
-
     def getDatabaseQuery(self,model_doc):
         query = {}
         querypatients = getSafe(model_doc,'dataset.patients',list,'Failed to retrieve patients list.')
-        queryconditions = geSafe(model_doc,'dataset.conditions',list,'Falied to retrieve conditions list.')
+        queryconditions = getSafe(model_doc,'dataset.conditions',list,'Falied to retrieve conditions list.')
         querycompounds = getSafe(model_doc,'dataset.compounds',list,'Failed to retrieve compounds list.')
         queryclasses = getSafe(model_doc,'dataset.classes',list,'Failed to retrieve classes list.')
         if (toInclude(querypatients)):

@@ -11,6 +11,7 @@ from PIL import Image
 import numpy as np
 import pydash as p_
 from datetime import datetime
+import traceback
 
 LOCATION = {
     'image': 'image.data',
@@ -262,4 +263,5 @@ class Trainer:
             self.finishJob() 
 
         except Exception as e:
+            print(traceback.format_exc())
             self.processError(str(e))

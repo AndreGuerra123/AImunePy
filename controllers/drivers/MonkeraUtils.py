@@ -73,7 +73,7 @@ def ValidateModelArchitecture(model,inp,out):
         return x  
 
     def changeInp(model,inp):
-        return clone_model(model,Input(batch_shape=inp))
+        return clone_model(model,Input(batch_shape=inp, name = 'input_'+str(int(round(time.time() * 1000)))))
         
     def changeOut(model,out):
         idx = findPreTop(model) # Finds the pre-topping layer (must be tested more extensively)

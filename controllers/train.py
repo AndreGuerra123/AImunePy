@@ -146,12 +146,12 @@ class Trainer:
         return toreturn
 
     def loadModelArchitecture(self, model_doc):
-        return LoadModelFromDatabase(self.model_id,'architecture.file',MODELS)
+        return LoadModelArchitectureBase64(self.model_id,'architecture.file',MODELS)
 
     def toInclude(lista):
        return ("-1" not in lista)
 
-    def getQuery(self,model_doc):
+    def getDatabaseQuery(self,model_doc):
         query = {}
         querypatients = getSafe(model_doc,'dataset.patients',list,'Failed to retrieve patients list.')
         queryconditions = geSafe(model_doc,'dataset.conditions',list,'Falied to retrieve conditions list.')
@@ -166,8 +166,6 @@ class Trainer:
         if (toInclude(queryclasses)):
             query["classes"] = {'$in': queryclasses}
         return query
-
-
 
     def __init__(self, params):
 
@@ -184,7 +182,7 @@ class Trainer:
         
             # Creating Query
             self.updateProgress(0.1,"Building image database query...")
-            self.query = self.buildingQuery(self.model_doc)
+            self.query = self.getDatabaseQuery(self.model_doc)
 
             # Creating Image Data Flow Generators
             self.updateProgress(0.15,"Setting MongoDB image data generators...")

@@ -218,7 +218,7 @@ class Trainer:
     def saveArchitecture(self):
         col = connect(MODELS)
         arch = self.model.to_json()
-        col.update_one({'_id':self.model_id},{'architecture.file': arch})
+        col.update_one({'_id':self.model_id},{'$set':{'architecture.file': arch}})
         disconnect(col)
                
     def __init__(self, params):

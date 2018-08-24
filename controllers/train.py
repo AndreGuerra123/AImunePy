@@ -197,7 +197,7 @@ class Trainer:
                  config={
                      'batch_size': getSafe(self.model_doc,'config.batchsize',int,'Could not retrieve a valid batchsize parameter.'),
                      'shuffle': getSafe(self.model_doc,'config.shuffle',bool,'Could not retrieve a valid suffle parameter.'),
-                     'seed': getSafe(self.model_doc,(type(None),int),'config.seed'),
+                     'seed': getSafe(self.model_doc,'config.seed',(type(None),int),'Could not retrieve a valid seed parameter.'),
                      'target_size': (getSafe(self.model_doc,'dataset.height',int,'Could not retrieve a valid heigh parameter.'),getSafe(self.model_doc,'dataset.width',int,'Could not retrieve a valid width parameter.')),
                      'data_format': getSafe(self.model_doc,'dataset.data_format',str,'Could not retrieve a valid data_format parameter.'),
                      'color_format': getSafe(self.model_doc,'dataset.color_format',str,'Could not retrieve a valid color_format parameter.'),

@@ -99,6 +99,7 @@ def LoadModelFromDatabase(obid,location,connection={'host':'localhost','port':27
     disconnect(col)
     arch = _get(doc,location)
     if(isinstance(arch,str)):
+        print(arch)
         a = base64.b64decode(arch) if decode else arch
         print(a)
         return model_from_json(a)

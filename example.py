@@ -1,5 +1,5 @@
 from controllers.drivers.Monkera import MongoImageDataGenerator
-from controllers.drivers.MonkeraUtils import Modify
+from controllers.drivers.MonkeraUtils import ValidateModelArchitecture
 
 import keras
 import tensorflow as tf
@@ -65,7 +65,7 @@ model.add(Dense(2))
 model.add(Activation('softmax'))
 
 traingen, valgen = mongogen.flows_from_mongo()
-model, modified = Modify(model,mongogen.getInputShape(),mongogen.getOutputShape())
+model, modified = ValidateModelArchitecture(model,mongogen.getInputShape(),mongogen.getOutputShape())
 
 # initiate RMSprop optimizer"""
 opt = keras.optimizers.rmsprop(lr=0.0001, decay=1e-6) 

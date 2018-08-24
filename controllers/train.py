@@ -24,6 +24,13 @@ MODELS = {
     'collection': 'models'
 }
 
+IMAGES = {
+    'host': 'localhost',
+    'port': 27017,
+    'database': 'authentication',
+    'collection': 'loads'
+}
+
 def get(obj, loc):
     return p_.get(obj, loc)
 
@@ -185,45 +192,45 @@ class Trainer:
 
             # Creating Image Data Flow Generators
             self.updateProgress(0.15,"Setting MongoDB image data generators...")
-            self.mifg = MongoImageFlowGenerator(connection=IMAGES,
+            self.mifg = MongoImageDataGenerator(connection=IMAGES,
                  query=self.query,
                  location=LOCATION,
                  config={
-                     'batch_size': get(self.model_postdoc,'batch_size'),
-                     'shuffle': get(self.model_postdoc,'shuffle'),
-                     'seed': get(self.model_postdoc,'seed'),
-                     'target_size': get(self.model_postdoc,'target_size'),
-                     'data_format': get(self.model_postdoc,'data_format'),
-                     'color_format': get(self.model_postdoc,'color_format'),
-                     'validation_split': get(self.model_postdoc,'validation_split')},
+                     'batch_size': getSafe(self.model_postdoc,'config.batchsize',int,'Could not retrieve a valid batchsize parameter.'),
+                     'shuffle': getSafe(self.model_postdoc,'config.shuffle',bool,'Could not retrieve a valid suffle parameter.'),
+                     'seed': get(self.model_postdoc,'config.seed'),
+                     'target_size': (getSafe(self.model_postdoc,'dataset.height',int,'Could not retrieve a valid heigh parameter.'),getSafe(self.model_postdoc,'dataset.width',int,'Could not retrieve a valid width parameter.')),
+                     'data_format': getSafe(self.model_postdoc,'dataset.data_format',str,'Could not retrieve a valid data_format parameter.'),
+                     'color_format': getSafe(self.model_postdoc,'dataset.color_format',str,'Could not retrieve a valid color_format parameter.'),
+                     'validation_split': getSafe(self.model_postdoc,'config.validation_split',float,'Could not retrieve a valid validation_split parameter.')},
                  stand={
-                     'center': get(self.model_postdoc,'shuffle'),
-                     'normalize': get(self.model_postdoc,'normalize'),
-                     'rescale': get(self.model_postdoc,'rescale'),
+                     'center': getSafe(self.model_postdoc,'dataset.center',bool,'Could not retrieve valid center parameter.'),
+                     'normalize': getSafe(self.model_postdoc,'dataset.normalise',bool,'Could not retrieve valid normalise parameter.'),
+                     'rescale': getSafe(self.model_postdoc,'dataset.rescale',str,'Could not retrieve a valid rescale parameter.'),
                      'preprocessing_function': None,
                  },
                  affine={
-                     'rounds': get(self.model_postdoc,'rounds'),
-                     'transform': get(self.model_postdoc,'transform'),
-                     'random': get(self.model_postdoc,'random'),
-                     'keep_original': get(self.model_postdoc,'keep_original'),
-                     'rotation': get(self.model_postdoc,'rotation'),
-                     'width_shift': get(self.model_postdoc,'width_shift'),
-                     'height_shift': get(self.model_postdoc,'height_shift'),
-                     'shear': get(self.model_postdoc,'shear'),
-                     'channel_shift': get(self.model_postdoc,'channel_shift'),
-                     'brightness': get(self.model_postdoc,'brightness'),
-                     'zoom': get(self.model_postdoc,'zoom'),
-                     'horizontal_flip': get(self.model_postdoc,'horizontal_flip'),
-                     'vertical_flip': get(self.model_postdoc,'vertical_flip'),
-                     'fill_mode': get(self.model_postdoc,'fill_mode'),
-                     'cval': get(self.model_postdoc,'cval')
+                     'rounds': getSafe(self.model_postdoc,'rounds',int,'Could not get a valid rounds parameter.'),
+                     'transform': getSafe(self.model_postdoc,'transform',bool,'Could not get a valid transform parameter.'),
+                     'random': getSafe(self.model_postdoc,'random',bool,'Could not get a valid random parameter.'),
+                     'keep_original': getSafe(self.model_postdoc,'keep',bool,'Could not get a valid keep_original parameter.'),
+                     'rotation': getSafe(self.model_postdoc,'rotation',float,'Could not get a valid rotation parameter.'),
+                     'width_shift': getSafe(self.model_postdoc,'width_shift',float,'Could not get a valid width shift parameter.'),
+                     'height_shift': getSafe(self.model_postdoc,'height_shift',float,'Could not get a valid height shift parameter.'),
+                     'shear': getSafe(self.model_postdoc,'shear',float,'Could not get a valid shear parameter.'),
+                     'channel_shift': getSafe(self.model_postdoc,'channel_shift',float,'Could not get a valid channel shift parameter.'),
+                     'brightness': getSafe(self.model_postdoc,'brightness',float,'Could not get a valid brightness parameter.'),
+                     'zoom': getSafe(self.model_postdoc,'zoom',float,'Could not get a valid zoom parameter.'),
+                     'horizontal_flip': getSafe(self.model_postdoc,'horizontal_flip',bool,'Could not get a valid horizontal flip parameter.'),
+                     'vertical_flip': getSafe(self.model_postdoc,'vertical_flip',bool,'Could not get a valid vertical flip parameter.'),
+                     'fill_mode': getSafe(self.model_postdoc,'fill_mode',str,'Could not get a valid fill mode parameter'),
+                     'cval': getSafe(self.model_postdoc,'cval',float,'Could not get a valid cval parameter.')
                  })
             self.traingen , self.valgen = self.mifg.flows_from_mongo()
 
             # Compiling Architecture
             self.updateProgress(0.25,"Compiling model loss, optimiser and metrics...") 
-            self.model.compile(loss=get(self.model_postdoc,'batch_size'),optimizer=get(self.model_postdoc,'optimizer'))
+            self.model.compile(loss=getSafe(self.model_postdoc,'batch_size'),optimizer=get(self.model_postdoc,'optimizer'))
 
             # Train Model
             self.updateProgress(0.3,"Retrieving model parameters and architecture...") 

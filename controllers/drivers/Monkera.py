@@ -437,7 +437,7 @@ def _g_d(obj, loc, default):
 def _g_d_a_t(obj, loc, default, typ, msg):
     pro = _g_d(obj, loc, default)
     if pro != default:
-        assert type(pro) is typ, msg
+        assert isinstance(pro,typ), msg
     return pro
 
 def _a_dic(object, msg):
@@ -520,7 +520,7 @@ class MongoImageDataGenerator(object):
         self.shuffle = _g_d_a_t(config, 'shuffle', True, bool,
                                 "Please select a valid boolean value for the shuffle parameter.")
 
-        self.seed = _g_d_a_t(config, 'seed', None, int,
+        self.seed = _g_d_a_t(config, 'seed', None, (type(None),int),
                              "Please select a valid integer value for the seed parameter.")
         
         self.target_size = _g_d_a_t(config, 'target_size', (32,32), tuple, 'Please select a valid tuple value (height,width) for the target size parameter.')
@@ -529,8 +529,8 @@ class MongoImageDataGenerator(object):
         assert (self.height > 0), "Height must be positive integer, check target size."
         assert (self.width > 0), "Width must be positive integer, check target size."
 
-        self.validation_split = _g_d_a_t(config, 'validation_split', 0., float,
-                                         "Please select a valid float value for the validation split parameter.")
+        self.validation_split = _g_d_a_t(config, 'validation_split', 0., (int,float),
+                                         "Please select a valid int/float value for the validation split parameter.")
         assert (self.validation_split >= 0 and self.validation_split <1), "Validation split parameter must be between 0 and 1"
 
         self.data_format = _g_d_a_t(config, 'data_format', backend.image_data_format(
@@ -547,7 +547,7 @@ class MongoImageDataGenerator(object):
             self.row_axis = 1
             self.col_axis = 2
 
-        self.color_format = _g_d_a_t(config, 'color_format', 'RGB', str,"Please select a valid float value for the validation split parameter.")
+        self.color_format = _g_d_a_t(config, 'color_format', 'RGB', str,"Please select a valid string for colo_format parameter.")
         assert self.color_format in color_formats, "Please select a valid color format string: L, RGB, or RGBA"
         self.color_shape = _g(color_formats,self.color_format)
 
@@ -565,8 +565,8 @@ class MongoImageDataGenerator(object):
                               '`center`.')
 
 
-        self.rescale = _g_d_a_t(stand, 'rescale', 1/255., float,
-                                "Please select a valid float value for the rescale parameter.")
+        self.rescale = _g_d_a_t(stand, 'rescale', 1/255., (int,float),
+                                "Please select a valid integer/int/float value for the rescale parameter.")
         assert (self.rescale != 0), "Rescaling with factor 0 will reset all data. Please update rescaling parameter to 1 if no rescaling is required."
         self.preprocessing_function = _g_d(
             stand, 'preprocessing_function', None)
@@ -584,20 +584,20 @@ class MongoImageDataGenerator(object):
                                       "Please select a valid boolean value for the keep_original parameter.")
 
         self.rotation = _g_d_a_t(
-            affine, 'rotation', 0., float, "Please select a valid float value for the rotation parameter.")
+            affine, 'rotation', 0., (int,float), "Please select a valid integer/float value for the rotation parameter.")
         self.width_shift = _g_d_a_t(
-            affine, 'width_shift', 0., float, "Please select a valid float value for the width_shift parameter.")
+            affine, 'width_shift', 0., (int,float), "Please select a valid int/float value for the width_shift parameter.")
         self.height_shift = _g_d_a_t(
-            affine, 'height_shift', 0., float, "Please select a valid float value for the height_shift parameter.")
+            affine, 'height_shift', 0., (int,float), "Please select a valid int/float value for the height_shift parameter.")
         self.shear = _g_d_a_t(
-            affine, 'shear', 0., float, "Please select a valid float value for the shear parameter.")
+            affine, 'shear', 0., (int,float), "Please select a valid int/float value for the shear parameter.")
         self.channel_shift = _g_d_a_t(
-            affine, 'channel_shift', 0., float, "Please select a valid float value for the channel_shift parameter.")
-        self.brightness = _g_d_a_t(affine, 'brightness', 1., float,
-                                   "Please select a valid float value for the brightness parameter.")
+            affine, 'channel_shift', 0., (int,float), "Please select a valid int/float value for the channel_shift parameter.")
+        self.brightness = _g_d_a_t(affine, 'brightness', 1., (int,float),
+                                   "Please select a valid int/float value for the brightness parameter.")
         assert (0 < self.brightness <= 1) , "Please select a value superior to zero (black image) for the brightness parameter"
 
-        self.zoom = _g_d_a_t(affine, 'zoom', 0.,float,"Please select a valid folat value for the zoom parameter")
+        self.zoom = _g_d_a_t(affine, 'zoom', 0.,(int,float),"Please select a valid int/float value for the zoom parameter")
         assert (0 <= self.zoom <= 2) , "Please select a value superior to zero (black image) for the brightness parameter"
 
         
@@ -608,8 +608,8 @@ class MongoImageDataGenerator(object):
                                       "Please select a valid boolean value for the vertical_flip parameter.")
         self.fill_mode = _g_d_a_t(affine, 'fill_mode', 'nearest', str,
                                   "Please select a valid str value for the fill_mode parameter.")
-        self.cval = _g_d_a_t(affine, 'cval', 0., float,
-                             "Please select a valid float value for the cval parameter.")
+        self.cval = _g_d_a_t(affine, 'cval', 0., (int,float),
+                             "Please select a valid int/float value for the cval parameter.")
 
         self.dtype = backend.floatx()
 

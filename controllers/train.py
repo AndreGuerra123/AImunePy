@@ -223,7 +223,7 @@ class Trainer:
                      'horizontal_flip': getSafe(self.model_doc,'dataset.horizontal_flip',bool,'Could not get a valid horizontal flip parameter.'),
                      'vertical_flip': getSafe(self.model_doc,'dataset.vertical_flip',bool,'Could not get a valid vertical flip parameter.'),
                      'fill_mode': getSafe(self.model_doc,'dataset.fill_mode',str,'Could not get a valid fill mode parameter'),
-                     'cval': getSafe(self.model_doc,'dataset.cval',float,'Could not get a valid cval parameter.')
+                     'cval': getSafe(self.model_doc,'dataset.cval',(int,float),'Could not get a valid cval parameter.')
                  })
 
             self.traingen , self.valgen = self.mifg.flows_from_mongo()

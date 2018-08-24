@@ -12,6 +12,7 @@ import numpy as np
 import pydash as p_
 from datetime import datetime
 import traceback
+import base64
 
 LOCATION = {
     'image': 'image.data',

@@ -172,26 +172,8 @@ class Trainer:
             query["classes"] = {'$in': queryclasses}
         return query
 
-    def __init__(self, params):
-
-        self.model_id = toObjectId(params, 'source')
-        self.startJob()
-        try:
-            # Retrieving modelling parameters
-            self.updateProgress(0,"Retrieving model parameters...")
-            self.model_doc = self.getModelParameters()
-
-            # Validating modelling parameters
-            self.updateProgress(0.05,"Loading model architecture...")
-            self.model = self.loadModelArchitecture(self.model_doc)
-        
-            # Creating Query
-            self.updateProgress(0.1,"Building image database query...")
-            self.query = self.getDatabaseQuery(self.model_doc)
-
-            # Creating Image Data Flow Generators
-            self.updateProgress(0.15,"Setting MongoDB image data generators...")
-            self.mifg = MongoImageDataGenerator(connection=IMAGES,
+    def createGenerators(self):
+        self.mifg = MongoImageDataGenerator(connection=IMAGES,
                  query=self.query,
                  location=LOCATION,
                  config={
@@ -225,12 +207,47 @@ class Trainer:
                      'fill_mode': getSafe(self.model_doc,'dataset.fill_mode',str,'Could not get a valid fill mode parameter'),
                      'cval': getSafe(self.model_doc,'dataset.cval',(int,float),'Could not get a valid cval parameter.')
                  })
+        self.traingen , self.valgen = self.mifg.flows_from_mongo()
 
-            self.traingen , self.valgen = self.mifg.flows_from_mongo()
+    def validateModelArchitecture(self):
+        self.model, self.modified = ValidateModelArchitecture(self.model,self.mifg.getInputShape(),self.mifg.getOutputShape())
+        if(self.modified):
+                self.saveArchitecture()
+
+    def saveArchitecture(self):
+        col = connect(MODELS)
+        arch = self.model.to_json()
+        col.update_one({'_id':self.model_id},{'architecture.file': arch})
+        disconnect(col)
+               
+    def __init__(self, params):
+
+        self.model_id = toObjectId(params, 'source')
+        self.startJob()
+        try:
+            # Retrieving modelling parameters
+            self.updateProgress(0,"Retrieving model parameters...")
+            self.model_doc = self.getModelParameters()
+
+            # Validating modelling parameters
+            self.updateProgress(0.05,"Loading model architecture...")
+            self.model = self.loadModelArchitecture(self.model_doc)
+        
+            # Creating Query
+            self.updateProgress(0.1,"Building image database query...")
+            self.query = self.getDatabaseQuery(self.model_doc)
+
+            # Creating Image Data Flow Generators
+            self.updateProgress(0.15,"Setting MongoDB image data generators...")
+            self.createGenerators()
+            
+            # Validating model90
+            self.updateProgress(0.25,"Validating model architecture and generators...") 
+            self.validateModelArchitecture()
 
             # Compiling Architecture
-            self.updateProgress(0.25,"Compiling model loss, optimiser and metrics...") 
-            self.model.compile(loss=getSafe(self.model_doc,'batch_size'),optimizer=get(self.model_doc,'optimizer'))
+            self.updateProgress(0.3,"Compiling model loss, optimiser and metrics...") 
+            self.compiling()
 
             # Train Model
             self.updateProgress(0.3,"Retrieving model parameters and architecture...") 

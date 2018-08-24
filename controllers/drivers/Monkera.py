@@ -600,8 +600,7 @@ class MongoImageDataGenerator(object):
         self.zoom = _g_d_a_t(affine, 'zoom', 0.,(int,float),"Please select a valid int/float value for the zoom parameter")
         assert (0 <= self.zoom <= 2) , "Please select a value superior to zero (black image) for the brightness parameter"
 
-        
-
+    
         self.horizontal_flip = _g_d_a_t(affine, 'horizontal_flip', False, bool,
                                         "Please select a valid boolean value for the horizontal_flip parameter.")
         self.vertical_flip = _g_d_a_t(affine, 'vertical_flip', False, bool,

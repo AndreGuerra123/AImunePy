@@ -13,6 +13,8 @@ import pydash as p_
 from datetime import datetime
 import traceback
 import base64
+from bson import Binary
+
 
 LOCATION = {
     'image': 'image.data',
@@ -218,7 +220,7 @@ class Trainer:
 
     def saveArchitecture(self):
         col = connect(MODELS)
-        arch = base64.b64encode(self.model.to_json())
+        arch = base64.b64encode(bytes(self.model.to_json()))
         col.update_one({'_id':self.model_id},{'$set':{'architecture.file': arch}})
         disconnect(col)
                

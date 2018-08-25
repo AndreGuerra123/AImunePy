@@ -108,8 +108,6 @@ def _to_model(strg):
     try:
             return model_from_json(arch)
     except:
-            try:
-                return model_from_json(base64.b64decode(arch))
-            except:
-                raise ValueError('Could not convert field to valid Keras model. Check if string is a valid json string from keras model.')
+            return model_from_json(base64.b64decode(arch))
+            
     

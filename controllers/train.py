@@ -13,7 +13,8 @@ import pydash as p_
 from datetime import datetime
 import traceback
 import base64
-from bson import Binary
+from bson import Binary#
+from keras import optimizers
 
 
 LOCATION = {
@@ -225,6 +226,58 @@ class Trainer:
         col.update_one({'_id':self.model_id},{'$set':{'architecture.file': arch}})
         disconnect(col)
                
+    def compilling(self):
+        self.loss = getSafe(self.model_doc,'config.loss',str,'Failed to retrieve string loss parameter')
+        self.optimiser_function = self.createOptimiser()
+        self.model = self.model.compile(loss=self.loss,optimiser=self.optimiser_function)
+
+    def createOptimiser(self):
+        self.optimiser = getSafe(self.model_doc,'config.optmiser',str,'Failed to retrieve string optimiser parameter')
+        if(self.optimiser == "sgd"):
+            return optimizers.SGD(lr=getSafe(self.model_doc,'config.lr',(int,float),'Failed to retrieve valid learning rate parameter.'),
+                                  decay=getSafe(self.model_doc,'config.decay',(int,float),'Failed to retrieve valid decay parameter.'),
+                                  momentum=getSafe(self.model_doc,'config.momentum',(int,float),'Failed to retrieve valid momentum parameter.'),
+                                  nesterov=getSafe(self.model_doc,'config.nesterov',bool,'Failed to retrieve valid learning Nesterov parameter.'))
+        elif(self.optimiser == "rmsprop"):
+            return optimizers.RMSprop(lr=getSafe(self.model_doc,'config.lr',(int,float),'Failed to retrieve valid learning rate parameter.'),
+                                  rho=getSafe(self.model_doc,'config.rho',(int,float),'Failed to retrieve valid rho parameter.'),
+                                  epsilon=getSafe(self.model_doc,'config.epsilon',(int,float),'Failed to retrieve valid epsilon parameter.'),
+                                  decay=getSafe(self.model_doc,'config.decay',(int,float),'Failed to retrieve valid decay parameter.'))
+
+        elif(self.optimiser == "adagrad"):
+            return optimizers.Adagrad(lr=getSafe(self.model_doc,'config.lr',(int,float),'Failed to retrieve valid learning rate parameter.'),
+                                  epsilon=getSafe(self.model_doc,'config.epsilon',(int,float),'Failed to retrieve valid epsilon parameter.'),
+                                  decay=getSafe(self.model_doc,'config.decay',(int,float),'Failed to retrieve valid decay parameter.'))
+
+        elif(self.optimiser == "adadelta"):
+            return optimizers.Adadelta(lr=getSafe(self.model_doc,'config.lr',(int,float),'Failed to retrieve valid learning rate parameter.'),
+                                  rho=getSafe(self.model_doc,'config.rho',(int,float),'Failed to retrieve valid rho parameter.'),
+                                  epsilon=getSafe(self.model_doc,'config.epsilon',(int,float),'Failed to retrieve valid epsilon parameter.'),
+                                  decay=getSafe(self.model_doc,'config.decay',(int,float),'Failed to retrieve valid decay parameter.'))
+
+        elif(self.optimiser == "adam"):
+            return optimizers.Adam(lr=getSafe(self.model_doc,'config.lr',(int,float),'Failed to retrieve valid learning rate parameter.'),
+                                  beta_1=getSafe(self.model_doc,'config.beta1',(int,float),'Failed to retrieve valid beta 1 parameter.'),
+                                  beta_2=getSafe(self.model_doc,'config.beta2',(int,float),'Failed to retrieve valid beta 2 parameter.'),
+                                  epsilon=getSafe(self.model_doc,'config.epsilon',(int,float),'Failed to retrieve valid epsilon parameter.'),
+                                  decay=getSafe(self.model_doc,'config.decay',(int,float),'Failed to retrieve valid decay parameter.'),
+                                  amsgrad = getSafe(self.model_doc,'config.amsgrad',bool,'Failed to retrieve valid amsgrad parameter.'))
+        elif(self.optimiser == "adamax"):
+            return optimizers.Adamax(lr=getSafe(self.model_doc,'config.lr',(int,float),'Failed to retrieve valid learning rate parameter.'),
+                                  beta_1=getSafe(self.model_doc,'config.beta1',(int,float),'Failed to retrieve valid beta 1 parameter.'),
+                                  beta_2=getSafe(self.model_doc,'config.beta2',(int,float),'Failed to retrieve valid beta 2 parameter.'),
+                                  epsilon=getSafe(self.model_doc,'config.epsilon',(int,float),'Failed to retrieve valid epsilon parameter.'),
+                                  decay=getSafe(self.model_doc,'config.decay',(int,float),'Failed to retrieve valid decay parameter.'))
+        elif(self.optimiser == "nadam"):
+            return optimizers.Nadam(lr=getSafe(self.model_doc,'config.lr',(int,float),'Failed to retrieve valid learning rate parameter.'),
+                                  beta_1=getSafe(self.model_doc,'config.beta1',(int,float),'Failed to retrieve valid beta 1 parameter.'),
+                                  beta_2=getSafe(self.model_doc,'config.beta2',(int,float),'Failed to retrieve valid beta 2 parameter.'),
+                                  epsilon=getSafe(self.model_doc,'config.epsilon',(int,float),'Failed to retrieve valid epsilon parameter.'),
+                                  decay=getSafe(self.model_doc,'config.decay',(int,float),'Failed to retrieve valid decay parameter.'))
+
+        else:
+            raise ValueError('Selected optimiser is not a valid option.')
+
     def __init__(self, params):
 
         self.model_id = toObjectId(params, 'source')
@@ -252,7 +305,7 @@ class Trainer:
 
             # Compiling Architecture
             self.updateProgress(0.3,"Compiling model loss, optimiser and metrics...") 
-            self.compiling()
+            self.compilling()
 
             # Train Model
             self.updateProgress(0.3,"Retrieving model parameters and architecture...") 

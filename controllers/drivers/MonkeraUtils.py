@@ -103,7 +103,7 @@ def LoadModelArchitecture(query,location,connection={'host':'localhost','port':2
     else:
         raise TypeError('Detected architecture object is neither a string or binary json object.')
 
-def _to_model(strg):
+def _to_model(arch):
     assert type(strg)==str, 'Retrieved field is not a valid string' 
     try:
             return model_from_json(arch)

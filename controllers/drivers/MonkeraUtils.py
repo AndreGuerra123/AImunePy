@@ -104,7 +104,7 @@ def LoadModelArchitecture(query,location,connection={'host':'localhost','port':2
         raise TypeError('Detected architecture object is neither a string or binary json object.')
 
 def _to_model(arch):
-    assert type(arch)==str, 'Retrieved field (decoded) is not a valid string.' 
+    assert type(arch)==str, 'Retrieved field (decoded) is not a valid Keras model json string.' 
     try:
             return model_from_json(arch)
     except:

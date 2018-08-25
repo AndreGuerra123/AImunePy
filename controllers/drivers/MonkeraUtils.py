@@ -86,7 +86,6 @@ def ValidateModelArchitecture(model,inp,out):
 def LoadModelArchitecture(query,location,connection={'host':'localhost','port':27017,'database':'database','collection':'collection'}):
     assert (type(query)==dict and bool(query)), 'Please provide a valid dictionary identifying which model architecture to retrieve. Ex. "{"_id":xxx}"'
     assert type(location) == str, 'Please provide a valid location of the model architecture.'
-    assert type(decode)==bool, 'Please provide a valid base64 encoded boolean parameter.'
     assert type(connection) == dict, 'Please provide a valid connection dictionary.' 
     
     col = connect(connection)

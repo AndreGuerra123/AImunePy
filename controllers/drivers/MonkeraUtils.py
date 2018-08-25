@@ -23,15 +23,6 @@ def disconnect(collection):
     del collection
     collection = None
 
-def toObjectId(got):
-    if (isinstance(got, ObjectId)):
-        return got
-    elif (isinstance(got, str)):
-        return ObjectId(str(got))
-    else:
-        raise ValueError(
-            'Supplied object is not a valid ObjectId object or string')
-
 def ValidateModelArchitecture(model,inp,out):
 
     def validation(model,inp,out):
@@ -92,19 +83,34 @@ def ValidateModelArchitecture(model,inp,out):
 
     return model, any([ci,co])
 
-def LoadModelArchitectureBase64(obid,location,connection={'host':'localhost','port':27017,'database':'database','collection':'collection'}):
-    assert type(location)== str, 'Please provide a valid location of the model architecture.'
-    obid = toObjectId(obid)
+def LoadModelArchitecture(query,location,connection={'host':'localhost','port':27017,'database':'database','collection':'collection'}):
+    assert (type(query)==dict and bool(query)), 'Please provide a valid dictionary identifying which model architecture to retrieve. Ex. "{"_id":xxx}"'
+    assert type(location) == str, 'Please provide a valid location of the model architecture.'
+    assert type(decode)==bool, 'Please provide a valid base64 encoded boolean parameter.'
+    assert type(connection) == dict, 'Please provide a valid connection dictionary.' 
+    
     col = connect(connection)
-    doc = col.find_one({'_id':obid})
+    doc = col.find_one(query)
     disconnect(col)
     arch = _get(doc,location)
+
     if(isinstance(arch,str)):
-        return model_from_json(base64.b64decode(arch).decode())
+        return _to_model(arch)
+    elif(isinstance(arch,bytes)):
+        arch = arch.decode()
+        return _to_model(arch)
     elif(arch is None):
         raise ValueError('Could not find an architecture object in the database.')
     else:
         raise TypeError('Detected architecture object is neither a string or binary json object.')
 
-  
+def _to_model(strg):
+    assert type(strg)==str, 'Retrieved field is not a valid string' 
+    try:
+            return model_from_json(arch)
+    except:
+            try:
+                return model_from_json(base64.b64decode(arch))
+            except:
+                raise ValueError('Could not convert field to valid Keras model. Check if string is a valid json string from keras model.')
     

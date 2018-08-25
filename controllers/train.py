@@ -4,7 +4,7 @@ import keras
 import random
 import json
 from controllers.drivers.Monkera import MongoImageDataGenerator
-from controllers.drivers.MonkeraUtils import ValidateModelArchitecture, LoadModelArchitectureBase64
+from controllers.drivers.MonkeraUtils import ValidateModelArchitecture, LoadModelArchitecture
 from keras.models import Model, model_from_json
 from keras.layers import deserialize, deserialize_keras_object
 from PIL import Image
@@ -153,20 +153,16 @@ class Trainer:
 
     def getModelParameters(self):
         col = connect(MODELS)
-        toreturn = col.find_one({'_id': self.model_id, }, {
+        self.model_doc = col.find_one({'_id': self.model_id, }, {
                             'dataset': 1, 'config': 1, 'architecture': 1})
         disconnect(col)
-        return toreturn
-
-    def loadModelArchitecture(self, model_doc):
-        return LoadModelArchitectureBase64(self.model_id,'architecture.file',MODELS)
-
-    def getDatabaseQuery(self,model_doc):
+        
+    def getDatabaseQuery(self):
         query = {}
-        querypatients = getSafe(model_doc,'dataset.patients',list,'Failed to retrieve patients list.')
-        queryconditions = getSafe(model_doc,'dataset.conditions',list,'Falied to retrieve conditions list.')
-        querycompounds = getSafe(model_doc,'dataset.compounds',list,'Failed to retrieve compounds list.')
-        queryclasses = getSafe(model_doc,'dataset.classes',list,'Failed to retrieve classes list.')
+        querypatients = getSafe(self.model_doc,'dataset.patients',list,'Failed to retrieve patients list.')
+        queryconditions = getSafe(self.model_doc,'dataset.conditions',list,'Falied to retrieve conditions list.')
+        querycompounds = getSafe(self.model_doc,'dataset.compounds',list,'Failed to retrieve compounds list.')
+        queryclasses = getSafe(self.model_doc,'dataset.classes',list,'Failed to retrieve classes list.')
         if (toInclude(querypatients)):
             query["patients"] = {'$in': querypatients}
         if (toInclude(queryconditions)):
@@ -175,7 +171,7 @@ class Trainer:
             query["compounds"] = {'$in': querycompounds}
         if (toInclude(queryclasses)):
             query["classes"] = {'$in': queryclasses}
-        return query
+        self.query = query
 
     def createGenerators(self):
         self.mifg = MongoImageDataGenerator(connection=IMAGES,
@@ -222,7 +218,6 @@ class Trainer:
     def saveArchitecture(self):
         col = connect(MODELS)
         arch = base64.b64encode(bytes(self.model.to_json(),'utf8'))
-        type(arch)
         col.update_one({'_id':self.model_id},{'$set':{'architecture.file': arch}})
         disconnect(col)
                
@@ -285,15 +280,15 @@ class Trainer:
         try:
             # Retrieving modelling parameters
             self.updateProgress(0,"Retrieving model parameters...")
-            self.model_doc = self.getModelParameters()
+            self.getModelParameters()
 
             # Validating modelling parameters
             self.updateProgress(0.05,"Loading model architecture...")
-            self.model = self.loadModelArchitecture(self.model_doc)
+            self.model = LoadModelArchitecture({'_id':self.model_id},'architecture.file',MODELS)
         
             # Creating Query
             self.updateProgress(0.1,"Building image database query...")
-            self.query = self.getDatabaseQuery(self.model_doc)
+            self.getDatabaseQuery()
 
             # Creating Image Data Flow Generators
             self.updateProgress(0.15,"Setting MongoDB image data generators...")

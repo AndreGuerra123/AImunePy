@@ -304,7 +304,7 @@ class Trainer:
 
             # Train Model
             self.updateProgress(0.4,"Fitting model...") 
-            self.model = self.model.fit_generator(self.traingen, epochs=get(self.model_doc,'epochs'), validation_data=self.valgen, workers=4, use_multiprocessing=True)
+            self.model = self.model.fit_generator(self.traingen, epochs=getSafe(self.model_doc,'config.epochs',int,'Please provide a valid integer for the epochs number parameter.'), validation_data=self.valgen, workers=4, use_multiprocessing=True)
 
             # Save weigths
             self.updateProgress(0.9,"Saving model trained weights...") 

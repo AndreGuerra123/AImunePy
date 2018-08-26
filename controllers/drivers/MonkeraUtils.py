@@ -59,11 +59,8 @@ def ValidateModelArchitecture(model,inp,out):
         return i
  
     def reshapeOutput(model,i,out): # Reshapes model accordingly to https://keras.io/applications/#usage-examples-for-image-classification-models
-        layer=model.layers[i]
-        x = layer.output
-        x = Dense(out[1], activation='softmax',name = 'output_aimune_'+str(int(round(time.time() * 1000))))(x)
-        return x  
-
+        return Dense(out[1], activation='softmax',name = 'output_aimune_'+str(int(round(time.time() * 1000))))(model.layers[i].output)
+     
     def changeInp(model,inp):
         return clone_model(model,Input(batch_shape=inp, name = 'input_aimune_'+str(int(round(time.time() * 1000)))))
         

@@ -217,14 +217,14 @@ class Trainer:
 
     def saveArchitecture(self):
         col = connect(MODELS)
-        arch = bytes(self.model.to_json(),'base64')
+        arch = base64.b64encode(bytes(self.model.to_json(),'utf8'))
         col.update_one({'_id':self.model_id},{'$set':{'architecture.file': arch}})
         disconnect(col)
                
     def compilling(self):
         self.loss = getSafe(self.model_doc,'config.loss',str,'Failed to retrieve string loss parameter')
         self.optimiser_function = self.createOptimiser()
-        self.model = self.model.compile(loss=self.loss,optimiser=self.optimiser_function)
+        self.model = self.model.compile(loss=self.loss,optimizer=self.optimiser_function)
 
     def createOptimiser(self):
         self.optimiser = getSafe(self.model_doc,'config.optimiser',str,'Failed to retrieve string optimiser parameter')

@@ -4,7 +4,7 @@ import keras
 import random
 import json
 from controllers.drivers.Monkera import MongoImageDataGenerator
-from controllers.drivers.MonkeraUtils import ValidateModelArchitecture, LoadModelArchitecture
+from controllers.drivers.MonkeraUtils import ValidateModelArchitecture, LoadModelArchitecture, MokeraCallback
 from keras.models import Model, model_from_json
 from keras.layers import deserialize, deserialize_keras_object
 from PIL import Image
@@ -302,9 +302,13 @@ class Trainer:
             self.updateProgress(0.3,"Compiling model loss, optimiser and metrics...") 
             self.compilling()
 
+            self.updateProgress(0.4,"Establishing callbacks...")
+            self.epochs = getSafe(self.model_doc,'config.epochs',int,'Please provide a valid integer for the epochs number parameter.')
+            self.callback = MonkeraCallback({'_id':self.model_id},config={'ini':0.5,'end':0.9,'epochs':self.epochs,'value':'file.job.value','description':'file.job.description'},connection=MODELS)
+
             # Train Model
-            self.updateProgress(0.4,"Fitting model...") 
-            self.model = self.model.fit_generator(self.traingen, epochs=getSafe(self.model_doc,'config.epochs',int,'Please provide a valid integer for the epochs number parameter.'), validation_data=self.valgen, workers=4, use_multiprocessing=True)
+            self.updateProgress(0.5,"Fitting model...") 
+            self.model = self.model.fit_generator(self.traingen, epochs=self.epochs,callbacks=[self.callback], validation_data=self.valgen, workers=4, use_multiprocessing=True)
 
             # Save weigths
             self.updateProgress(0.9,"Saving model trained weights...") 

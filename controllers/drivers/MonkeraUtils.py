@@ -1,5 +1,6 @@
 from keras.layers import Dense, Input
 from keras.models import clone_model, Model, Sequential, model_from_json
+from keras.callbacks import Callback
 from pymongo import MongoClient
 from bson.objectid import ObjectId
 import pydash as p_
@@ -107,5 +108,37 @@ def _to_model(archi):
     except:           
             return model_from_json(base64.b64decode(archi).decode()) # the string was encoded in base64
 
+class MokeraCallback(Callback):
+    def __init__(query,config={'ini':0,'end':1,'epochs':1,'value':'value','description':'description'},connection={'host':'localhost','port':27017,'database':'database','collection':'collection'}):
+         assert type(query) == dict and bool(query), 'Please insert a valid dictionary for the query parameter. Ex:"{"_id":xxx}"'
+         self.query = query
+         self.ini = _getSafe(config,'ini',(int,float),'Initialization parameter must be an integer or a float.')
+         self.end = _getSafe(config,'end',(int,float),'Ending parameter must be an integer or a float.')
+         assert self.end > self.ini ,'Ending parameter must be bigger than initialization parameter.'
+         assert self.ini>=0 and self.ini<1, 'Initialization parameter must be between 0 inclusive and 1 exclusive.'
+         assert self.end>0 and self.ini<=1, 'Ending parameter must be between 0 exclusive and 1 inclusive.'
+
+         self.valuepath = _getSafe(config,'value',str, 'Value parameter must be a valid string referencing the path of the value to write in the document.')
+         self.descriptionpath = _getSafe(config,'description',str, 'Description parameter must be a valid string referencing the path of the description to write in the document.')
+
+         self.epochs = _getSafe(config,'epochs',int,'Epochs parameter must be a valid integer value.')
+         assert self.epochs > 0, 'Epochs parameter must be positive.'
+
+         _getSafe(connection,'host',str,'Host must be a valid string referencing to mongodb host.')
+         _getSafe(connection,'port',int,'Port must be a valid integer referencing to mongodb port.')
+         _getSafe(connection,'database',str,'Database must be a valid string referencing to mongodb database.')
+         _getSafe(connection,'collection',str,'Collection must be a valid string referencing to mongodb collection.')
+         self.connection = connection
+
+    def on_epoch_end(self, epoch, logs = None):
+
+            value = self.ini + (epoch/self.epochs)*(self.end-self.ini)
+            description = "Fitting model: Epoch: "+str(epoch)+ " Loss: " + str(logs.get('loss'))
+            col = connect(self.connection)
+            col.update_one(self.query,{"$set":{self.valuepath:value,
+                self.descriptionpath:description}})
+            disconnect(col)
+
             
+
     

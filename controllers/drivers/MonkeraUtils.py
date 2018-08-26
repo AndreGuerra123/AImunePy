@@ -100,7 +100,8 @@ def LoadModelArchitecture(query,location,connection={'host':'localhost','port':2
         raise ValueError('Could not find an architecture object in the database.')
     else:
         raise TypeError('Detected architecture object is neither a string or binary json object.')
-
+def _sprint(obj):
+    print("value:"+obj+" type:"+str(type(0)))
 def _to_model(archi):
     assert type(archi)==str, 'Retrieved field (decoded) is not a valid Keras model json string.' 
     try:
@@ -109,9 +110,10 @@ def _to_model(archi):
             return model_from_json(base64.b64decode(archi).decode()) # the string was encoded in base64
 
 class MonkeraCallback(Callback):
-    def __init__(self,query,config={'ini':0,'end':1,'epochs':1,'value':'value','description':'description'},connection={'host':'localhost','port':27017,'database':'database','collection':'collection'}):
+    def __init__(query,config={'ini':0,'end':1,'epochs':1,'value':'value','description':'description'},connection={'host':'localhost','port':27017,'database':'database','collection':'collection'}):
          assert type(query) == dict and bool(query), 'Please insert a valid dictionary for the query parameter. Ex:"{"_id":xxx}"'
          self.query = query
+         _sprint(_get(config,'ini'))
          self.ini = _getSafe(config,'ini',(int,float),'Initialization parameter must be an integer or a float.')
          self.end = _getSafe(config,'end',(int,float),'Ending parameter must be an integer or a float.')
          assert self.end > self.ini ,'Ending parameter must be bigger than initialization parameter.'

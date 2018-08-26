@@ -103,8 +103,9 @@ def LoadModelArchitecture(query,location,connection={'host':'localhost','port':2
 def _to_model(archi):
     assert type(archi)==str, 'Retrieved field (decoded) is not a valid Keras model json string.' 
     try:
-            return model_from_json(archi)
-    except:
-            return model_from_json(base64.b64decode(archi))
+            return model_from_json(archi) #simply encoded as binary or loaded as pure string
+    except:           
+            return model_from_json(base64.b64decode(archi).decode()) # the string was encoded in base64
+
             
     

@@ -110,7 +110,7 @@ def _to_model(archi):
 
 class MonkeraCallback(Callback):
     def __init__(self,query,config={'ini':0,'end':1,'epochs':1,'value':'value','description':'description'},connection={'host':'localhost','port':27017,'database':'database','collection':'collection'}):
-         self = super.__init__(Callback)
+         super(MonkeraCallback, self).__init__()
          assert type(query) == dict and bool(query), 'Please insert a valid dictionary for the query parameter. Ex:"{"_id":xxx}"'
          self.query = query
          self.ini = _getSafe(config,'ini',(int,float),'Initialization parameter must be an integer or a float.')

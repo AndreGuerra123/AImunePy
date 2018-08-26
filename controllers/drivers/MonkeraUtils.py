@@ -61,11 +61,11 @@ def ValidateModelArchitecture(model,inp,out):
     def reshapeOutput(model,i,out): # Reshapes model accordingly to https://keras.io/applications/#usage-examples-for-image-classification-models
         layer=model.layers[i]
         x = layer.output
-        x = Dense(out[1], activation='softmax')(x)
+        x = Dense(out[1], activation='softmax',name = 'output_aimune_'+str(int(round(time.time() * 1000))))(x)
         return x  
 
     def changeInp(model,inp):
-        return clone_model(model,Input(batch_shape=inp, name = 'input_'+str(int(round(time.time() * 1000)))))
+        return clone_model(model,Input(batch_shape=inp, name = 'input_aimune_'+str(int(round(time.time() * 1000)))))
         
     def changeOut(model,out):
         idx = findPreTop(model) # Finds the pre-topping layer (must be tested more extensively)

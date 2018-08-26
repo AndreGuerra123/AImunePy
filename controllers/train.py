@@ -224,7 +224,7 @@ class Trainer:
     def compilling(self):
         self.loss = getSafe(self.model_doc,'config.loss',str,'Failed to retrieve string loss parameter')
         self.optimiser_function = self.createOptimiser()
-        self.model = self.model.compile(loss=self.loss,optimizer=self.optimiser_function)
+        self.model.compile(loss=self.loss,optimizer=self.optimiser_function)
 
     def createOptimiser(self):
         self.optimiser = getSafe(self.model_doc,'config.optimiser',str,'Failed to retrieve string optimiser parameter')
@@ -303,7 +303,7 @@ class Trainer:
             self.compilling()
 
             # Train Model
-            self.updateProgress(0.3,"Retrieving model parameters and architecture...") 
+            self.updateProgress(0.4,"Fitting model...") 
             self.model = self.model.fit_generator(self.traingen, epochs=get(self.model_doc,'epochs'), validation_data=self.valgen, workers=4, use_multiprocessing=True)
 
             # Save weigths

@@ -304,11 +304,11 @@ class Trainer:
 
             self.updateProgress(0.4,"Establishing callbacks...")
             self.epochs = getSafe(self.model_doc,'config.epochs',int,'Please provide a valid integer for the epochs number parameter.')
-            #self.callback = MonkeraCallback(query={'_id':self.model_id},config={'ini':0.5,'end':0.9,'epochs':self.epochs,'value':'file.job.value','description':'file.job.description'},connection=MODELS)
+            self.callback = MonkeraCallback(query={'_id':self.model_id},config={'ini':0.5,'end':0.9,'epochs':self.epochs,'value':'file.job.value','description':'file.job.description'},connection=MODELS)
 
             # Train Model
             self.updateProgress(0.5,"Fitting model...") 
-            self.model = self.model.fit_generator(self.traingen, epochs=self.epochs, validation_data=self.valgen, workers=4, use_multiprocessing=True)
+            self.model = self.model.fit_generator(self.traingen, epochs=self.epochs,callbacks=[self.callback], validation_data=self.valgen, workers=4, use_multiprocessing=True)
 
             # Save weigths
             self.updateProgress(0.9,"Saving model trained weights...") 

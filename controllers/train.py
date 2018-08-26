@@ -227,7 +227,7 @@ class Trainer:
         self.model = self.model.compile(loss=self.loss,optimiser=self.optimiser_function)
 
     def createOptimiser(self):
-        self.optimiser = getSafe(self.model_doc,'config.optmiser',str,'Failed to retrieve string optimiser parameter')
+        self.optimiser = getSafe(self.model_doc,'config.optimiser',str,'Failed to retrieve string optimiser parameter')
         if(self.optimiser == "sgd"):
             return optimizers.SGD(lr=getSafe(self.model_doc,'config.lr',(int,float),'Failed to retrieve valid learning rate parameter.'),
                                   decay=getSafe(self.model_doc,'config.decay',(int,float),'Failed to retrieve valid decay parameter.'),

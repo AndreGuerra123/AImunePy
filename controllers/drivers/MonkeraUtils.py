@@ -26,9 +26,7 @@ def disconnect(collection):
 def ValidateModelArchitecture(model,inp,out):
 
     def validation(model,inp,out):
-        assert isinstance(model,int) or isinstance(model,Model)    
-        assert isinstance(inp,tuple), 'Input parameter is not a valid tuple.'
-        assert isinstance(out,tuple), 'Output parameter is not a valid tuple.'
+        assert isinstance(model,int) or isinstance(model,Model)
         n_in = len(model.inputs)
         n_out =len(model.outputs) 
         assert (n_in) > 0, 'Model has not detectable inputs.'
@@ -36,6 +34,18 @@ def ValidateModelArchitecture(model,inp,out):
         assert (n_in) <= 1, 'Model has multiple %d inputs tensors. Cannot apply input transformation.' % (n_in)
         assert (n_out) <= 1, 'Model has multiple %d output tensors Cannot apply output transformation.' % (n_out)
     
+        inp_old = model.input_shape
+    
+        assert len(inp_old) == 4, 'Model input tensor shape != 4: Not a valid image classification model (B x X x X x X).'
+    
+        assert isinstance(inp,tuple), 'Input parameter is not a valid tuple.'
+        assert len(inp) == 4, 'Input parameter is not a valid 4-rank tensor shape.'
+
+        out_old = model.output_shape
+        assert len(out_old) == 2, 'Model output tensor shape !=2: Not a valid image classification model (B x C).'
+        assert isinstance(out,tuple), 'Output parameter is not a valid tuple.'
+        assert len(out) == 2, 'Output parameter is not a valid 2-rank tensor shape.'
+
         ci = any([inp[i] != inp_old[i] for i in range(0,len(inp))])
         co = any([out[i] != out_old[i] for i in range(0,len(out))])
       

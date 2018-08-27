@@ -213,12 +213,12 @@ def PlotHistory(history,width=300,height=300,tools="pan,wheel_zoom,box_zoom,rese
     unique_metrics = set(list([x.replace('val_','') for x in history.keys()]))
 
     plots=list()
-    for i,x in unique_metrics:
+    for x in unique_metrics:
         plot = figure(tools=tools, plot_width=width, plot_height=heightt)
         if(_get(history,x)): plot.scatter(_get(history,x))
         if(_get(history,'val_'+x)): plot.scatter(_get(history,'val_'+x))
-        plots.insert(i,plot)
-    
+        plots.append(plot)
+
     return file_html(plots,CDN)
 
     

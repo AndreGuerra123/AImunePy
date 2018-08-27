@@ -8,6 +8,7 @@ import base64
 import time
 import tempfile
 import gridfs
+import io
 
 def _get(obj,loc):
     return p_.get(obj,loc)

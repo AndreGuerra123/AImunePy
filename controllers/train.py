@@ -15,11 +15,6 @@ import traceback
 import base64
 from bson import Binary#
 from keras import optimizers
-import io
-import tempfile
-import gridfs
-
-
 
 LOCATION = {
     'image': 'image.data',

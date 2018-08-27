@@ -10,6 +10,7 @@ import tempfile
 import gridfs
 import io
 import os
+import pickle
 
 def _get(obj,loc):
     return p_.get(obj,loc)
@@ -167,6 +168,31 @@ def LoadModelWeights(model,fileID,connection={'host':'localhost','port':27017,'d
     finally:
         os.remove(out)
         disconnect(db)
+
+def SaveHistory(history,connection={'host':'localhost','port':27017,'database':'database'}):
+        db = MongoClient(_getSafe(connection,'host',str,'Host must be a valid string referencing to mongodb host.'),
+         _getSafe(connection,'port',int,'Port must be a valid integer referencing to mongodb port.'))[_getSafe(connection,'database',str,'Database must be a valid string referencing to mongodb database.')]        
+        fs = gridfs.GridFS(db)
+        fd, name = tempfile.mkstemp()
+        try:
+                pickle.dump(history, open(fd, 'wb'))
+                return fs.put(open(fd, 'rb'))
+        finally:
+            os.remove(name)
+            disconnect(db)
+
+def LoadHistory(fileID,connection={'host':'localhost','port':27017,'database':'database'}):
+    db = MongoClient(_getSafe(connection,'host',str,'Host must be a valid string referencing to mongodb host.'),
+         _getSafe(connection,'port',int,'Port must be a valid integer referencing to mongodb port.'))[_getSafe(connection,'database',str,'Database must be a valid string referencing to mongodb database.')]
+    assert isinstance(fileID,ObjectId) , 'Provided fileID parameter is not a valid ObjectID.'
+    try:
+        fs = gridfs.GridFS(db)
+        out = fs.get(fileID)
+        return pickle.load(out)
+    finally:
+        os.remove(out)
+        disconnect(db)
+        
 
 
 

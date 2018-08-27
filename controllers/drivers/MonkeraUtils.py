@@ -148,9 +148,9 @@ class MonkeraCallback(Callback):
 def SaveModelWeights(model,connection={'host':'localhost','port':27017,'database':'database'}):
     db = MongoClient(_getSafe(connection,'host',str,'Host must be a valid string referencing to mongodb host.'),
          _getSafe(connection,'port',int,'Port must be a valid integer referencing to mongodb port.'))[_getSafe(connection,'database',str,'Database must be a valid string referencing to mongodb database.')]
-    fs = gridfs.GridFS(db)
-    fd, name = tempfile.mkstemp()
     try:
+        fs = gridfs.GridFS(db)
+        fd, name = tempfile.mkstemp()
         model.save_weights(name)
         return fs.put(open(fd, 'rb'))
     finally:
@@ -172,12 +172,11 @@ def LoadModelWeights(model,fileID,connection={'host':'localhost','port':27017,'d
 def SaveHistory(history,connection={'host':'localhost','port':27017,'database':'database'}):
         db = MongoClient(_getSafe(connection,'host',str,'Host must be a valid string referencing to mongodb host.'),
          _getSafe(connection,'port',int,'Port must be a valid integer referencing to mongodb port.'))[_getSafe(connection,'database',str,'Database must be a valid string referencing to mongodb database.')]        
-        fs = gridfs.GridFS(db)
-        fd, name = tempfile.mkstemp()
         try:
-                pickle.dump(history, open(fd, 'wb'))
-                fd.close()
-                return fs.put(open(fd, 'rb'))
+            fs = gridfs.GridFS(db)
+            fd, name = tempfile.mkstemp()
+            pickle.dump(history, fd)
+            return fs.put(open(fd, 'rb'))
         finally:
             os.remove(name)
             disconnect(db)

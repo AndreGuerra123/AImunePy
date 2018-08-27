@@ -4,7 +4,7 @@ import keras
 import random
 import json
 from controllers.drivers.Monkera import MongoImageDataGenerator
-from controllers.drivers.MonkeraUtils import ValidateModelArchitecture, LoadModelArchitecture, MonkeraCallback
+from controllers.drivers.MonkeraUtils import ValidateModelArchitecture, LoadModelArchitecture, MonkeraCallback, SaveModelWeights
 from keras.models import Model, model_from_json
 from keras.layers import deserialize, deserialize_keras_object
 from PIL import Image
@@ -15,6 +15,10 @@ import traceback
 import base64
 from bson import Binary#
 from keras import optimizers
+import io
+import tempfile
+import gridfs
+
 
 
 LOCATION = {
@@ -22,19 +26,17 @@ LOCATION = {
     'label': 'classi'
 }
 
-MODELS = {
+DATABASE = {
     'host': 'localhost',
     'port': 27017,
-    'database': 'authentication',
-    'collection': 'models'
+    'database': 'authentication'
 }
 
-IMAGES = {
-    'host': 'localhost',
-    'port': 27017,
-    'database': 'authentication',
-    'collection': 'loads'
-}
+MODELS = dict(DATABASE)
+MODELS['collection'] = 'models'
+
+IMAGES = dict(DATABASE)
+IMAGES['collection'] = 'loads'
 
 def get(obj, loc):
     return p_.get(obj, loc)
@@ -115,7 +117,6 @@ class Trainer:
         else:
             raise ValueError('Model training was canceled/reset.')
 
-    # Returns False if cannot update meaning that it was canceled
     def updateProgress(self, value, strmsg):
         if(self.proceed()):
             self.file['job']['value'] = value
@@ -273,6 +274,12 @@ class Trainer:
         else:
             raise ValueError('Selected optimiser is not a valid option.')
 
+    def saveModel(self):
+        fileid = SaveModelWeights(self.model,DATABASE)
+        models = connect(MODELS)
+        models.update_one({'_id':self.model_id},{'$set':{'weights':fileid}})
+        disconnect(models)
+        
     def __init__(self, params):
 
         self.model_id = toObjectId(params, 'source')
@@ -294,7 +301,7 @@ class Trainer:
             self.updateProgress(0.15,"Setting MongoDB image data generators...")
             self.createGenerators()
             
-            # Validating model90
+            # Validating model
             self.updateProgress(0.25,"Validating model architecture and generators...") 
             self.validateModelArchitecture()
 
@@ -311,10 +318,12 @@ class Trainer:
             self.model = self.model.fit_generator(self.traingen, epochs=self.epochs,callbacks=[self.callback], validation_data=self.valgen, workers=4, use_multiprocessing=True)
 
             # Save weigths
-            self.updateProgress(0.9,"Saving model trained weights...") 
-
+            self.updateProgress(0.9,"Saving model trained weights...")
+            self.saveModel()
+     
             # Save results
-            self.updateProgress(0.95,"Saving model results...") 
+            self.updateProgress(0.95,"Saving model results...")
+            self.saveResults() 
     
             self.finishJob() 
 

@@ -221,9 +221,6 @@ def PlotHistory(history,width=300,height=300,tools="pan,wheel_zoom,box_zoom,rese
         if(_get(history,'val_+x')): plot.circle(range(1,len(_get(history,'val_'+x))+1), _get(history,'val_'+x), legend='val_'+x, color="green",fill_color="white", size=5)
         plots.append(plot)
 
-    toreturn = file_html(plots,CDN)
-    print(type(toreturn))
-    print(toreturn)
-    return toreturn
+    return plots
 
     

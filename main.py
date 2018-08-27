@@ -4,6 +4,7 @@ from flask_cors import CORS
 from controllers.train import Trainer
 from controllers.predict import Predictor
 from controllers.results import Resulter
+from bokeh.embed import components
 
 app = Flask(__name__)
 CORS(app)
@@ -18,7 +19,9 @@ def train():
 
 @app.route("/results",methods=['POST'])
 def result():
-    return Resulter(request.json).getHtml()
+    plots = Resulter(request.json).getHtml()
+    script, div = components(plots, wrap_script=False)
+    return jsonify({'div': div, 'script': script})
 
 @app.route("/predict", methods=['POST'])
 def predict():

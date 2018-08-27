@@ -200,9 +200,8 @@ def writeTempPickle(obj):
         pickle.dump(obj, f)
     return f
 
-def readTempPickle(tempFile):
-    with open(tempFile.name, 'rb') as f:
-        pi_obj = pickle.load(f)
+def readTempPickle(out):
+    return pickle.load(out)
    
 def PlotHistory(history,width=300,height=300,tools="pan,wheel_zoom,box_zoom,reset,save"):
     assert isinstance(history,dict), 'Please provide a valid history dictionary parameter.' 

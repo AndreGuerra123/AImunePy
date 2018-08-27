@@ -14,6 +14,7 @@ import pickle
 from bokeh.plotting import figure
 from bokeh.resources import CDN
 from bokeh.embed import file_html
+from bokeh.models import Range1d
 
 def _get(obj,loc):
     return p_.get(obj,loc)
@@ -215,8 +216,8 @@ def PlotHistory(history,width=300,height=300,tools="pan,wheel_zoom,box_zoom,rese
     plots=list()
     for x in unique_metrics:
         plot = figure(tools=tools, plot_width=width, plot_height=height)
-        if(_get(history,x)): plot.scatter(_get(history,x))
-        if(_get(history,'val_'+x)): plot.scatter(_get(history,'val_'+x))
+        if(_get(history,x)): plot.scatter(Range1D(start=1,end=len(_get(history,x))+1),_get(history,x))
+        if(_get(history,'val_'+x)): plot.scatter(Range1d(start=1,end=len(_get(history,'val_'+x))+1),_get(history,'val_'+x))
         plots.append(plot)
 
     return file_html(plots,CDN)

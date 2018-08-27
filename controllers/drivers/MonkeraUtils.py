@@ -205,7 +205,6 @@ def readTempPickle(tempFile):
     with open(tempFile.name, 'rb') as f:
         pi_obj = pickle.load(f)
    
-
 def PlotHistory(history,width=300,height=300,tools="pan,wheel_zoom,box_zoom,reset,save"):
     assert isinstance(history,dict), 'Please provide a valid history dictionary parameter.' 
     assert isinstance(width,int) and width>0, 'Please provide a valid value for the width of the graphical component.'

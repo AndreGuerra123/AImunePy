@@ -277,7 +277,7 @@ class Trainer:
         disconnect(models)
 
     def saveResults(self):
-        fileid = SaveHistory(self.history,DATABASE)
+        fileid = SaveHistory(self.history.history,DATABASE)
         models = connect(MODELS)
         models.update_one({'_id':self.model_id},{'$set':{'results':fileid}})
         disconnect(models)

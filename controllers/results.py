@@ -2,11 +2,18 @@ from pymongo import MongoClient
 from bson.objectid import ObjectId
 import pydash as p_
 from controllers.drivers.MonkeraUtils import LoadHistory, PlotHistory
+from pymongo import MongoClient
 
 DATABASE = {
     'host': 'localhost',
     'port': 27017,
     'database': 'authentication'
+}
+MODELS = {
+    'host': 'localhost',
+    'port': 27017,
+    'database': 'authentication',
+    'collection': 'models'
 }
 
 def get(obj, loc):
@@ -18,6 +25,14 @@ def getSafe(obj, loc, typ, msg):
     assert isinstance(tr,typ), msg
     return tr
 
+def connect(obj):
+    return MongoClient(
+        _getSafe(obj, 'host', str, 'Hostname is not a valid string.'),
+        _getSafe(obj, 'port', int, 'Port is not a valid integer.'))[_getSafe(obj, 'database', str, 'Database name is not a valid string.')][_getSafe(obj, 'collection', str, 'Collection name is not a valid string.')]
+
+def disconnect(collection):
+    del collection
+    collection = None
 
 def toObjectId(params, loc):
     obj = get(params, loc)
@@ -33,7 +48,7 @@ class Resulter:
     def __init__(self,params):
        self.model_id = toObjectId(params, 'source')
        models = connect(MODELS)
-       model = models.find_one({'_id':self.model_id},{'results':1,'_id':1})
+       model = models.find_one({'_id':self.model_id},{'results':1})
        self.result_id = toObjectId(getSafe(model,'results',(str,ObjectId),'Could not find a valid results id refering the GridFS holding the file chuncks.'))
        disconnect(models)
        self.history = LoadHistory(self.result_id,DATABASE)

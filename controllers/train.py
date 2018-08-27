@@ -15,6 +15,7 @@ import traceback
 import base64
 from bson import Binary#
 from keras import optimizers
+import pickle
 
 LOCATION = {
     'image': 'image.data',
@@ -274,7 +275,13 @@ class Trainer:
         models = connect(MODELS)
         models.update_one({'_id':self.model_id},{'$set':{'weights':fileid}})
         disconnect(models)
-        
+
+    def saveResults(self):
+        fileid = SaveHistory(self.history,DATABASE)
+        models = connect(MODELS)
+        models.update_one({'_id':self.model_id},{'$set':{'results':fileid}})
+        disconnect(models)
+
     def __init__(self, params):
 
         self.model_id = toObjectId(params, 'source')
@@ -310,7 +317,7 @@ class Trainer:
 
             # Train Model
             self.updateProgress(0.5,"Fitting model...") 
-            self.model.fit_generator(self.traingen, epochs=self.epochs,callbacks=[self.callback], validation_data=self.valgen, workers=4, use_multiprocessing=True)
+            self.history = self.model.fit_generator(self.traingen, epochs=self.epochs,callbacks=[self.callback], validation_data=self.valgen, workers=4, use_multiprocessing=True)
 
             # Save weigths
             self.updateProgress(0.9,"Saving model trained weights...")

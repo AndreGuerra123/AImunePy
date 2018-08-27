@@ -1,10 +1,11 @@
-Flask==1.0.2
-numpy==1.15.1
-Keras==2.2.2
 six==1.11.0
-tensorflow==1.10.0
-pymongo==3.7.1
+numpy==1.15.1
+bokeh==0.13.0
 scipy==1.1.0
-pydash==4.7.3
+Flask==1.0.2
+tensorflow==1.10.0
 Flask_Cors==3.0.6
+pydash==4.7.3
+Keras==2.2.2
+pymongo==3.7.1
 Pillow==5.2.0

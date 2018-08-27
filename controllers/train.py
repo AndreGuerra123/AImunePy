@@ -4,7 +4,7 @@ import keras
 import random
 import json
 from controllers.drivers.Monkera import MongoImageDataGenerator
-from controllers.drivers.MonkeraUtils import ValidateModelArchitecture, LoadModelArchitecture, MonkeraCallback, SaveModelWeights
+from controllers.drivers.MonkeraUtils import ValidateModelArchitecture, LoadModelArchitecture, MonkeraCallback, SaveModelWeights, SaveHistory
 from keras.models import Model, model_from_json
 from keras.layers import deserialize, deserialize_keras_object
 from PIL import Image

@@ -18,8 +18,7 @@ def train():
 
 @app.route("/results",methods=['POST'])
 def result():
-    resulter = Resulter(request.json)
-    return(jsonsify(resulter.getHtml())
+    return Resulter(request.json).getHtml()
 
 @app.route("/predict", methods=['POST'])
 def predict():

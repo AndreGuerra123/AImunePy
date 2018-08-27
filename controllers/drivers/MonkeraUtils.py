@@ -217,10 +217,12 @@ def PlotHistory(history,width=300,height=300,tools="pan,wheel_zoom,box_zoom,rese
     for x in unique_metrics:
         
         plot = figure(title=x,tools=tools,x_axis_label='Epochs', y_axis_label='Value',plot_width=width, plot_height=height)
-        plot.circle(range(1,len(_get(history,x))+1), _get(history,x), legend=x, color="blue",fill_color="white", size=5)
-        plot.circle(range(1,len(_get(history,'val_'+x))+1), _get(history,'val_'+x), legend='val_'+x, color="green",fill_color="white", size=5)
+        if(_get(history,x)): plot.circle(range(1,len(_get(history,x))+1), _get(history,x), legend=x, color="blue",fill_color="white", size=5)
+        if(_get(history,'val_+x')): plot.circle(range(1,len(_get(history,'val_'+x))+1), _get(history,'val_'+x), legend='val_'+x, color="green",fill_color="white", size=5)
         plots.append(plot)
 
-    return file_html(plots,CDN)
+    toreturn = file_html(plots,CDN)
+    print(type(toreturn))
+    return toreturn
 
     

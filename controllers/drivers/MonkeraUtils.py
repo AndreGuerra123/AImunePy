@@ -174,11 +174,10 @@ def SaveHistory(history,connection={'host':'localhost','port':27017,'database':'
          _getSafe(connection,'port',int,'Port must be a valid integer referencing to mongodb port.'))[_getSafe(connection,'database',str,'Database must be a valid string referencing to mongodb database.')]        
         try:
             fs = gridfs.GridFS(db)
-            fd, name = tempfile.mkstemp()
-            pickle.dump(history, fd)
-            return fs.put(open(fd, 'rb'))
+            f = writeTempPickle(history)
+            return fs.put(open(f.name, 'rb'))
         finally:
-            os.remove(name)
+            os.remove(f.name)
             disconnect(db)
 
 def LoadHistory(fileID,connection={'host':'localhost','port':27017,'database':'database'}):
@@ -188,12 +187,21 @@ def LoadHistory(fileID,connection={'host':'localhost','port':27017,'database':'d
     try:
         fs = gridfs.GridFS(db)
         out = fs.get(fileID)
-        return pickle.load(out)
+        return readTempPickle(out)
     finally:
         os.remove(out)
         disconnect(db)
-        
 
+def writeTempPickle(obj):
+    with tempfile.NamedTemporaryFile(delete=False) as f:
+        pickle.dump(obj, f)
+    return f
+
+
+def readTempPickle(tempFile):
+    with open(tempFile.name, 'rb') as f:
+        pi_obj = pickle.load(f)
+   
 
 
             

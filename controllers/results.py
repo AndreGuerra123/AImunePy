@@ -49,7 +49,7 @@ class Resulter:
        self.model_id = toObjectId(params, 'source')
        models = connect(MODELS)
        model = models.find_one({'_id':self.model_id},{'results':1})
-       self.result_id = toObjectId(_getSafe(model,'results',(str,ObjectId),'Could not find a valid results id refering the GridFS holding the file chuncks.'))
+       self.result_id = toObjectId(model,'results')
        disconnect(models)
        self.history = LoadHistory(self.result_id,DATABASE)
 

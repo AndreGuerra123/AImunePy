@@ -16,10 +16,10 @@ def train():
     return jsonify("Train finished.")
     # this will route the request to the an API wich performs image prediciton in tensorflow
 
-@app.route("/results",methods=['GET'])
+@app.route("/results",methods=['POST'])
 def result():
-    print(request.json)
-    return Resulter(request.json).getHtml()
+    resulter = Resulter(request.json)
+    return(jsonsify(resulter.getHtml())
 
 @app.route("/predict", methods=['POST'])
 def predict():

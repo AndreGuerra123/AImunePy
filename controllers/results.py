@@ -16,11 +16,11 @@ MODELS = {
     'collection': 'models'
 }
 
-def get(obj, loc):
+def _get(obj, loc):
     return p_.get(obj, loc)
 
 
-def getSafe(obj, loc, typ, msg):
+def _getSafe(obj, loc, typ, msg):
     tr = p_.get(obj, loc)
     assert isinstance(tr,typ), msg
     return tr
@@ -35,7 +35,7 @@ def disconnect(collection):
     collection = None
 
 def toObjectId(params, loc):
-    obj = get(params, loc)
+    obj = _get(params, loc)
     if (isinstance(obj, ObjectId)):
         return obj
     elif (isinstance(obj, str)):
@@ -49,7 +49,7 @@ class Resulter:
        self.model_id = toObjectId(params, 'source')
        models = connect(MODELS)
        model = models.find_one({'_id':self.model_id},{'results':1})
-       self.result_id = toObjectId(getSafe(model,'results',(str,ObjectId),'Could not find a valid results id refering the GridFS holding the file chuncks.'))
+       self.result_id = toObjectId(_getSafe(model,'results',(str,ObjectId),'Could not find a valid results id refering the GridFS holding the file chuncks.'))
        disconnect(models)
        self.history = LoadHistory(self.result_id,DATABASE)
 

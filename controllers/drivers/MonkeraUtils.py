@@ -144,7 +144,7 @@ class MonkeraCallback(Callback):
             disconnect(col)
 
 def SaveModelWeights(model,connection={'host':'localhost','port':27017,'database':'database'}):
-    db = pymongo.MongoClient(_getSafe(connection,'host',str,'Host must be a valid string referencing to mongodb host.'),
+    db = MongoClient(_getSafe(connection,'host',str,'Host must be a valid string referencing to mongodb host.'),
          _getSafe(connection,'port',int,'Port must be a valid integer referencing to mongodb port.'))[_getSafe(connection,'database',str,'Database must be a valid string referencing to mongodb database.')]
     fs = gridfs.GridFS(db)
     fd, name = tempfile.mkstemp()
@@ -156,7 +156,7 @@ def SaveModelWeights(model,connection={'host':'localhost','port':27017,'database
         disconnect(db)
 
 def LoadModelWeights(model,fileID,connection={'host':'localhost','port':27017,'database':'database'}):
-    db = pymongo.MongoClient(_getSafe(connection,'host',str,'Host must be a valid string referencing to mongodb host.'),
+    db = MongoClient(_getSafe(connection,'host',str,'Host must be a valid string referencing to mongodb host.'),
          _getSafe(connection,'port',int,'Port must be a valid integer referencing to mongodb port.'))[_getSafe(connection,'database',str,'Database must be a valid string referencing to mongodb database.')]
     assert isinstance(fileID,ObjectId) , 'Provided fileID parameter is not a valid ObjectID.'
     try:

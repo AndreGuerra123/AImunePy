@@ -214,7 +214,7 @@ def PlotHistory(history,width=300,height=300,tools="pan,wheel_zoom,box_zoom,rese
 
     plots=list()
     for x in unique_metrics:
-        plot = figure(tools=tools, plot_width=width, plot_height=heigh t)
+        plot = figure(tools=tools, plot_width=width, plot_height=height)
         if(_get(history,x)): plot.scatter(_get(history,x))
         if(_get(history,'val_'+x)): plot.scatter(_get(history,'val_'+x))
         plots.append(plot)

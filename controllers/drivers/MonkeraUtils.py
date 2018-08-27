@@ -215,9 +215,9 @@ def PlotHistory(history,width=300,height=300,tools="pan,wheel_zoom,box_zoom,rese
 
     plots=list()
     for x in unique_metrics:
-        plot = figure(tools=tools, plot_width=width, plot_height=height)
-        if(_get(history,x)): plot.scatter(Range1D(start=1,end=len(_get(history,x))+1),_get(history,x))
-        if(_get(history,'val_'+x)): plot.scatter(Range1d(start=1,end=len(_get(history,'val_'+x))+1),_get(history,'val_'+x))
+        plot = figure(title=x,tools=tools, plot_width=width, plot_height=height)
+        if(_get(history,x)): plot.scatter(Range1d(start=1,end=len(_get(history,x))),_get(history,x))
+        if(_get(history,'val_'+x)): plot.scatter(Range1d(start=1,end=len(_get(history,'val_'+x))),_get(history,'val_'+x))
         plots.append(plot)
 
     return file_html(plots,CDN)

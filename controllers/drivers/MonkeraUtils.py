@@ -11,6 +11,9 @@ import gridfs
 import io
 import os
 import pickle
+from bokeh.plotting import figure
+from bokeh.resources import CDN
+from bokeh.embed import file_html
 
 def _get(obj,loc):
     return p_.get(obj,loc)
@@ -198,13 +201,27 @@ def writeTempPickle(obj):
         pickle.dump(obj, f)
     return f
 
-
 def readTempPickle(tempFile):
     with open(tempFile.name, 'rb') as f:
         pi_obj = pickle.load(f)
    
 
+def PlotHistory(history,width=300,height=300,tools="pan,wheel_zoom,box_zoom,reset,save"):
+    assert isinstance(history,dict), 'Please provide a valid history dictionary parameter.' 
+    assert isinstance(width,int) and width>0, 'Please provide a valid value for the width of the graphical component.'
+    assert isinstance(height,int) and height>0, 'Please provide a valid value for the height of the graphical component.'
+    assert isinstance(tools,str), 'Please insert a valid string value for the tools parameter'
 
-            
+    #Dictionary of unique plots keys
+    unique_metrics = set(list([x.replace('val_','') for x in history.keys()]))
+
+    plots=list()
+    for i,x in unique_metrics:
+        plot = figure(tools=tools, plot_width=width, plot_height=heightt)
+        if(_get(history,x)): plot.scatter(_get(history,x))
+        if(_get(history,'val_'+x)): plot.scatter(_get(history,'val_'+x))
+        plots.insert(i,plot)
+    
+    return file_html(plots,CDN)
 
     

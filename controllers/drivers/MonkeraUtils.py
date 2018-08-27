@@ -176,6 +176,7 @@ def SaveHistory(history,connection={'host':'localhost','port':27017,'database':'
         fd, name = tempfile.mkstemp()
         try:
                 pickle.dump(history, open(fd, 'wb'))
+                fd.close()
                 return fs.put(open(fd, 'rb'))
         finally:
             os.remove(name)

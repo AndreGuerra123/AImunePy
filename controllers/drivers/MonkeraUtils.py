@@ -9,6 +9,7 @@ import time
 import tempfile
 import gridfs
 import io
+import os
 
 def _get(obj,loc):
     return p_.get(obj,loc)
@@ -149,7 +150,7 @@ def SaveModelWeights(model,connection={'host':'localhost','port':27017,'database
     fs = gridfs.GridFS(db)
     fd, name = tempfile.mkstemp()
     try:
-        self.model.save_weights(name)
+        model.save_weights(name)
         return fs.put(open(fd, 'rb'))
     finally:
         os.remove(name)

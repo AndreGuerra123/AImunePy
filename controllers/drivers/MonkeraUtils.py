@@ -193,7 +193,6 @@ def LoadHistory(fileID,connection={'host':'localhost','port':27017,'database':'d
         out = fs.get(fileID)
         return readTempPickle(out)
     finally:
-        os.remove(out)
         disconnect(db)
 
 def writeTempPickle(obj):

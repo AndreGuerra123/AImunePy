@@ -54,5 +54,4 @@ class Resulter:
        self.history = LoadHistory(self.result_id,DATABASE)
 
     def getHtml(self):
-        print(self.history)
         return PlotHistory(self.history,width=800,height=600)

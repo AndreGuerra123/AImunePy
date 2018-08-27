@@ -83,6 +83,7 @@ def ValidateModelArchitecture(model,inp,out):
     if(co): #change ouput
         model = changeOut(model,out)
 
+    model.build(model.input_shape)
 
     return model, any([ci,co])
 

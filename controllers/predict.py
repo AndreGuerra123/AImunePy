@@ -56,7 +56,7 @@ class Predictor:
         disconnect(temps)
 
         self.model = LoadModelArchitecture({'_id':self.modelid},'architecture.file',MODELS)
-        LoadModelWeights(self.model,_getSafe(self.model_doc,'weights',(str,ObjectId),'Could not find a valid weights model file.'))
+        LoadModelWeights(self.model,_getSafe(self.model_doc,'weights',(str,ObjectId),'Could not find a valid weights model file.'),DATABASE)
         self.hotlabels = _getSafe(self.model_doc,'hotlabels',dict,'Could not find a valid hot labels dictionary.')
 
 

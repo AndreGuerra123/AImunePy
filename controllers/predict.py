@@ -1,7 +1,7 @@
 from pymongo import MongoClient
 from bson.objectid import ObjectId
 import pydash as p_
-from controllers.drivers.MonkeraUtils import _to_model, LoadModelWeights
+from controllers.drivers.MonkeraUtils import _to_model, LoadModelWeights, LoadModelArchitecture
 from pymongo import MongoClient
 
 DATABASE = {

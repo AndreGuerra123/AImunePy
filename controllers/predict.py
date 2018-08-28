@@ -55,10 +55,10 @@ class Predictor:
         self.temp_doc = temps.find_one({'_id':self.tempid})
         disconnect(temps)
 
-        self.model = _to_model(_getSafe(self.model_doc,'architecture.file',(str,bytes),'Could not find a valid model architecture.'))
+        self.model = LoadModelArchitecture({'_id':self.modelid},'architecture.file',MODELS)
         LoadModelWeights(self.model,_getSafe(self.model_doc,'weights',(str,ObjectId),'Could not find a valid weights model file.'))
         self.hotlabels = _getSafe(self.model_doc,'hotlabels',dict,'Could not find a valid hot labels dictionary.')
 
-        
+
     def getPredictions(self):
         return False

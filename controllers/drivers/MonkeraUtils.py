@@ -214,22 +214,22 @@ def PlotHistory(history,width=300,height=300,tools="pan,wheel_zoom,box_zoom,rese
     unique_metrics = set(list([x.replace('val_','') for x in history.keys()]))
 
     plots=list()
-    for i in range(0,3):
-        for x in unique_metrics:
+    
+    for x in unique_metrics:
         
-            plot = figure(title=x,tools=tools,x_axis_label='Epochs', y_axis_label='Value',plot_width=width, plot_height=height)
-            datax = _get(history,x)
-            if(datax):
-                rangem = len(datax)+1
-                plot.line(range(1,rangem), datax, legend=x, color="blue")
-                plot.circle(range(1,rangem), datax, legend=x, color="blue",fill_color="white", size=5)
+        plot = figure(title=x,tools=tools,x_axis_label='Epochs', y_axis_label='Value',plot_width=width, plot_height=height)
+        datax = _get(history,x)
+        if(datax):
+            rangem = len(datax)+1
+            plot.line(range(1,rangem), datax, legend=x, color="blue")
+            plot.circle(range(1,rangem), datax, legend=x, color="blue",fill_color="white", size=5)
 
-            dataxval = _get(history,'val_'+x)
-            if(dataxval):
-                rangem = len(dataxval)+1
-                plot.line(range(1,rangem), dataxval, legend='val_'+x, color="green")
-                plot.circle(range(1,rangem), dataxval, legend='val_'+x, color="green",fill_color="white", size=5)
-            plots.append(plot)
+        dataxval = _get(history,'val_'+x)
+        if(dataxval):
+            rangem = len(dataxval)+1
+            plot.line(range(1,rangem), dataxval, legend='val_'+x, color="green")
+            plot.circle(range(1,rangem), dataxval, legend='val_'+x, color="green",fill_color="white", size=5)
+        plots.append(plot)
 
     return plots
 

@@ -171,7 +171,6 @@ def LoadModelWeights(model,fileID,connection={'host':'localhost','port':27017,'d
         out = fs.get(fileID)
         model.load_weights(out)
     finally:
-        os.remove(out)
         disconnect(db)
 
 def SaveHistory(history,connection={'host':'localhost','port':27017,'database':'database'}):

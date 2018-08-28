@@ -172,8 +172,7 @@ def LoadModelWeights(model,fileID,connection={'host':'localhost','port':27017,'d
         gout = fs.get(fileID)
         print(gout)
         print(type(gout.read()))
-        print(type(gout.read().decode()))
-        model.load_weights(gout.read().decode())
+        model.load_weights(gout.read())
     finally:
         disconnect(db)
 

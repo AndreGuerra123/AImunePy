@@ -25,8 +25,8 @@ def result():
 
 @app.route("/predict", methods=['POST'])
 def predict():
-    return jsonify(Predictor(request.json))
-
+    predictor = Predictor(request.json)
+    return jsonify(predictor.getPredictions())
 
 # HTTP Errors handlers
 

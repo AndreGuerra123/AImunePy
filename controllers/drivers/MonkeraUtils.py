@@ -169,11 +169,12 @@ def LoadModelWeights(model,fileID,connection={'host':'localhost','port':27017,'d
     try:
         fs = gridfs.GridFS(db)
 
-        gout = fs.get(fileID)
-        print(gout)
-        print(type(gout.read()))
-        model.load_weights(gout.read())
+        f = tempfile.NamedTemporaryFile(delete=False)
+        f.write(fs.get(fileID).read())
+        f.close()
+        model.load_weights(f.name)
     finally:
+        os.unlink(f.name)
         disconnect(db)
 
 def SaveHistory(history,connection={'host':'localhost','port':27017,'database':'database'}):

@@ -232,5 +232,4 @@ def PlotHistory(history,width=300,height=300,tools="pan,wheel_zoom,box_zoom,rese
         plots.append(plot)
 
     return plots
-
-    
+  

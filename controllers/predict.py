@@ -1,7 +1,7 @@
 from pymongo import MongoClient
 from bson.objectid import ObjectId
 import pydash as p_
-from controllers.drivers.MonkeraUtils import LoadHistory, PlotHistory
+from controllers.drivers.MonkeraUtils import _to_model, LoadModelWeights
 from pymongo import MongoClient
 
 DATABASE = {
@@ -48,5 +48,17 @@ class Predictor:
     def __init__(self, params):
         self.modelid = toObjectId(params,'model_id')
         self.tempid = toObjectId(params,'temp_id')
+        models = connect(MODELS)
+        self.model_doc = models.find_one({'_id':self.modelid})
+        disconnect(models)
+        temps = connect(TEMPS)
+        self.temp_doc = temps.find_one({'_id':self.tempid})
+        disconnect(temps)
+
+        self.model = _to_model(_getSafe(self.model_doc,'architecture.file',(str,bytes),'Could not find a valid model architecture.'))
+        LoadModelWeights(self.model,_getSafe(self.model_doc,'weights',(str,ObjectId),'Could not find a valid weights model file.'))
+        self.hotlabels = _getSafe(self.model_doc,'hotlabels',dict,'Could not find a valid hot labels dictionary.')
+
+        
     def getPredictions(self):
         return False

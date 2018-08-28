@@ -168,7 +168,7 @@ def LoadModelWeights(model,fileID,connection={'host':'localhost','port':27017,'d
     assert isinstance(fileID,ObjectId) , 'Provided fileID parameter is not a valid ObjectID.'
     try:
         fs = gridfs.GridFS(db)
-        model.load_weights(open(fs.get(fileID),'rb'))
+        model.load_weights(fs.get(fileID).read())
     finally:
         disconnect(db)
 

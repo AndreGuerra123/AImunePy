@@ -258,8 +258,9 @@ def ValidateImageModel(query,location,connection={'host':'localhost','port':2701
     assert color_format in ['L','RGB','RGBA'], "Please select a valid color format string: L, RGB, or RGBA"
 
     col = connect(connection)
-    imagestr = _getSafe(col.find_one(query),location,(str,bytes),'Selected image object is not a valid str/binary image object.')
+    imgstr = _getSafe(col.find_one(query),location,(str,bytes),'Selected image object is not a valid str/binary image object.')
     disconnect(col)
+    print(type(imgstr))
 
     img = Image.open(io.BytesIO(imgstr)).resize(target_size).convert(color_format)
     return img_to_array(img,data_format=data_format)

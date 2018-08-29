@@ -239,10 +239,13 @@ def PlotHistory(history,width=300,height=300,tools="pan,wheel_zoom,box_zoom,rese
 
     return plots
 
-def PlotPredictions(preds,labels,tools,height=300,width=300):
+def PlotPredictions(preds,labels,tools="pan,wheel_zoom,box_zoom,reset,save",height=300,width=300):
 
     assert isinstance(preds,np.ndarray), 'Please provide a valid preds numpy array as parameter.' 
     assert isinstance(labels,dict),'Please provide a valid labels'
+    assert isinstance(width,int) and width>0, 'Please provide a valid value for the width of the graphical component.'
+    assert isinstance(height,int) and height>0, 'Please provide a valid value for the height of the graphical component.'
+    assert isinstance(tools,str), 'Please insert a valid string value for the tools parameter'
 
     source = ColumnDataSource(data=dict(legend=labels.keys(), counts=preds, color=Spectral6))
     plot = figure(title='Results Histogram',tools=tools,x_axis_label='Classes', y_axis_label='%',plot_width=width, plot_height=height)

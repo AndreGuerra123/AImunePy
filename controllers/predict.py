@@ -49,8 +49,7 @@ def _getKey(mydict, value):
     for k, v in mydict.items():   
         if v == value:
             return k
-
-    return mydict.keys()[mydict.values().index(value)] 
+    return ValueError('Faieled to determine the correct sample label.')
 
 class Predictor:
     def __init__(self, params):

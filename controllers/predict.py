@@ -3,6 +3,8 @@ from bson.objectid import ObjectId
 import pydash as p_
 from controllers.drivers.MonkeraUtils import _to_model, LoadModelWeights, LoadModelArchitecture
 from pymongo import MongoClient
+from keras import backend as K
+
 
 DATABASE = {
     'host': 'localhost',
@@ -45,6 +47,7 @@ def toObjectId(params, loc):
 
 class Predictor:
     def __init__(self, params):
+        K.clear_session()
         self.modelid = toObjectId(params,'model_id')
         self.tempid = toObjectId(params,'temp_id')
         models = connect(MODELS)

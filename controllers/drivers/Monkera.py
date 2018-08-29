@@ -961,21 +961,6 @@ class MongoImageDataGenerator(object):
         self.__disconnect(collection)
         return object_ids
 
-    def __getDictionary(self):
-        collection = self.__connect()
-        lbls = collection.distinct(
-            self.lbl_location, {'_id': {'$in': self.object_ids}})
-        nb = len(lbls)
-        # keys as human readable, any type.
-        dictionary = {k: self.__hot(v, nb) for v, k in enumerate(lbls)}
-        self.__disconnect(collection)
-        return dictionary, nb
-
-    def __hot(self, idx, nb):
-        hot = np.zeros((nb,))
-        hot[idx] = 1
-        return hot
-
     def readMongoSample(self, oid):
 
         collection = self.__connect()
@@ -1003,6 +988,28 @@ class MongoImageDataGenerator(object):
                     "Failed to retrieve image label (ID:"+str(_g(sample, '_id'))+") at "+self.lbl_location+".")
         return self.getEncoded(label)
 
+    def __getDictionary(self):
+        collection = self.__connect()
+        lbls = collection.distinct(self.lbl_location, {'_id': {'$in': self.object_ids}})
+        print(type(lbls))
+        print(lbls)
+        nb = len(lbls)
+        # keys as human readable, any type.
+        dictionary = {k: self.__hot(v, nb) for v, k in enumerate(lbls)}
+        self.__disconnect(collection)
+        return dictionary, nb
+
+    def __hot(self, idx, nb):
+        hot = np.zeros((nb,))
+        hot[idx] = 1
+        return hot
+    
+    def getEncoded(self, label):
+        return _g(self.dictionary, label)
+
+    def getDecoded(self, np):
+        return self.dictionary.keys()[self.dictionary.values().index(np)]
+
     def getInputShape(self):
         toreturn = [None,None,None,None]
         toreturn[self.channel_axis] = self.color_shape
@@ -1013,11 +1020,7 @@ class MongoImageDataGenerator(object):
     def getOutputShape(self):
         return tuple([None,self.classes])
 
-    def getEncoded(self, label):
-        return _g(self.dictionary, label)
 
-    def getDecoded(self, np):
-        return self.dictionary.keys()[self.dictionary.values().index(np)]
 
 class MongoTrainFlowGenerator(Iterator):
 

@@ -74,7 +74,7 @@ class Predictor:
 
     def getResults(self):
         argmax = int(np.argmax(self.pred)),
-        prob = float(pred[argmax]),
+        prob = float(self.pred[argmax]),
         label = _getKey(self.hotlabels,argmax)
         return {'label':label,'prob':prob}
 

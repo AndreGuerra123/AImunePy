@@ -17,6 +17,7 @@ from bokeh.resources import CDN
 from bokeh.embed import file_html
 from bokeh.models import Range1d
 from PIL import Image
+import numpy as np
 
 
 def _get(obj,loc):
@@ -260,7 +261,6 @@ def ValidateImageModel(query,location,connection={'host':'localhost','port':2701
     col = connect(connection)
     imgstr = _getSafe(col.find_one(query),location,(str,bytes),'Selected image object is not a valid str/binary image object.')
     disconnect(col)
-    print(type(imgstr))
 
     img = Image.open(io.BytesIO(imgstr)).resize(target_size).convert(color_format)
     return img_to_array(img,data_format=data_format)

@@ -1,7 +1,7 @@
 from pymongo import MongoClient
 from bson.objectid import ObjectId
 import pydash as p_
-from controllers.drivers.MonkeraUtils import _to_model, LoadModelWeights, LoadModelArchitecture
+from controllers.drivers.MonkeraUtils import _to_model, LoadModelWeights, LoadModelArchitecture, ValidateImageModel
 from pymongo import MongoClient
 from keras import backend as K
 
@@ -61,6 +61,7 @@ class Predictor:
         LoadModelWeights(self.model,_getSafe(self.model_doc,'weights',(str,ObjectId),'Could not find a valid weights model file.'),DATABASE)
         self.hotlabels = _getSafe(self.model_doc,'hotlabels',dict,'Could not find a valid hot labels dictionary.')
 
+        self.tensor = ValidateImageModel(self.model,self.temp_id,'image.data',TEMPS)
 
     def getPredictions(self):
-        return False
+        self.predictions = self.model.predict_proba(self.tensor)

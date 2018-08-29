@@ -18,7 +18,6 @@ from keras import utils as keras_utils
 from keras.preprocessing.image import Iterator
 
 from PIL import ImageEnhance
-from PIL import Image as pil_image
 
 import io
 import pymongo
@@ -32,12 +31,12 @@ import keras
 import random
 
 _PIL_INTERPOLATION_METHODS = {
-    'nearest': pil_image.NEAREST,
-    'bilinear': pil_image.BILINEAR,
-    'bicubic': pil_image.BICUBIC,
-    'hamming': pil_image.HAMMING,
-    'box': pil_image.BOX,
-    'lanczos': pil_image.LANCZOS}
+    'nearest': Image.NEAREST,
+    'bilinear': Image.BILINEAR,
+    'bicubic': Image.BICUBIC,
+    'hamming': Image.HAMMING,
+    'box': Image.BOX,
+    'lanczos': Image.LANCZOS}
 
 color_formats = {
             'L':1,
@@ -380,13 +379,13 @@ def array_to_img(x, data_format=None, scale=True):
         x *= 255
     if x.shape[2] == 4:
         # RGBA
-        return pil_image.fromarray(x.astype('uint8'), 'RGBA')
+        return Image.fromarray(x.astype('uint8'), 'RGBA')
     elif x.shape[2] == 3:
         # RGB
-        return pil_image.fromarray(x.astype('uint8'), 'RGB')
+        return Image.fromarray(x.astype('uint8'), 'RGB')
     elif x.shape[2] == 1:
         # grayscale
-        return pil_image.fromarray(x[:, :, 0].astype('uint8'), 'L')
+        return Image.fromarray(x[:, :, 0].astype('uint8'), 'L')
     else:
         raise ValueError('Unsupported channel number: ', x.shape[2])
 

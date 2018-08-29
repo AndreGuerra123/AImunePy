@@ -1,6 +1,7 @@
 from keras.layers import Dense, Input
 from keras.models import clone_model, Model, Sequential, model_from_json
 from keras.callbacks import Callback
+from keras import backend
 from pymongo import MongoClient
 from bson.objectid import ObjectId
 import pydash as p_
@@ -15,6 +16,8 @@ from bokeh.plotting import figure
 from bokeh.resources import CDN
 from bokeh.embed import file_html
 from bokeh.models import Range1d
+from PIL import Image
+
 
 def _get(obj,loc):
     return p_.get(obj,loc)
@@ -234,4 +237,64 @@ def PlotHistory(history,width=300,height=300,tools="pan,wheel_zoom,box_zoom,rese
         plots.append(plot)
 
     return plots
-  
+
+def ValidateImageModel(query,location,connection={'host':'localhost','port':27017,'database':'database','collection':'collection'},config={'target_size':(100,100),'color_format':'L','data_format':'channels_last'}):
+    assert isinstance(query,dict), 'Query is not a valid dictionary.'
+    assert isinstance(location,str), 'Location is not a valid string.'
+    assert isinstance(connection,dict), 'Collection is not a valid dictionary.'
+    assert isinstance(config,dict), 'Config is not a valid dictionary.'
+    _getSafe(connection,'host',str,'Connection host is not a valid string.')
+    _getSafe(connection,'port',int,'Connection port is not a valid integer.')
+    _getSafe(connection,'database',str,'Connection database is not a valid string.')
+    _getSafe(connection,'collection',str,'Connection collection is not a valid string.')
+
+    target_size = _getSafe(config,'target_size',tuple,'Config target size is not a valid tuple.')
+    assert len(target_size) == 2, 'Target_size tuple is not 2 dimensional.'
+
+    data_format = _getSafe(config, 'data_format', str, "Please select a valid string for the data_format parameter.")
+    assert (data_format in ['channels_first', 'channels_last']), 'Data format parameter should be `"channels_last"` (channel after row and column) or `"channels_first"` (channel before row and column). Received: %s' % self.data_format
+
+    color_format = _getSafe(config, 'color_format', str,"Please select a valid string for color_format parameter.")
+    assert color_format in ['L','RGB','RGBA'], "Please select a valid color format string: L, RGB, or RGBA"
+
+    col = connect(connection)
+    imagestr = _getSafe(col.find_one(query),location,(str,bytes),'Selected image object is not a valid str/binary image object.')
+    disconnect(col)
+
+    img = Image.open(io.BytesIO(imgstr)).resize(target_size).convert(color_format)
+    return img_to_array(img,data_format=data_format)
+
+
+def img_to_array(img, data_format=None):
+    """Converts a PIL Image instance to a Numpy array.
+
+    # Arguments
+        img: PIL Image instance.
+        data_format: Image data format,
+            either "channels_first" or "channels_last".
+
+    # Returns
+        A 3D Numpy array.
+
+    # Raises
+        ValueError: if invalid `img` or `data_format` is passed.
+    """
+    if data_format is None:
+        data_format = backend.image_data_format()
+    if data_format not in {'channels_first', 'channels_last'}:
+        raise ValueError('Unknown data_format: ', data_format)
+    # Numpy array x has format (height, width, channel)
+    # or (channel, height, width)
+    # but original PIL image has format (width, height, channel)
+    x = np.asarray(img, dtype=backend.floatx())
+    if len(x.shape) == 3:
+        if data_format == 'channels_first':
+            x = x.transpose(2, 0, 1)
+    elif len(x.shape) == 2:
+        if data_format == 'channels_first':
+            x = x.reshape((1, x.shape[0], x.shape[1]))
+        else:
+            x = x.reshape((x.shape[0], x.shape[1], 1))
+    else:
+        raise ValueError('Unsupported image shape: ', x.shape)
+    return x

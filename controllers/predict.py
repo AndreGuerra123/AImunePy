@@ -69,4 +69,4 @@ class Predictor:
        
 
     def getPredictions(self):
-        print(self.model.predict(self.sample))
+        print(self.model.predict_classes(self.sample))

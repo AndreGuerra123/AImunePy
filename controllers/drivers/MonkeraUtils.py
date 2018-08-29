@@ -251,7 +251,7 @@ def PlotPredictions(preds,labels,tools="pan,wheel_zoom,box_zoom,reset,save",heig
 
     source = ColumnDataSource(data=dict(legend=list(labels.keys()), counts=preds.tolist(), color=Spectral6))
     plot = figure(title='Results Histogram',tools=tools,x_axis_label='Classes', y_axis_label='%',plot_width=width, plot_height=height)
-    p.vbar(x='legend', top='counts', width=0.8, color='color', source=source)
+    plot.vbar(x='legend', top='counts', width=0.8, color='color', source=source)
     
     return plot
 

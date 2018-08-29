@@ -16,6 +16,8 @@ from bokeh.plotting import figure
 from bokeh.resources import CDN
 from bokeh.embed import file_html
 from bokeh.models import Range1d
+from bokeh.models import ColumnDataSource
+from bokeh.palettes import Spectral6
 from PIL import Image
 import numpy as np
 

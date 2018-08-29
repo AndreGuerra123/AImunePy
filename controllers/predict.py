@@ -46,6 +46,10 @@ def toObjectId(params, loc):
             'Supplied object is not a valid ObjectId object or string')
 
 def _getKey(mydict, value):
+    for k, v in mydict.items():   
+        if v == value:
+            return k
+
     return mydict.keys()[mydict.values().index(value)] 
 
 class Predictor:

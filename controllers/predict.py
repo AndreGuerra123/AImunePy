@@ -46,10 +46,10 @@ def toObjectId(params, loc):
             'Supplied object is not a valid ObjectId object or string')
 
 def _getKey(mydict, value):
-    for k, v in mydict.iteritems():   
-        if v == value:
-            return k
-    raise ValueError('Failed to determine the correct sample label.')
+    labels = [labels for label, v in mydict.items() if value == v]
+    assert len(labels) <2, 'Multiple labels were found simultaneously for the same classification hotlabel.'
+    assert len(labels) >0, 'No labels were found the predicted classification hotlabel.'
+    return labels[0]
 
 class Predictor:
     def __init__(self, params):

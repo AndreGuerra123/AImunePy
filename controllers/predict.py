@@ -46,7 +46,7 @@ def toObjectId(params, loc):
             'Supplied object is not a valid ObjectId object or string')
 
 def _getKey(mydict, value):
-    for k, v in mydict.items():   
+    for k, v in mydict.iteritems():   
         if v == value:
             return k
     raise ValueError('Failed to determine the correct sample label.')

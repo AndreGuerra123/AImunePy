@@ -61,11 +61,12 @@ class Predictor:
         LoadModelWeights(self.model,_getSafe(self.model_doc,'weights',(str,ObjectId),'Could not find a valid weights model file.'),DATABASE)
         self.hotlabels = _getSafe(self.model_doc,'hotlabels',dict,'Could not find a valid hot labels dictionary.')
 
-        self.tensor = ValidateImageModel({'_id':self.tempid},'image.data',TEMPS,config={
+        self.imagetensor = ValidateImageModel({'_id':self.tempid},'image.data',TEMPS,config={
             'target_size':(_getSafe(self.model_doc,'dataset.height',int,'Failed to retrieve target height integer.'),_getSafe(self.model_doc,'dataset.width',int,'Failed to retrieve target width integer.')),
             'data_format':_getSafe(self.model_doc,'dataset.data_format',str,'Failed to retrieve target data_format string.'),
             'color_format':_getSafe(self.model_doc,'dataset.color_format',str,'Failed to retrieve target color_format string.')
         })
+        self.sampletensor = np.array([imagetensor,])
 
     def getPredictions(self):
-        print(self.model.predict([self.tensor]))
+        print(self.model.predict(self.sampletensor)

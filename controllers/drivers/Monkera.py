@@ -964,7 +964,7 @@ class MongoImageDataGenerator(object):
     def __getDictionary(self):
         collection = self.__connect()
         lbls = collection.distinct(self.lbl_location, {'_id': {'$in': self.object_ids}})
-        unique_keys = list(set(map(str,a)))
+        unique_keys = list(set(map(str,lbls)))
         unique_keys.sort()
         dictionary = {x:i for i,x in enumerate(unique_keys)}# keys as human readable, values are the indexes (sorted)
         nb = len(dictionary)
@@ -1014,8 +1014,6 @@ class MongoImageDataGenerator(object):
     def getOutputShape(self):
         return tuple([None,self.classes])
 
-    def getEncoded(self, label):
-        return _g(self.dictionary, label)
 
 class MongoTrainFlowGenerator(Iterator):
 

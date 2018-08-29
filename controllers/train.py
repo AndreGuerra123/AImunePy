@@ -282,6 +282,11 @@ class Trainer:
         models.update_one({'_id':self.model_id},{'$set':{'results':fileid}})
         disconnect(models)
 
+    def saveHotlabels(self):
+        models = connect(MODELS)
+        model.update_one({'_id':self.model_id},{'$set':{'hotlabels':self.mifg.dictionary}})
+        disconnect(models)
+
     def __init__(self, params):
 
         self.model_id = toObjectId(params, 'source')
@@ -325,8 +330,11 @@ class Trainer:
      
             # Save results
             self.updateProgress(0.95,"Saving model results...")
-            self.saveResults() 
-    
+            self.saveResults()
+
+            self.updateProgress(0.97,"Saving model classification hotlabels...") 
+            self.saveHotlabels()
+
             self.finishJob() 
 
         except Exception as e:

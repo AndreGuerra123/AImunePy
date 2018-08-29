@@ -117,7 +117,6 @@ def _to_model(archi):
             return model_from_json(archi) #simply encoded as binary or loaded as pure string
     except:           
             return model_from_json(base64.b64decode(archi).decode()) # the string was encoded in base64
-
 class MonkeraCallback(Callback):
     def __init__(self,query,config={'ini':0,'end':1,'epochs':1,'value':'value','description':'description'},connection={'host':'localhost','port':27017,'database':'database','collection':'collection'}):
          super(MonkeraCallback, self).__init__()

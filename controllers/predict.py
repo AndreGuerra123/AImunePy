@@ -46,6 +46,8 @@ def toObjectId(params, loc):
             'Supplied object is not a valid ObjectId object or string')
 
 def _getKey(mydict, value):
+    print(mydict)
+    print(value)
     labels = [labels for label, v in mydict.items() if value == v]
     assert len(labels) <2, 'Multiple labels were found simultaneously for the same classification hotlabel.'
     assert len(labels) >0, 'No labels were found the predicted classification hotlabel.'
@@ -66,7 +68,6 @@ class Predictor:
         self.model = LoadModelArchitecture({'_id':self.modelid},'architecture.file',MODELS)
         LoadModelWeights(self.model,_getSafe(self.model_doc,'weights',(str,ObjectId),'Could not find a valid weights model file.'),DATABASE)
         self.hotlabels = _getSafe(self.model_doc,'hotlabels',dict,'Could not find a valid hot labels dictionary.')
-        print(self.hotlabels)
         self.sample = ValidateImageModel({'_id':self.tempid},'image.data',TEMPS,config={
             'target_size':(_getSafe(self.model_doc,'dataset.height',int,'Failed to retrieve target height integer.'),_getSafe(self.model_doc,'dataset.width',int,'Failed to retrieve target width integer.')),
             'data_format':_getSafe(self.model_doc,'dataset.data_format',str,'Failed to retrieve target data_format string.'),

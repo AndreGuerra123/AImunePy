@@ -284,7 +284,7 @@ class Trainer:
 
     def saveHotlabels(self):
         models = connect(MODELS)
-        model.update_one({'_id':self.model_id},{'$set':{'hotlabels':self.mifg.dictionary}})
+        models.update_one({'_id':self.model_id},{'$set':{'hotlabels':self.mifg.dictionary}})
         disconnect(models)
 
     def __init__(self, params):

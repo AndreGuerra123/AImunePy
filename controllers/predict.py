@@ -70,7 +70,7 @@ class Predictor:
             'color_format':_getSafe(self.model_doc,'dataset.color_format',str,'Failed to retrieve target color_format string.')
         })
        
-        self.pred = self.model.predict_classes(self.sample)[0]
+        self.pred = self.model.predict(self.sample)[0]
 
     def getResults(self):
         argmax = int(np.argmax(self.pred)),

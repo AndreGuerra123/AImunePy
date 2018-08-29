@@ -249,7 +249,7 @@ def PlotPredictions(preds,labels,tools="pan,wheel_zoom,box_zoom,reset,save",heig
     assert isinstance(height,int) and height>0, 'Please provide a valid value for the height of the graphical component.'
     assert isinstance(tools,str), 'Please insert a valid string value for the tools parameter'
 
-    source = ColumnDataSource(data=dict(legend=labels.keys(), counts=preds, color=Spectral6))
+    source = ColumnDataSource(data=dict(legend=list(labels.keys()), counts=preds.tolist(), color=Spectral6))
     plot = figure(title='Results Histogram',tools=tools,x_axis_label='Classes', y_axis_label='%',plot_width=width, plot_height=height)
     p.vbar(x='legend', top='counts', width=0.8, color='color', source=source)
     

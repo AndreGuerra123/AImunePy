@@ -19,7 +19,6 @@ MODELS['collection'] = 'models'
 def _get(obj, loc):
     return p_.get(obj, loc)
 
-
 def _getSafe(obj, loc, typ, msg):
     tr = p_.get(obj, loc)
     assert isinstance(tr,typ), msg

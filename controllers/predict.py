@@ -69,4 +69,4 @@ class Predictor:
         self.sampletensor = np.array([imagetensor,])
 
     def getPredictions(self):
-        print(self.model.predict(self.sampletensor)
+        print(self.model.predict(self.sampletensor))

@@ -68,4 +68,4 @@ class Predictor:
         })
 
     def getPredictions(self):
-        print(self.model.predict(self.tensor))
+        print(self.model.predict([self.tensor]))

@@ -46,8 +46,6 @@ def toObjectId(params, loc):
             'Supplied object is not a valid ObjectId object or string')
 
 def _getKey(mydict, value):
-    print(mydict)
-    print(value)
     labels = [labels for label, v in mydict.items() if value == v]
     assert len(labels) <2, 'Multiple labels were found simultaneously for the same classification hotlabel.'
     assert len(labels) >0, 'No labels were found the predicted classification hotlabel.'
@@ -77,8 +75,8 @@ class Predictor:
         self.pred = self.model.predict(self.sample)[0]
 
     def getResults(self):
-        argmax = int(np.argmax(self.pred)),
-        prob = float(self.pred[argmax]),
+        argmax = np.argmax(self.pred)
+        prob = float(self.pred[argmax])
         label = _getKey(self.hotlabels,argmax)
         return {'label':label,'prob':prob}
 

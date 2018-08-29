@@ -961,6 +961,22 @@ class MongoImageDataGenerator(object):
         self.__disconnect(collection)
         return object_ids
 
+    def __getDictionary(self):
+        collection = self.__connect()
+        lbls = collection.distinct(self.lbl_location, {'_id': {'$in': self.object_ids}})
+        unique_keys = list(set(map(str,a)))
+        unique_keys.sort()
+        dictionary = {x:i for i,x in enumerate(unique_keys)}# keys as human readable, values are the indexes (sorted)
+        nb = len(dictionary)
+        self.__disconnect(collection)
+        return dictionary, nb
+
+    def __getHotlabel(self, label):
+        idx = _a_g(self.dictionary,str(label),'Failed to find label in hotlabel dictionary.')
+        hot = np.zeros((self.classes,))
+        hot[idx] = 1
+        return hot
+
     def readMongoSample(self, oid):
 
         collection = self.__connect()
@@ -986,29 +1002,7 @@ class MongoImageDataGenerator(object):
     def __getLabel(self, sample):
         label = _a_g(sample, self.lbl_location,
                     "Failed to retrieve image label (ID:"+str(_g(sample, '_id'))+") at "+self.lbl_location+".")
-        return self.getEncoded(label)
-
-    def __getDictionary(self):
-        collection = self.__connect()
-        lbls = collection.distinct(self.lbl_location, {'_id': {'$in': self.object_ids}})
-        print(type(lbls))
-        print(lbls)
-        nb = len(lbls)
-        # keys as human readable, any type.
-        dictionary = {k: self.__hot(v, nb) for v, k in enumerate(lbls)}
-        self.__disconnect(collection)
-        return dictionary, nb
-
-    def __hot(self, idx, nb):
-        hot = np.zeros((nb,))
-        hot[idx] = 1
-        return hot
-    
-    def getEncoded(self, label):
-        return _g(self.dictionary, label)
-
-    def getDecoded(self, np):
-        return self.dictionary.keys()[self.dictionary.values().index(np)]
+        return self.__getHotlabel(label)
 
     def getInputShape(self):
         toreturn = [None,None,None,None]
@@ -1020,7 +1014,8 @@ class MongoImageDataGenerator(object):
     def getOutputShape(self):
         return tuple([None,self.classes])
 
-
+    def getEncoded(self, label):
+        return _g(self.dictionary, label)
 
 class MongoTrainFlowGenerator(Iterator):
 

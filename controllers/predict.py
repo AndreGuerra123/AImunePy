@@ -1,10 +1,10 @@
 from pymongo import MongoClient
 from bson.objectid import ObjectId
 import pydash as p_
-from controllers.drivers.MonkeraUtils import _to_model, LoadModelWeights, LoadModelArchitecture, ValidateImageModel
+from controllers.drivers.MonkeraUtils import _to_model, LoadModelWeights, LoadModelArchitecture, ValidateImageModel, PlotPredictions
 from pymongo import MongoClient
 from keras import backend as K
-
+import numpy as np
 
 DATABASE = {
     'host': 'localhost',
@@ -45,6 +45,9 @@ def toObjectId(params, loc):
         raise ValueError(
             'Supplied object is not a valid ObjectId object or string')
 
+def _getKey(mydict, value):
+    return mydict.keys()[mydict.values().index(value)] 
+
 class Predictor:
     def __init__(self, params):
         K.clear_session()
@@ -67,6 +70,13 @@ class Predictor:
             'color_format':_getSafe(self.model_doc,'dataset.color_format',str,'Failed to retrieve target color_format string.')
         })
        
+        self.pred = self.model.predict_classes(self.sample)[0]
 
-    def getPredictions(self):
-        print(self.model.predict_classes(self.sample))
+    def getResults(self):
+        argmax = int(np.argmax(self.pred)),
+        prob = float(pred[argmax]),
+        label = _getKey(self.hotlabels,argmax)
+        return {'label':label,'prob':prob}
+
+    def getPlot(self):
+        return PlotPredictions(self.pred,self.hotlabels)

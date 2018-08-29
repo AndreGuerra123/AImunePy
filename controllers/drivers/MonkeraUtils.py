@@ -239,6 +239,17 @@ def PlotHistory(history,width=300,height=300,tools="pan,wheel_zoom,box_zoom,rese
 
     return plots
 
+def PlotPredictions(preds,labels,tools,height=300,width=300):
+
+    assert isinstance(preds,np.ndarray), 'Please provide a valid preds numpy array as parameter.' 
+    assert isinstance(labels,dict),'Please provide a valid labels'
+
+    source = ColumnDataSource(data=dict(legend=labels.keys(), counts=preds, color=Spectral6))
+    plot = figure(title='Results Histogram',tools=tools,x_axis_label='Classes', y_axis_label='%',plot_width=width, plot_height=height)
+    p.vbar(x='legend', top='counts', width=0.8, color='color', source=source)
+    
+    return plot
+
 def ValidateImageModel(query,location,connection={'host':'localhost','port':27017,'database':'database','collection':'collection'},config={'target_size':(100,100),'color_format':'L','data_format':'channels_last'}):
     assert isinstance(query,dict), 'Query is not a valid dictionary.'
     assert isinstance(location,str), 'Location is not a valid string.'
@@ -266,7 +277,6 @@ def ValidateImageModel(query,location,connection={'host':'localhost','port':2701
     tensor = img_to_array(img,data_format=data_format)
 
     return np.array([tensor,])
-
 
 def img_to_array(img, data_format=None):
     """Converts a PIL Image instance to a Numpy array.

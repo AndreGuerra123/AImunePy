@@ -26,7 +26,10 @@ def result():
 @app.route("/predict", methods=['POST'])
 def predict():
     predictor = Predictor(request.json)
-    return jsonify(predictor.getPredictions())
+    res = predictor.getResults()
+    plot = predictor.getPlot()
+    script, div = components(plot, wrap_script=False)
+    return jsonify({'result':res,'plot':{'div': div, 'script': script}})
 
 # HTTP Errors handlers
 
